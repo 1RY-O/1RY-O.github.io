@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pilla Sri Sai Rahul — Mechatronics · Robotics · Embedded Systems · AI</title>
+  <meta name="description" content="Portfolio of Pilla Sri Sai Rahul — Mechatronics Engineering student focused on robotics, embedded systems, IoT, and AI-enabled applications." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128241;</text></svg>" />
+</head>
+<body>
+  <a class="skip-link" href="#about">Skip to content</a>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav">
+    <div class="nav-inner container">
+      <a href="#home" class="nav-logo">
+        <span class="logo-bracket">&lt;</span>rahul<span class="logo-accent">.dev</span><span class="logo-bracket">/&gt;</span>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span class="burger"></span>
+        <span class="burger"></span>
+        <span class="burger"></span>
+      </button>
+      <nav class="nav-links" id="nav-links">
+        <a href="#about">About</a>
+        <a href="#education">Education</a>
+        <a href="#projects">Projects</a>
+        <a href="#experience">Experience</a>
+        <a href="#skills">Skills</a>
+        <a href="#certifications">Certifications</a>
+        <a href="#activities">Activities</a>
+        <a class="nav-resume" href="resume.pdf" download>Resume</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section id="home" class="hero">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="container hero-inner">
+        <div class="hero-left reveal">
+          <p class="hero-kicker mono">$ whoami</p>
+          <h1 class="hero-name">PILLA SRI SAI&nbsp;<span class="gradient-text">RAHUL</span></h1>
+          <p class="hero-type mono"><span class="prompt">&gt;</span> <span id="typed"></span><span class="caret">&nbsp;</span></p>
+          <p class="hero-tags">
+            <span class="tag">Mechatronics Engineering</span>
+            <span class="tag">Robotics</span>
+            <span class="tag">Embedded Systems</span>
+            <span class="tag">AI Integration</span>
+          </p>
+          <p class="hero-desc">
+            Mechatronics undergrad at Mahindra University building robots, IoT systems, and
+            AI-powered applications. Creator of <strong>Lumis</strong>, an open-source
+            AI journaling platform. Chasing the dirty work — sensors, actuators, circuits,
+            and getting LLMs to actually ship features.
+          </p>
+          <div class="hero-actions">
+            <a href="#projects" class="btn btn-primary">View Projects</a>
+            <a href="resume.pdf" download class="btn btn-ghost">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download Resume
+            </a>
+          </div>
+          <div class="hero-social">
+            <a href="mailto:fabledadventurer.pssr@gmail.com" aria-label="Email">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            </a>
+            <a href="tel:+919652371580" aria-label="Phone">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </a>
+            <a href="https://www.linkedin.com/in/sri-sai-rahul-pilla" target="_blank" rel="noopener" aria-label="LinkedIn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.55C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.72C24 .77 23.2 0 22.22 0z"/></svg>
+            </a>
+            <a href="https://github.com/1RY-O" target="_blank" rel="noopener" aria-label="GitHub">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.87-1.54-3.87-1.54-.53-1.33-1.29-1.69-1.29-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.72-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.78 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.35.77 1.04.77 2.1 0 1.52-.01 2.74-.01 3.11 0 .31.21.68.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Terminal card -->
+        <div class="hero-terminal reveal" aria-hidden="false">
+          <div class="term-head">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="term-title mono">rahul@mahindra:~</span>
+          </div>
+          <div class="term-body mono">
+            <p><span class="term-prompt">rahul@mahindra:~$</span> ./identity --verbose</p>
+            <p><span class="term-dim"># Mechatronics &middot; Robotics &middot; Embedded &middot; AI</span></p>
+            <p class="term-out"><span class="t-cyan">name</span>: Pilla Sri Sai Rahul</p>
+            <p class="term-out"><span class="t-cyan">degree</span>: B.Tech Mechatronics, Mahindra Univ.</p>
+            <p class="term-out"><span class="t-cyan">focus</span>: [robotics, embedded, IoT, AI]</p>
+            <p class="term-out"><span class="t-cyan">flagship</span>: Lumis (open-source AI journaling)</p>
+            <p class="term-out"><span class="t-cyan">status</span>: <span class="t-green">BUILDING // learning in public</span></p>
+            <p><span class="term-prompt">rahul@mahindra:~$</span> ./start_career<span class="caret">&nbsp;</span></p>
+          </div>
+        </div>
+      </div>
+      <a href="#about" class="scroll-hint mono" aria-label="Scroll down">&darr;</a>
+    </section>
+
+    <!-- ============ ABOUT ============ -->
+    <section id="about" class="section">
+      <div class="container">
+        <p class="section-tag mono">&lt;!-- about me --&gt;</p>
+        <h2 class="section-title reveal">About <span class="gradient-text">Me</span></h2>
+        <div class="about-grid">
+          <div class="card about-card reveal">
+            <div class="avatar mono">SR</div>
+            <p class="about-text">
+              I'm a first-year Mechatronics Engineering student at Mahindra University with a
+              core interest in <strong>robotics, embedded systems, IoT, and AI-enabled applications</strong>.
+              I like building things that move, sense, and think.
+            </p>
+            <p class="about-text">
+              I built <strong>Lumis</strong>, an open-source full-stack AI journaling platform that
+              combines React, Firebase, Node.js, Google Cloud Run, and the Gemini API — my first real
+              taste of shipping something end-to-end. Now I'm getting my hands dirty with Arduino,
+              ESP32, sensors, and actuators through robotics training at Unlox Academy.
+            </p>
+            <p class="about-text">
+              Outside the lab, I love demystifying AI tools for my peers — from Gen AI communities at
+              Mahindra to teaching Python, embedded systems, and LLM concepts. Big believer in
+              <em>learning in public</em> and open source.
+            </p>
+          </div>
+          <div class="card stats-card reveal">
+            <div class="stat">
+              <span class="stat-num mono gradient-text">1</span>
+              <span class="stat-label">open-source flagship</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num mono gradient-text">+8</span>
+              <span class="stat-label">skill domains</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num mono gradient-text">3</span>
+              <span class="stat-label">certifications &amp; courses</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num mono gradient-text">2</span>
+              <span class="stat-label">hackathons competed</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num mono gradient-text">2</span>
+              <span class="stat-label">leadership roles</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ EDUCATION ============ -->
+    <section id="education" class="section alt">
+      <div class="container">
+        <p class="section-tag mono">&lt;!-- education --&gt;</p>
+        <h2 class="section-title reveal">Education</h2>
+        <div class="timeline">
+          <article class="card timeline-item reveal">
+            <div class="timeline-marker" aria-hidden="true"></div>
+            <div class="timeline-head">
+              <h3>B.Tech in Mechatronics Engineering</h3>
+              <span class="timeline-date mono">2026 – 2030</span>
+            </div>
+            <p class="timeline-sub">Mahindra University</p>
+            <p class="timeline-course mono">Relevant coursework: Engineering Mathematics &middot; Programming Fundamentals (C/C++) &middot; Introduction to Electronics &middot; AI Tools &amp; Development</p>
+          </article>
+          <article class="card timeline-item reveal">
+            <div class="timeline-marker" aria-hidden="true"></div>
+            <div class="timeline-head">
+              <h3>Senior Secondary (Class XII)</h3>
+              <span class="timeline-date mono">Completed · 89%</span>
+            </div>
+            <p class="timeline-sub">Board of Intermediate Education</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROJECTS ============ -->
+    <section id="projects" class="section">
+      <div class="container">
+        <p class="section-tag mono">&lt;!-- featured project --&gt;</p>
+        <h2 class="section-title reveal">Projects</h2>
+        <article class="card project-card reveal">
+          <div class="project-top">
+            <div class="project-icon mono"><span class="folder-emoji">&#128193;</span></div>
+            <div class="project-links">
+              <a href="https://github.com/1RY-O/lumis-journal" target="_blank" rel="noopener" aria-label="Lumis on GitHub">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.87-1.54-3.87-1.54-.53-1.33-1.29-1.69-1.29-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.72-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.78 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.35.77 1.04.77 2.1 0 1.52-.01 2.74-.01 3.11 0 .31.21.68.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+              </a>
+            </div>
+          </div>
+          <h3 class="project-title">Lumis — AI-Powered Journaling &amp; Reflection Platform</h3>
+          <p class="project-stack mono">React · Vite · Firebase · Firestore · Node.js · Express · Google Cloud Run · Gemini API · 2025–2026</p>
+          <ul class="project-points">
+            <li>Open-source full-stack AI journaling prototype for structured reflection and idea exploration.</li>
+            <li>Integrates the Gemini API to transform unstructured entries into validated, structured reflections using JSON-based outputs.</li>
+            <li>Authenticated user flows with Firebase Authentication and per-user Firestore data isolation.</li>
+            <li>Backend architecture on Node.js/Express and Google Cloud Run with server-side API credential management via Cloud Secret Manager.</li>
+            <li>Built with an AI-assisted dev workflow (Cursor, Manus 1.6 Lite) integrated with GitHub for rapid iteration.</li>
+            <li>Designed as a reference for teaching peers how real-world AI API integration works.</li>
+          </ul>
+          <div class="project-footer">
+            <span class="badge">Proud open-source</span>
+            <span class="badge">AI APIs</span>
+            <span class="badge">Full-stack</span>
+            <a class="project-link" href="https://github.com/1RY-O/lumis-journal" target="_blank" rel="noopener">github.com/1RY-O/lumis-journal &rarr;</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ EXPERIENCE ============ -->
+    <section id="experience" class="section alt">
+      <div class="container">
+        <p class="section-tag mono">&lt;!-- experience &amp; training --&gt;</p>
+        <h2 class="section-title reveal">Experience &amp; Training</h2>
+        <div class="cards-row">
+          <article class="card exp-card reveal">
+            <div class="exp-icon mono">&#9881;</div>
+            <h3>IoT &amp; Robotics Trainee</h3>
+            <p class="exp-org">Unlox Academy</p>
+            <span class="timeline-date mono">2026 – Present</span>
+            <ul class="exp-points">
+              <li>Developing hands-on IoT systems with Arduino, ESP32, sensors, and actuators.</li>
+              <li>Building and testing sensor-driven systems and microcontroller control logic.</li>
+              <li>Working with MQTT and IoT data-flow; prototyping in Tinkercad and Wokwi.</li>
+            </ul>
+          </article>
+          <article class="card exp-card reveal">
+            <div class="exp-icon mono">&#129309;</div>
+            <h3>Team Leader</h3>
+            <p class="exp-org">Entrepreneurship Cell, Mahindra University</p>
+            <span class="timeline-date mono">2026 – Present</span>
+            <ul class="exp-points">
+              <li>Coordinating team activities and driving ideation, planning, and execution of entrepreneurial initiatives.</li>
+              <li>Working at the intersection of technology, product thinking, and teamwork.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SKILLS ============ -->
+    <section id="skills" class="section">
+      <div class="container">
+        <p class="section-tag mono">&lt;!-- technical skills --&gt;</p>
+        <h2 class="section-title reveal">Technical <span class="gradient-text">Skills</span></h2>
+        <div class="skills-grid">
+          <div class="card skill-card reveal">
+            <h4 class="skill-head mono"><span class="t-cyan">[</span> languages <span class="t-cyan">]</span></h4>
+            <ul class="skill-list">
+              <li>Python</li><li>C</li><li>C++</li><li>HTML</li>
+            </ul>
+          </div>
+          <div class="card skill-card reveal">
+            <h4 class="skill-head mono"><span class="t-cyan">[</span> embedded &amp; iot <span class="t-cyan">]</span></h4>
+            <ul class="skill-list">
+              <li>Arduino</li><li>ESP32</li><li>Sensors</li><li>Actuators</li><li>GPIO</li><li>PWM</li><li>MQTT</li>
+            </ul>
+          </div>
+          <div class="card skill-card reveal">
+            <h4 class="skill-head mono"><span class="t-cyan">[</span> ai &amp; apis <span class="t-cyan">]</span></h4>
+            <ul class="skill-list">
+              <li>Gemini API</li><li>Claude</li><li>Structured Output</li><li>Prompt Engineering</li><li>AI-Assisted Development</li>
+            </ul>
+          </div>
+          <div class="card skill-card reveal">
+            <h4 class="skill-head mono"><span class="t-cyan">[</span> web &amp; backend <span class="t-cyan">]</span></h4>
+            <ul class="skill-list">
+              <li>React</li><li>Vite</li><li>Node.js</li><li>Express</li><li>REST APIs</li>
+            </ul>
+          </div>
+          <div class="card skill-card reveal">
+            <h4 class="skill-head mono"><span class="t-cyan">[</span> cloud &amp; databases <span class="t-cyan">]</span></h4>
+            <ul class="skill-list">
+              <li>Firebase</li><li>Firestore</li><li>Google Cloud Run</li><li>Cloud Secret Manager</li>
+            </ul>
+          </div>
+          <div class="card skill-card reveal">
+            <h4 class="skill-head mono"><span class="t-cyan">[</span> tools &amp; platforms <span class="t-cyan">]</span></h4>
+            <ul class="skill-list">
+              <li>Cursor</li><li>Manus 1.6 Lite</li><li>Ideogram</li><li>Git</li><li>GitHub</li><li>VS Code</li><li>Tinkercad</li><li>Wokwi</li><li>Termux</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CERTIFICATIONS ============ -->
+    <section id="certifications" class="section alt">
+      <div class="container">
+        <p class="section-tag mono">&lt;!-- certifications --&gt;</p>
+        <h2 class="section-title reveal">Certifications &amp; Courses</h2>
+        <div class="cards-row">
+          <article class="card cert-card reveal">
+            <span class="badge badge-green">Completed · Aug 2026</span>
+            <h3>BE10X — AI Tools &amp; Claude Workshop</h3>
+            <p class="cert-org">Certificate of Completion</p>
+            <p class="cert-desc">AI-assisted presentations, data analysis, coding, and debugging. Eager to deepen Claude expertise and share insights with the Mahindra community.</p>
+          </article>
+          <article class="card cert-card reveal">
+            <span class="badge badge-amber">In Progress</span>
+            <h3>Python</h3>
+            <p class="cert-org">Udemy</p>
+            <p class="cert-desc">Deepening Python fundamentals for automation, embedded scripting, and AI workflows.</p>
+          </article>
+          <article class="card cert-card reveal">
+            <span class="badge badge-amber">In Progress</span>
+            <h3>C / C++</h3>
+            <p class="cert-org">Udemy</p>
+            <p class="cert-desc">Strengthening low-level programming for microcontrollers and high-performance robotics.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HACKATHONS / ACTIVITIES ============ -->
+    <section id="activities" class="section">
+      <div class="container">
+        <p class="section-tag mono">&lt;!-- community &amp; activities --&gt;</p>
+        <h2 class="section-title reveal">Hackathons &amp; Community</h2>
+        <div class="cards-row">
+          <article class="card act-card reveal">
+            <span class="act-icon mono">&#129505;</span>
+            <h3>Hack2Skill — Gen AI APAC Ideathon</h3>
+            <p class="act-meta mono">Participant / Builder · 2026</p>
+            <p class="act-desc">Built ideas at the intersection of generative AI and real-world problems in a regional APAC competition.</p>
+          </article>
+          <article class="card act-card reveal">
+            <span class="act-icon mono">&#128268;</span>
+            <h3>AssemblyAI × LabLab AI Hackathon</h3>
+            <p class="act-meta mono">Participant / Builder · 2026</p>
+            <p class="act-desc">Hacked with modern AI APIs and shipped a build on the LabLab platform alongside a global builder community.</p>
+          </article>
+          <article class="card act-card reveal">
+            <span class="act-icon mono">&#127793;</span>
+            <h3>Open Source &amp; Student Advocacy</h3>
+            <p class="act-meta mono">Always on</p>
+            <p class="act-desc">Active in Gen AI and emerging-tech communities at Mahindra. Teach Python, embedded systems, and AI concepts to peers — making LLMs feel less like magic and more like tools.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER / CONTACT ============ -->
+  <footer id="contact" class="footer">
+    <div class="container">
+      <p class="section-tag mono center">&lt;!-- let's build together --&gt;</p>
+      <h2 class="footer-title">Let's Collide <span class="gradient-text">Some Ideas</span></h2>
+      <p class="footer-sub">
+        Open to internships, robotics/embedded builds, AI experiments, and teaching opportunities.
+        If it moves, senses, or thinks — I'm in.
+      </p>
+      <div class="footer-actions">
+        <a class="btn btn-primary" href="mailto:fabledadventurer.pssr@gmail.com">Email Me</a>
+        <a class="btn btn-ghost" href="resume.pdf" download>Download Resume</a>
+      </div>
+      <div class="footer-contact mono">
+        <a href="tel:+919652371580">+91 96523 71580</a>
+        <a href="mailto:fabledadventurer.pssr@gmail.com">fabledadventurer.pssr@gmail.com</a>
+        <a href="https://www.linkedin.com/in/sri-sai-rahul-pilla" target="_blank" rel="noopener">linkedin.com/in/sri-sai-rahul-pilla</a>
+        <a href="https://github.com/1RY-O" target="_blank" rel="noopener">github.com/1RY-O</a>
+      </div>
+      <div class="footer-meta mono">
+        <p>Designed &amp; built by Pilla Sri Sai Rahul · HTML/CSS/JS · no frameworks, just vibes &amp; grit</p>
+        <p>&copy; 2026 · Hosted on GitHub Pages</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
