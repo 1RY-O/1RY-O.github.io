@@ -19,6 +19,8 @@
 <body id="top">
   <a class="skip-link" href="#main">Skip to content</a>
 
+  <div class="progress" aria-hidden="true"><i id="progress-bar"></i></div>
+
   <!-- ============ MASTHEAD ============ -->
   <header class="site-head">
     <div class="head-row">
@@ -29,7 +31,7 @@
         <a href="#toolbox">Toolbox</a>
         <a href="#record">Record</a>
         <a href="#contact">Contact</a>
-        <a class="head-resume" href="resume.pdf" download>Résumé&hairsp;<span aria-hidden="true">↓</span></a>
+        <a class="head-resume magnet" href="resume.pdf" download>Résumé&hairsp;<span aria-hidden="true">↓</span></a>
       </nav>
       <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="menu-overlay">Index</button>
     </div>
@@ -60,14 +62,14 @@
       <div class="wrap hero-inner">
         <p class="eyebrow mono"><span>Pilla Sri Sai Rahul&ensp;—&ensp;Mechatronics · Mahindra University · 2026</span></p>
 
-        <h1 class="display">
+        <h1 class="display" id="hero-display">
           <span class="line"><span class="line-in">I build things</span></span>
           <span class="line"><span class="line-in">that <em>move</em>, <em>sense</em></span></span>
           <span class="line"><span class="line-in">& <em class="acc">think.</em></span></span>
         </h1>
 
         <div class="hero-cards" aria-hidden="true">
-          <div class="hcard hcard--violet is-front">
+          <div class="hcard hcard--violet">
             <span class="hcard-chip">✦</span>
             <p class="hcard-line">Systems that<br /><strong>move, sense & think.</strong></p>
           </div>
@@ -91,6 +93,13 @@
             <span class="hcard-chip">⌁</span>
             <p class="hcard-line">GPIO, PWM, MQTT —<br /><strong>wired end to end.</strong></p>
           </div>
+
+          <div class="deck-meta">
+            <span class="deck-count mono"
+              ><span class="deck-cur" id="deck-cur">01</span><span class="deck-sep">/</span><span id="deck-total">06</span></span
+            >
+            <span class="deck-bar"><i id="deck-bar"></i></span>
+          </div>
         </div>
 
         <div class="hero-low">
@@ -101,8 +110,8 @@
               and code with a body.
             </p>
             <div class="hero-cta">
-              <a class="btn-solid" href="#work">Selected work&ensp;<span aria-hidden="true">↓</span></a>
-              <a class="btn-ghost" href="resume.pdf" download>Résumé</a>
+              <a class="btn-solid magnet" href="#work">Selected work&ensp;<span aria-hidden="true">↓</span></a>
+              <a class="btn-ghost magnet" href="resume.pdf" download>Résumé</a>
             </div>
           </div>
 
@@ -145,7 +154,7 @@
         <div class="plate-grid">
           <div class="plate-copy reveal">
             <p class="plate-tag mono">Lumis — think without the noise</p>
-            <h3 class="plate-title">Lumis</h3>
+            <h3 class="plate-title" data-split="chars">Lumis</h3>
             <p class="plate-desc">
               An open-source journal that turns raw entries into structured reflection.
               React and Firebase up front; Gemini and a Node API doing quiet work
@@ -153,12 +162,12 @@
             </p>
             <p class="plate-stack mono">React · Vite · Firebase · Node · Cloud Run · Gemini</p>
             <div class="plate-cta">
-              <a class="plate-link mono" href="https://lumis---journal.web.app/" target="_blank" rel="noopener">Open the live site&ensp;<span aria-hidden="true">↗</span></a>
-              <a class="plate-quiet mono" href="https://github.com/1RY-O/lumis-journal" target="_blank" rel="noopener">Read the source&ensp;<span aria-hidden="true">↗</span></a>
+              <a class="plate-link mono magnet" href="https://lumis---journal.web.app/" target="_blank" rel="noopener">Open the live site&ensp;<span aria-hidden="true">↗</span></a>
+              <a class="plate-quiet mono magnet" href="https://github.com/1RY-O/lumis-journal" target="_blank" rel="noopener">Read the source&ensp;<span aria-hidden="true">↗</span></a>
             </div>
           </div>
 
-          <figure class="browser reveal" role="img" aria-label="Preview of the Lumis journaling interface" style="--d:.15s">
+          <figure class="browser reveal tilt" role="img" aria-label="Preview of the Lumis journaling interface" style="--d:.15s">
             <div class="browser-bar mono" aria-hidden="true">
               <span class="b-url">lumis---journal.web.app</span>
               <span class="b-dots"><i></i><i></i><i></i></span>
@@ -318,17 +327,17 @@
           <span class="sec-note mono">replies fast</span>
         </header>
 
-        <h2 class="contact-title reveal">Let’s make something<br />that <em class="acc">thinks.</em></h2>
+        <h2 class="contact-title reveal" data-split="words">Let’s make something<br />that <em class="acc">thinks.</em></h2>
 
         <p class="contact-mail-line reveal" style="--d:.1s">
-          <a class="contact-mail" href="mailto:fabledadventurer.pssr@gmail.com">fabledadventurer.pssr@gmail.com</a>
+          <a class="contact-mail magnet" href="mailto:fabledadventurer.pssr@gmail.com">fabledadventurer.pssr@gmail.com</a>
         </p>
 
         <div class="contact-links mono reveal" style="--d:.18s">
-          <a href="https://github.com/1RY-O" target="_blank" rel="noopener">GitHub&hairsp;<span aria-hidden="true">↗</span></a>
-          <a href="https://www.linkedin.com/in/sri-sai-rahul-pilla" target="_blank" rel="noopener">LinkedIn&hairsp;<span aria-hidden="true">↗</span></a>
-          <a href="tel:+919652371580">+91&nbsp;96523&nbsp;71580</a>
-          <a href="resume.pdf" download>Résumé&hairsp;<span aria-hidden="true">↓</span></a>
+          <a class="magnet" href="https://github.com/1RY-O" target="_blank" rel="noopener">GitHub&hairsp;<span aria-hidden="true">↗</span></a>
+          <a class="magnet" href="https://www.linkedin.com/in/sri-sai-rahul-pilla" target="_blank" rel="noopener">LinkedIn&hairsp;<span aria-hidden="true">↗</span></a>
+          <a class="magnet" href="tel:+919652371580">+91&nbsp;96523&nbsp;71580</a>
+          <a class="magnet" href="resume.pdf" download>Résumé&hairsp;<span aria-hidden="true">↓</span></a>
         </div>
 
         <div class="colophon mono">
@@ -338,6 +347,11 @@
       </div>
     </footer>
   </main>
+
+  <script>
+    document.documentElement.classList.remove("no-js");
+    document.documentElement.classList.add("js");
+  </script>
 
   <script src="script.js"></script>
 </body>
