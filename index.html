@@ -12,267 +12,243 @@
   <meta property="og:url" content="https://1ry-o.github.io/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Instrument+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='82' font-size='96' text-anchor='middle' fill='%23C9A86A' font-family='Arial,sans-serif'%3E*%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='82' font-size='96' text-anchor='middle' fill='%23C8723F' font-family='Arial,sans-serif'%3E*%3C/text%3E%3C/svg%3E" />
 </head>
 <body>
   <a class="skip-link" href="#panel-1">Skip to content</a>
 
-  <!-- ============ BROKEN MIRROR — opening sequence ============ -->
-  <div class="mirror" id="mirror" aria-hidden="true">
-    <div class="mirror-stage" id="mirror-stage">
-      <div class="mirror-plane" id="mirror-plane">
-        <i class="mirror-sheen" aria-hidden="true"></i>
-        <p class="mirror-kicker mono">Pilla Sri Sai Rahul — Portfolio</p>
-        <h1 class="mirror-name">PILLA SRI SAI RAHUL</h1>
-        <p class="mirror-fields mono">Mechatronics · Robotics · Embedded Systems · AI</p>
-      </div>
+  <!-- ============ PROLOGUE — the fractured plate ============
+       Filled at runtime with a copy of chapter 01's composition,
+       then cut into shards. When the shards reassemble, they are
+       not a decoration: they ARE chapter 01, mid-reconstruction. -->
+  <div class="prologue" id="prologue" aria-hidden="true">
+    <div class="prologue-stage" id="prologue-stage">
+      <div class="prologue-plane" id="prologue-plane"></div>
     </div>
+    <p class="prologue-hint mono" id="prologue-hint">click to enter</p>
   </div>
 
-  <!-- ============ ATMOSPHERE — subordinate life ============ -->
+  <!-- ============ ATMOSPHERE — light inhabiting the room ============ -->
   <div class="atmo" aria-hidden="true">
     <i class="bloom bloom-1"></i>
     <i class="bloom bloom-2"></i>
     <i class="bloom bloom-3"></i>
-    <i class="bubble bubble-1"></i>
-    <i class="bubble bubble-2"></i>
-    <i class="bubble bubble-3"></i>
+    <i class="mote mote-1"></i>
+    <i class="mote mote-2"></i>
   </div>
+
+  <div class="grain" aria-hidden="true"></div>
 
   <!-- ============ MASTHEAD ============ -->
   <header class="site-head">
-    <button class="wordmark" data-go="0" aria-label="Pilla Sri Sai Rahul — home">R<span class="ast" aria-hidden="true">*</span></button>
+    <button class="wordmark mono" data-go="0" aria-label="Pilla Sri Sai Rahul — home">
+      Pilla<span class="ast" aria-hidden="true">*</span><span class="wordmark-sub">Sri Sai Rahul</span>
+    </button>
     <div class="head-chapter mono" aria-live="polite">
-      <span id="chapter-cur">01</span><span class="head-sep">/</span><span id="chapter-total">08</span>
+      <span id="chapter-cur">01</span><span class="head-sep">/</span><span id="chapter-total">06</span>
+      <span class="head-title" id="chapter-title">&ensp;Identity</span>
     </div>
     <a class="head-resume mono" href="resume.pdf" download>Résumé&hairsp;<span aria-hidden="true">↓</span></a>
   </header>
 
-  <!-- ============ STAIRCASE DECK ============ -->
+  <!-- ============ THE DECK — six compositions in depth ============ -->
   <main id="deck" class="deck" aria-label="Portfolio chapters">
 
     <!-- 01 · IDENTITY -->
-    <section class="panel panel--glow" id="panel-1" data-chapter="01" data-title="Identity" role="group" aria-label="Chapter 1 — Identity" tabindex="-1">
-      <div class="panel-inner">
-        <header class="panel-head">
-          <span class="panel-num mono">01</span>
-          <span class="panel-title mono">Identity</span>
-        </header>
+    <section class="panel" id="panel-1" data-chapter="01" data-title="Identity" role="group" aria-label="Chapter 1 — Identity" tabindex="-1">
+      <div class="panel-frame">
+        <header class="panel-head mono"><span class="ph-num">01</span><span class="ph-rule"></span><span class="ph-title">Identity</span></header>
         <div class="panel-body">
-          <div class="identity">
-            <p class="identity-kicker mono">Pilla Sri Sai Rahul</p>
-            <h2 class="identity-name">PILLA<br />SRI SAI RAHUL</h2>
-            <p class="identity-fields mono">Mechatronics · Robotics · Embedded Systems · IoT · AI</p>
-            <p class="identity-tag">Systems that move, sense & think.</p>
+          <div class="idcomp">
+            <p class="idcomp-kicker mono fx" style="--d:.05s">Portfolio — Mahindra University, Hyderabad</p>
+            <h1 class="idcomp-name fx" style="--d:.14s">PILLA<br /><em>SRI&nbsp;SAI</em><br />RAHUL</h1>
+            <p class="idcomp-fields mono fx" style="--d:.26s"><i class="dot" aria-hidden="true"></i>Mechatronics&ensp;·&ensp;Robotics&ensp;·&ensp;Embedded&ensp;·&ensp;IoT&ensp;·&ensp;AI</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- 02 · ABOUT -->
-    <section class="panel" data-chapter="02" data-title="About" role="group" aria-label="Chapter 2 — About" tabindex="-1">
-      <div class="panel-inner">
-        <header class="panel-head">
-          <span class="panel-num mono">02</span>
-          <span class="panel-title mono">About</span>
-        </header>
+    <section class="panel" id="panel-2" data-chapter="02" data-title="About" role="group" aria-label="Chapter 2 — About" tabindex="-1">
+      <div class="panel-frame">
+        <header class="panel-head mono"><span class="ph-num">02</span><span class="ph-rule"></span><span class="ph-title">About</span></header>
         <div class="panel-body">
-          <div class="about-grid">
-            <div class="about-copy">
-              <p class="about-lead">First-year Mechatronics Engineering student at Mahindra University.</p>
-              <p class="about-p">I build systems that move, sense, and think — from microcontroller rigs to AI-enabled applications. My work sits where hardware meets software, where code has a body.</p>
+          <div class="about">
+            <p class="about-lead fx" style="--d:.05s">I build systems that<br /><em>move</em>, <em>sense</em> and <em>think</em>.</p>
+            <div class="about-grid">
+              <p class="about-p fx" style="--d:.14s">First-year Mechatronics Engineering student at Mahindra University. My work sits where hardware meets software — from microcontroller rigs wired on a desk to AI-enabled applications running in the cloud. Code, for me, should have a body.</p>
+              <dl class="about-facts fx" style="--d:.22s">
+                <div class="fact"><dt class="mono">Focus</dt><dd>Robotics · Embedded · IoT · AI</dd></div>
+                <div class="fact"><dt class="mono">Studying</dt><dd>B.Tech Mechatronics · Mahindra University</dd></div>
+                <div class="fact"><dt class="mono">Now</dt><dd>IoT & robotics training · Unlox Academy</dd></div>
+                <div class="fact"><dt class="mono">Status</dt><dd>Open to internships & collaborations</dd></div>
+              </dl>
             </div>
-            <dl class="about-facts">
-              <div class="fact"><dt class="mono">Focus</dt><dd>Robotics · Embedded · IoT · AI</dd></div>
-              <div class="fact"><dt class="mono">Studying</dt><dd>B.Tech Mechatronics · Mahindra University</dd></div>
-              <div class="fact"><dt class="mono">Now</dt><dd>IoT & robotics training at Unlox Academy</dd></div>
-              <div class="fact"><dt class="mono">Status</dt><dd>Open to internships & collabs</dd></div>
+            <span class="about-margin mono fx" style="--d:.3s" aria-hidden="true">hardware, software — one discipline</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 · LUMIS — flagship case -->
+    <section class="panel" id="panel-3" data-chapter="03" data-title="Lumis" role="group" aria-label="Chapter 3 — Lumis" tabindex="-1">
+      <div class="panel-frame">
+        <header class="panel-head mono"><span class="ph-num">03</span><span class="ph-rule"></span><span class="ph-title">Lumis</span></header>
+        <div class="panel-body">
+          <div class="lumis">
+            <header class="lumis-head">
+              <p class="lumis-tag mono fx" style="--d:.05s">Flagship · 2026 →</p>
+              <h3 class="lumis-title fx" style="--d:.1s">Lumis</h3>
+              <p class="lumis-desc fx" style="--d:.18s">An AI-powered journaling and reflection platform. Raw entries in, structured insight out — quietly, privately, without the noise.</p>
+            </header>
+            <figure class="lumis-visual fx" style="--d:.24s">
+              <div class="journal" aria-hidden="true">
+                <div class="j-top"><span class="j-logo">Lumis</span><span class="j-nav mono">journal&ensp;/&ensp;reflections</span></div>
+                <div class="j-entry">
+                  <p class="j-date mono">FRI · SEP 04</p>
+                  <p class="j-head">Morning pages</p>
+                  <p class="j-text">05:40 — the line-follower finally held the corner at speed. Gains still guesswork, but they're my guesswork.</p>
+                  <div class="j-reflect"><span class="mono">insight</span><p>You debug best at dawn. Protect the morning block.</p></div>
+                </div>
+                <div class="j-entry j-entry--dim">
+                  <p class="j-date mono">THU · SEP 03</p>
+                  <p class="j-head">Wiring day</p>
+                  <p class="j-text">Mapped the MQTT topics for the rig. Publish, subscribe, sleep — same loop as writing.</p>
+                </div>
+              </div>
+              <figcaption class="mono">FIG. 01 — ENTRY → INSIGHT</figcaption>
+            </figure>
+            <footer class="lumis-foot">
+              <p class="lumis-stack mono fx" style="--d:.32s">React&ensp;/&ensp;Firebase&ensp;/&ensp;Firestore&ensp;/&ensp;Node.js&ensp;/&ensp;Express&ensp;/&ensp;Google Cloud Run&ensp;/&ensp;Gemini API</p>
+              <div class="lumis-cta fx" style="--d:.38s">
+                <a class="btn" href="https://lumis---journal.web.app/" target="_blank" rel="noopener">Open Lumis&ensp;<span aria-hidden="true">↗</span></a>
+                <a class="btn btn--ghost" href="https://github.com/1RY-O/lumis-journal" target="_blank" rel="noopener">Source&ensp;<span aria-hidden="true">↗</span></a>
+              </div>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 · MACHINES — robotics / IoT / hackathons -->
+    <section class="panel" id="panel-4" data-chapter="04" data-title="Machines" role="group" aria-label="Chapter 4 — Machines" tabindex="-1">
+      <div class="panel-frame">
+        <header class="panel-head mono"><span class="ph-num">04</span><span class="ph-rule"></span><span class="ph-title">Machines</span></header>
+        <div class="panel-body">
+          <div class="mach">
+            <div class="mach-grid">
+              <div class="mach-copy">
+                <p class="mach-lead fx" style="--d:.05s">Hardware is where software gets a <em>body</em>.</p>
+                <p class="mach-p fx" style="--d:.12s">Microcontrollers, sensors, actuators — the physical layer of intelligent systems. I work the full chain: GPIO and PWM at the pin level, MQTT pipelines out to the cloud.</p>
+              </div>
+              <figure class="schem fx" style="--d:.18s">
+                <svg viewBox="0 0 380 236" role="img" aria-label="Signal chain diagram: sensors to microcontroller to actuators and cloud">
+                  <g class="schem-wires">
+                    <path class="wire wire--flow" d="M78 128 H150" />
+                    <path d="M230 123 H302" />
+                    <path d="M190 95 V46" />
+                    <path class="wire--dash" d="M190 46 C 190 20, 260 20, 300 20" />
+                  </g>
+                  <g class="schem-nodes">
+                    <circle cx="78" cy="128" r="3.5" />
+                    <circle cx="302" cy="123" r="3.5" />
+                    <circle cx="190" cy="46" r="3.5" />
+                  </g>
+                  <g class="schem-boxes">
+                    <rect x="150" y="95" width="80" height="66" rx="3" />
+                    <rect x="18" y="106" width="60" height="44" rx="3" />
+                    <rect x="302" y="101" width="58" height="44" rx="3" />
+                  </g>
+                  <g class="schem-labels mono">
+                    <text x="190" y="124" text-anchor="middle">MCU</text>
+                    <text x="190" y="140" text-anchor="middle">ESP32</text>
+                    <text x="48" y="125" text-anchor="middle">SENSORS</text>
+                    <text x="48" y="138" text-anchor="middle">GPIO·PWM</text>
+                    <text x="331" y="120" text-anchor="middle">ACT</text>
+                    <text x="331" y="133" text-anchor="middle">MOTORS</text>
+                    <text x="238" y="30">MQTT → CLOUD</text>
+                  </g>
+                </svg>
+                <figcaption class="mono">SIGNAL CHAIN — SENSE → COMPUTE → ACT</figcaption>
+              </figure>
+            </div>
+            <div class="sprints">
+              <p class="sprints-kicker mono fx" style="--d:.24s">Field log — sprints</p>
+              <ol class="sprints-list">
+                <li class="sprint fx" style="--d:.3s">
+                  <span class="sprint-num mono">S/01</span>
+                  <div class="sprint-main">
+                    <h4 class="sprint-title">Hack2Skill Gen AI APAC Ideathon</h4>
+                    <p class="sprint-desc">Gen AI ideathon across the APAC region — concept to pitch in a weekend.</p>
+                  </div>
+                  <span class="sprint-meta mono">2026</span>
+                </li>
+                <li class="sprint fx" style="--d:.36s">
+                  <span class="sprint-num mono">S/02</span>
+                  <div class="sprint-main">
+                    <h4 class="sprint-title">AssemblyAI × LabLab AI Hackathon</h4>
+                    <p class="sprint-desc">Built with speech-AI APIs under a tight sprint deadline.</p>
+                  </div>
+                  <span class="sprint-meta mono">2026</span>
+                </li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 · PRACTICE — experience & skills, editorial -->
+    <section class="panel" id="panel-5" data-chapter="05" data-title="Practice" role="group" aria-label="Chapter 5 — Practice" tabindex="-1">
+      <div class="panel-frame">
+        <header class="panel-head mono"><span class="ph-num">05</span><span class="ph-rule"></span><span class="ph-title">Practice</span></header>
+        <div class="panel-body">
+          <div class="practice">
+            <ol class="roles">
+              <li class="role fx" style="--d:.06s">
+                <span class="role-year mono">2026&ensp;→</span>
+                <div class="role-main">
+                  <h4 class="role-title">IoT & Robotics Trainee</h4>
+                  <p class="role-org mono">Unlox Academy</p>
+                  <p class="role-desc">Sensor rigs and microcontroller control logic — building, breaking, rewiring.</p>
+                </div>
+              </li>
+              <li class="role fx" style="--d:.12s">
+                <span class="role-year mono">2026&ensp;→</span>
+                <div class="role-main">
+                  <h4 class="role-title">Team Lead</h4>
+                  <p class="role-org mono">Entrepreneurship Cell · Mahindra University</p>
+                  <p class="role-desc">Coordinating a small team — running ideation sessions and carrying projects from concept to execution.</p>
+                </div>
+              </li>
+            </ol>
+            <dl class="craft">
+              <div class="craft-col fx" style="--d:.18s"><dt class="mono">Build</dt><dd>Python · C · C++ · HTML</dd></div>
+              <div class="craft-col fx" style="--d:.24s"><dt class="mono">Systems</dt><dd>Arduino · ESP32 · GPIO / PWM · MQTT · sensors & actuators</dd></div>
+              <div class="craft-col fx" style="--d:.3s"><dt class="mono">Software</dt><dd>React · Node.js · Express · REST · Firebase · Firestore · Cloud Run · Gemini API</dd></div>
+              <div class="craft-col fx" style="--d:.36s"><dt class="mono">Tools</dt><dd>Git & GitHub · VS Code · Cursor · Tinkercad · Wokwi</dd></div>
             </dl>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 03 · LUMIS -->
-    <section class="panel panel--warm" data-chapter="03" data-title="Lumis" role="group" aria-label="Chapter 3 — Lumis" tabindex="-1">
-      <div class="panel-inner">
-        <header class="panel-head">
-          <span class="panel-num mono">03</span>
-          <span class="panel-title mono">Lumis</span>
-        </header>
-        <div class="panel-body">
-          <div class="lumis-grid">
-            <div class="lumis-copy">
-              <p class="lumis-tag mono">Flagship project</p>
-              <h3 class="lumis-title">Lumis</h3>
-              <p class="lumis-desc">An AI-powered journaling and reflection platform. Raw entries in, structured insight out — quietly, privately, without the noise.</p>
-              <p class="lumis-stack mono">React · Firebase · Firestore · Node.js · Express · Google Cloud Run · Gemini API</p>
-              <div class="lumis-cta">
-                <a class="btn-solid" href="https://lumis---journal.web.app/" target="_blank" rel="noopener">Live site&ensp;<span aria-hidden="true">↗</span></a>
-                <a class="btn-ghost" href="https://github.com/1RY-O/lumis-journal" target="_blank" rel="noopener">Source&ensp;<span aria-hidden="true">↗</span></a>
-              </div>
-            </div>
-            <div class="lumis-visual" aria-hidden="true">
-              <div class="journal">
-                <div class="journal-top">
-                  <span class="journal-logo">Lumis</span>
-                  <span class="journal-nav mono">journal · reflections</span>
-                </div>
-                <div class="journal-body">
-                  <p class="journal-date mono">Fri · Sep 04</p>
-                  <p class="journal-entry">Morning pages</p>
-                  <p class="journal-text">05:40 — the line-follower finally held the corner at speed. Gains still guesswork, but they're my guesswork.</p>
-                  <div class="journal-reflect">
-                    <span class="mono journal-reflect-label">reflection</span>
-                    <p>You debug best at dawn. Protect the morning block.</p>
-                  </div>
-                  <p class="journal-date mono" style="margin-top:16px">Thu · Sep 03</p>
-                  <p class="journal-entry">Wiring day</p>
-                  <p class="journal-text">Mapped the MQTT topics for the rig. Publish, subscribe, sleep — same loop as writing.</p>
-                  <div class="journal-reflect">
-                    <span class="mono journal-reflect-label">reflection</span>
-                    <p>Hardware journals like software does. Log the state, not the mood.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 04 · ROBOTICS / IoT -->
-    <section class="panel panel--circuit" data-chapter="04" data-title="Robotics & IoT" role="group" aria-label="Chapter 4 — Robotics and IoT" tabindex="-1">
-      <div class="panel-inner">
-        <header class="panel-head">
-          <span class="panel-num mono">04</span>
-          <span class="panel-title mono">Robotics & IoT</span>
-        </header>
-        <div class="panel-body">
-          <div class="robotics">
-            <div class="robotics-copy">
-              <p class="robotics-lead">Hardware is where software gets a body.</p>
-              <p class="robotics-p">Microcontrollers, sensors, actuators — the physical layer of intelligent systems. I work the full chain: from GPIO and PWM at the pin level to MQTT pipelines that connect devices to the cloud.</p>
-            </div>
-            <ul class="robotics-terms">
-              <li class="mono">Arduino</li>
-              <li class="mono">ESP32</li>
-              <li class="mono">Sensors</li>
-              <li class="mono">Actuators</li>
-              <li class="mono">GPIO</li>
-              <li class="mono">PWM</li>
-              <li class="mono">MQTT</li>
-              <li class="mono">Embedded systems</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 05 · HACKATHONS -->
-    <section class="panel" data-chapter="05" data-title="Hackathons" role="group" aria-label="Chapter 5 — Hackathons" tabindex="-1">
-      <div class="panel-inner">
-        <header class="panel-head">
-          <span class="panel-num mono">05</span>
-          <span class="panel-title mono">Hackathons</span>
-        </header>
-        <div class="panel-body">
-          <div class="hacks">
-            <p class="hacks-lead">Two AI-builder competitions. Same instinct: ship something real, fast.</p>
-            <ol class="hacks-list">
-              <li class="hack">
-                <span class="hack-num mono">01</span>
-                <div class="hack-main">
-                  <h3 class="hack-title">Hack2Skill Gen AI APAC Ideathon</h3>
-                  <p class="hack-desc">Gen AI ideathon across the APAC region — concept to pitch in a weekend.</p>
-                </div>
-                <span class="hack-meta mono">2026</span>
-              </li>
-              <li class="hack">
-                <span class="hack-num mono">02</span>
-                <div class="hack-main">
-                  <h3 class="hack-title">AssemblyAI × LabLab AI Hackathon</h3>
-                  <p class="hack-desc">Building with speech AI APIs under a tight sprint deadline.</p>
-                </div>
-                <span class="hack-meta mono">2026</span>
-              </li>
-            </ol>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 06 · EXPERIENCE / LEADERSHIP -->
-    <section class="panel" data-chapter="06" data-title="Experience & Leadership" role="group" aria-label="Chapter 6 — Experience and Leadership" tabindex="-1">
-      <div class="panel-inner">
-        <header class="panel-head">
-          <span class="panel-num mono">06</span>
-          <span class="panel-title mono">Experience & Leadership</span>
-        </header>
-        <div class="panel-body">
-          <div class="exp">
-            <ol class="exp-list">
-              <li class="exp-item">
-                <div class="exp-main">
-                  <h3 class="exp-title">IoT & Robotics Trainee</h3>
-                  <p class="exp-org mono">Unlox Academy</p>
-                  <p class="exp-desc">Sensor rigs and microcontroller control logic — building, breaking, rewiring.</p>
-                </div>
-                <span class="exp-meta mono">2026 →</span>
-              </li>
-              <li class="exp-item">
-                <div class="exp-main">
-                  <h3 class="exp-title">Team Leader</h3>
-                  <p class="exp-org mono">Entrepreneurship Cell, Mahindra University</p>
-                  <p class="exp-desc">Driving ideation through execution; product thinking as daily practice.</p>
-                </div>
-                <span class="exp-meta mono">2026 →</span>
-              </li>
-            </ol>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 07 · SKILLS -->
-    <section class="panel" data-chapter="07" data-title="Skills" role="group" aria-label="Chapter 7 — Skills" tabindex="-1">
-      <div class="panel-inner">
-        <header class="panel-head">
-          <span class="panel-num mono">07</span>
-          <span class="panel-title mono">Skills</span>
-        </header>
-        <div class="panel-body">
-          <dl class="skills">
-            <div class="skill"><dt class="mono">Languages</dt><dd>Python · C · C++ · HTML</dd></div>
-            <div class="skill"><dt class="mono">Embedded & IoT</dt><dd>Arduino · ESP32 · GPIO / PWM · MQTT · sensors & actuators</dd></div>
-            <div class="skill"><dt class="mono">AI & APIs</dt><dd>Gemini API · structured output · prompt engineering</dd></div>
-            <div class="skill"><dt class="mono">Web</dt><dd>React · Vite · Node.js · Express · REST</dd></div>
-            <div class="skill"><dt class="mono">Cloud & Data</dt><dd>Firebase · Firestore · Cloud Run · Secret Manager</dd></div>
-            <div class="skill"><dt class="mono">Tools</dt><dd>Git & GitHub · Cursor · VS Code · Tinkercad · Wokwi</dd></div>
-          </dl>
-        </div>
-      </div>
-    </section>
-
-    <!-- 08 · CONTACT -->
-    <section class="panel panel--glow-b" data-chapter="08" data-title="Contact" role="group" aria-label="Chapter 8 — Contact" tabindex="-1">
-      <div class="panel-inner">
-        <header class="panel-head">
-          <span class="panel-num mono">08</span>
-          <span class="panel-title mono">Contact</span>
-        </header>
+    <!-- 06 · CONTACT — the closing composition -->
+    <section class="panel" id="panel-6" data-chapter="06" data-title="Contact" role="group" aria-label="Chapter 6 — Contact" tabindex="-1">
+      <div class="panel-frame">
+        <header class="panel-head mono"><span class="ph-num">06</span><span class="ph-rule"></span><span class="ph-title">Contact</span></header>
         <div class="panel-body">
           <div class="contact">
-            <h3 class="contact-title">Let's make something that <em>thinks.</em></h3>
-            <div class="contact-links">
-              <a class="contact-link mono" href="https://github.com/1RY-O" target="_blank" rel="noopener">GitHub&ensp;<span aria-hidden="true">↗</span></a>
-              <a class="contact-link mono" href="https://www.linkedin.com/in/sri-sai-rahul-pilla" target="_blank" rel="noopener">LinkedIn&ensp;<span aria-hidden="true">↗</span></a>
-              <a class="contact-link mono" href="mailto:fabledadventurer.pssr@gmail.com">Email&ensp;<span aria-hidden="true">↗</span></a>
-              <a class="contact-link mono" href="https://1ry-o.github.io/" target="_blank" rel="noopener">Website&ensp;<span aria-hidden="true">↗</span></a>
-            </div>
-            <p class="contact-mail mono">fabledadventurer.pssr@gmail.com</p>
+            <h3 class="contact-title fx" style="--d:.06s">Let's make something<br />that <em>thinks</em>.</h3>
+            <ul class="contact-links fx" style="--d:.16s">
+              <li><a class="contact-link mono" href="https://github.com/1RY-O" target="_blank" rel="noopener">GitHub&ensp;<span aria-hidden="true">↗</span></a></li>
+              <li><a class="contact-link mono" href="https://www.linkedin.com/in/sri-sai-rahul-pilla" target="_blank" rel="noopener">LinkedIn&ensp;<span aria-hidden="true">↗</span></a></li>
+              <li><a class="contact-link mono" href="mailto:fabledadventurer.pssr@gmail.com">Email&ensp;<span aria-hidden="true">↗</span></a></li>
+            </ul>
+            <p class="contact-mail mono fx" style="--d:.24s">fabledadventurer.pssr@gmail.com</p>
+            <footer class="contact-meta mono fx" style="--d:.32s">© 2026 · Hyderabad, IN · designed & built by hand</footer>
           </div>
         </div>
       </div>
@@ -280,20 +256,19 @@
 
   </main>
 
-  <!-- ============ NAVIGATION ============ -->
+  <!-- ============ RAIL — orientation ============ -->
   <nav class="rail" aria-label="Chapters">
-    <button class="rail-btn" data-go="0" aria-label="Go to chapter 1, Identity"><span>01</span></button>
-    <button class="rail-btn" data-go="1" aria-label="Go to chapter 2, About"><span>02</span></button>
-    <button class="rail-btn" data-go="2" aria-label="Go to chapter 3, Lumis"><span>03</span></button>
-    <button class="rail-btn" data-go="3" aria-label="Go to chapter 4, Robotics and IoT"><span>04</span></button>
-    <button class="rail-btn" data-go="4" aria-label="Go to chapter 5, Hackathons"><span>05</span></button>
-    <button class="rail-btn" data-go="5" aria-label="Go to chapter 6, Experience and Leadership"><span>06</span></button>
-    <button class="rail-btn" data-go="6" aria-label="Go to chapter 7, Skills"><span>07</span></button>
-    <button class="rail-btn" data-go="7" aria-label="Go to chapter 8, Contact"><span>08</span></button>
+    <button class="rail-btn" data-go="0" aria-label="Go to chapter 1, Identity"><i aria-hidden="true"></i><span class="mono">Identity</span></button>
+    <button class="rail-btn" data-go="1" aria-label="Go to chapter 2, About"><i aria-hidden="true"></i><span class="mono">About</span></button>
+    <button class="rail-btn" data-go="2" aria-label="Go to chapter 3, Lumis"><i aria-hidden="true"></i><span class="mono">Lumis</span></button>
+    <button class="rail-btn" data-go="3" aria-label="Go to chapter 4, Machines"><i aria-hidden="true"></i><span class="mono">Machines</span></button>
+    <button class="rail-btn" data-go="4" aria-label="Go to chapter 5, Practice"><i aria-hidden="true"></i><span class="mono">Practice</span></button>
+    <button class="rail-btn" data-go="5" aria-label="Go to chapter 6, Contact"><i aria-hidden="true"></i><span class="mono">Contact</span></button>
   </nav>
 
   <button class="nav-arrow nav-prev" id="nav-prev" aria-label="Previous chapter">↑</button>
   <button class="nav-arrow nav-next" id="nav-next" aria-label="Next chapter">↓</button>
+  <p class="hint mono" id="hint" aria-hidden="true">scroll — or use ↑ ↓</p>
 
   <script src="script.js"></script>
 </body>

@@ -1,8 +1,10 @@
 /* ============================================================
    PILLA SRI SAI RAHUL — experience engine
-   Broken-mirror opening · staircase depth deck · controlled inertia
+   fracture → reassembly → exploration
+   The prologue cuts chapter 01 into shards; the shards
+   reassemble; the reassembled plate dissolves into the deck.
    Input: wheel · trackpad · keyboard · touch/swipe · rail
-   Motion: transform/opacity/filter only · rAF lerp · reduced-motion safe
+   Motion: transform/opacity/filter only · reduced-motion safe
    ============================================================ */
 
 (function () {
@@ -11,134 +13,199 @@
   var doc = document.documentElement;
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  var mobileQuery = window.matchMedia("(max-width: 900px)");
 
-  function clamp(v, min, max) { return v < min ? min : v > max ? max : v; }
   function pad2(n) { return (n < 10 ? "0" : "") + n; }
 
+  function isMobile() { return mobileQuery.matches; }
+
   /* ============================================================
-     BROKEN MIRROR — shatter, scatter, reassemble
+     PROLOGUE — the fractured plate
      ============================================================ */
-  var mirror = document.getElementById("mirror");
-  var mirrorStage = document.getElementById("mirror-stage");
-  var mirrorPlane = document.getElementById("mirror-plane");
 
-  var SHATTER_MS = 900;      // fragments fly apart
-  var HOLD_MS = 500;         // brief stillness in the broken state
-  var REASSEMBLE_MS = 1900;  // fragments return home
-  var REVEAL_MS = 1100;      // mirror fades, deck takes over
+  var prologue = document.getElementById("prologue");
+  var stage = document.getElementById("prologue-stage");
+  var plane = document.getElementById("prologue-plane");
 
-  function buildFragments() {
-    if (!mirror || !mirrorStage || !mirrorPlane) return;
+  /* 11 hand-cut shards — an intentional fracture pattern,
+     straight fracture lines meeting at irregular nodes.
+     Each entry: cut + scatter vector + surface quality. */
+  var SHARDS = [
+    { clip: "polygon(0% 0%, 34% 0%, 22% 26%, 0% 32%)",
+      dx: -210, dy: -150, dz: -240, rx: 12, ry: -8, rz: -6, o: 0.8, fb: 2.5, br: 0.85 },
+    { clip: "polygon(34% 0%, 66% 0%, 58% 22%, 22% 26%)",
+      dx: -60, dy: -215, dz: -320, rx: -8, ry: 6, rz: 4, o: 0.72, fb: 3, br: 0.8 },
+    { clip: "polygon(66% 0%, 100% 0%, 100% 30%, 78% 34%, 58% 22%)",
+      dx: 175, dy: -160, dz: -210, rx: 10, ry: 8, rz: 5, o: 0.78, fb: 2, br: 0.82 },
+    { clip: "polygon(0% 32%, 22% 26%, 58% 22%, 52% 52%, 18% 58%, 0% 64%)",
+      dx: -245, dy: -30, dz: -150, rx: -6, ry: -10, rz: 3, o: 0.88, fb: 1.5, br: 0.86 },
+    { clip: "polygon(58% 22%, 78% 34%, 74% 56%, 52% 52%)",
+      dx: -36, dy: -56, dz: -60, rx: 4, ry: -3, rz: -2, o: 0.95, fb: 0.8, br: 0.96 },
+    { clip: "polygon(78% 34%, 100% 30%, 100% 62%, 84% 66%, 74% 56%)",
+      dx: 235, dy: -40, dz: -260, rx: 7, ry: 9, rz: 6, o: 0.78, fb: 2.5, br: 0.8 },
+    { clip: "polygon(0% 64%, 18% 58%, 52% 52%, 46% 80%, 20% 86%, 0% 92%)",
+      dx: -190, dy: 130, dz: -230, rx: -9, ry: -7, rz: 4, o: 0.84, fb: 2, br: 0.84 },
+    { clip: "polygon(52% 52%, 74% 56%, 70% 78%, 46% 80%)",
+      dx: 34, dy: 150, dz: -90, rx: 5, ry: 4, rz: -3, o: 0.94, fb: 1.2, br: 0.93 },
+    { clip: "polygon(74% 56%, 84% 66%, 100% 62%, 100% 92%, 78% 96%, 70% 78%)",
+      dx: 205, dy: 140, dz: -300, rx: -7, ry: 9, rz: 5, o: 0.76, fb: 2.5, br: 0.79 },
+    { clip: "polygon(0% 92%, 20% 86%, 46% 80%, 54% 100%, 0% 100%)",
+      dx: -125, dy: 235, dz: -360, rx: 10, ry: -5, rz: -7, o: 0.68, fb: 3.5, br: 0.77 },
+    { clip: "polygon(46% 80%, 70% 78%, 78% 96%, 100% 92%, 100% 100%, 46% 100%)",
+      dx: 75, dy: 255, dz: -280, rx: -11, ry: 6, rz: 5, o: 0.7, fb: 3, br: 0.8 }
+  ];
 
-    // 12 fragments — a 4×3 grid, each a piece of the whole
-    var cols = 4, rows = 3;
-    var frags = [];
-    var planeHTML = mirrorPlane.innerHTML;
+  /* reassembly order — center crystallizes first, the frame settles last */
+  var ORDER = [4, 7, 3, 5, 1, 8, 0, 2, 6, 9, 10];
 
-    mirrorPlane.style.display = "none";
+  var timers = [];
+  var prologueDone = false;
+  var finished = false;
 
-    for (var r = 0; r < rows; r++) {
-      for (var c = 0; c < cols; c++) {
-        var f = document.createElement("div");
-        f.className = "frag";
-        f.innerHTML = planeHTML;
+  function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
 
-        // clip-path defines the visible shard
-        var x0 = (c / cols) * 100;
-        var y0 = (r / rows) * 100;
-        var x1 = ((c + 1) / cols) * 100;
-        var y1 = ((r + 1) / rows) * 100;
-        f.style.clipPath =
-          "polygon(" + x0 + "% " + y0 + "%, " + x1 + "% " + y0 + "%, " +
-          x1 + "% " + y1 + "%, " + x0 + "% " + y1 + "%)";
+  function buildShards() {
+    var source = document.querySelector("#panel-1 .panel-frame");
+    if (!prologue || !stage || !plane || !source) return null;
 
-        // scattered transform — depth, rotation, drift
-        var dx = (Math.random() - 0.5) * 220;
-        var dy = (Math.random() - 0.5) * 160;
-        var dz = (Math.random() - 0.5) * 300;
-        var rot = (Math.random() - 0.5) * 14;
-        var scale = 0.82 + Math.random() * 0.3;
-        var blur = 1 + Math.random() * 3;
-        var op = 0.55 + Math.random() * 0.4;
+    var clone = source.cloneNode(true);
+    plane.appendChild(clone);
 
-        f.style.setProperty("--fx", dx.toFixed(1) + "px");
-        f.style.setProperty("--fy", dy.toFixed(1) + "px");
-        f.style.setProperty("--fz", dz.toFixed(1) + "px");
-        f.style.setProperty("--fr", rot.toFixed(2) + "deg");
-        f.style.setProperty("--fs", scale.toFixed(3));
-        f.style.setProperty("--fb", blur.toFixed(2));
-        f.style.setProperty("--fo", op.toFixed(2));
+    SHARDS.forEach(function (s) {
+      var shard = document.createElement("div");
+      shard.className = "shard";
+      var fill = document.createElement("div");
+      fill.className = "shard-fill";
+      fill.appendChild(clone.cloneNode(true));
+      shard.appendChild(fill);
 
-        // staggered scatter timing
-        f.style.transitionDelay = (Math.random() * 0.15).toFixed(2) + "s";
+      shard.style.setProperty("--clip", s.clip);
+      shard.style.setProperty("--dx", s.dx + "px");
+      shard.style.setProperty("--dy", s.dy + "px");
+      shard.style.setProperty("--dz", s.dz + "px");
+      shard.style.setProperty("--rx", s.rx + "deg");
+      shard.style.setProperty("--ry", s.ry + "deg");
+      shard.style.setProperty("--rz", s.rz + "deg");
+      shard.style.setProperty("--o", s.o);
+ ``     shard.style.setProperty("--fb", s.fb + "px");
+      shard.style.setProperty("--br", s.br);
 
-        mirrorStage.appendChild(f);
-        frags.push(f);
-      }
-    }
+      stage.appendChild(shard);
+    });
 
-    return frags;
+    return Array.prototype.slice.call(stage.querySelectorAll(".shard"));
   }
 
-  function runMirror(callback) {
-    if (reduceMotion || !mirror || !mirrorStage) {
-      if (mirror) mirror.style.display = "none";
-      if (callback) callback();
+  function finishPrologue(instant) {
+    if (finished) return;
+    finished = true;
+    timers.forEach(clearTimeout);
+    timers = [];
+
+    var shards = stage ? Array.prototype.slice.call(stage.querySelectorAll(".shard")) : [];
+    if (!instant) {
+      shards.forEach(function (s) {
+        s.style.transitionDelay = "0s";
+        s.classList.add("home");
+      });
+    }
+
+    prologueDone = true;
+    if (prologue) prologue.classList.add("done");
+    revealDeck();
+    later(function () {
+      if (prologue && prologue.parentNode) prologue.parentNode.removeChild(prologue);
+    }, 1000);
+  }
+
+  function runPrologue() {
+    if (reduceMotion || isMobile() || !prologue || !stage || !plane) {
+      if (prologue) prologue.style.display = "none";
+      prologueDone = true;
+      revealDeck();
       return;
     }
 
-    var frags = buildFragments();
-    if (!frags || !frags.length) {
-      if (mirror) mirror.style.display = "none";
-      if (callback) callback();
+    var shards = buildShards();
+    if (!shards) {
+      if (prologue) prologue.style.display = "none";
+      prologueDone = true;
+      revealDeck();
       return;
     }
 
-    // Phase 1 — shatter: fragments fly apart
-    requestAnimationFrame(function () {
+    // wait for type — the plate must fracture in its final face
+    var fontsReady = (document.fonts && document.fonts.ready) ?
+      Promise.race([
+        document.fonts.ready,
+        new Promise(function (r) { setTimeout(r, 1500); })
+      ]) :
+      Promise.resolve();
+
+    fontsReady.then(function () {
+      // Phase 1 — the fragments surface out of the dark
       requestAnimationFrame(function () {
-        frags.forEach(function (f) { f.classList.add("scattered"); });
+        requestAnimationFrame(function () {
+          shards.forEach(function (s) { s.classList.add("seen"); });
+        });
+      });
 
-        // Phase 2 — reassemble after a beat of stillness
-        setTimeout(function () {
-          frags.forEach(function (f, i) {
-            f.style.transitionDelay = (i * 0.045).toFixed(2) + "s";
-            f.classList.remove("scattered");
-            f.classList.add("reassembled");
-          });
+      var STAGGER = ORDER.length * 55;
+      var MOVE = 1600;
 
-          // Phase 3 — mirror lifts, deck takes over
-          setTimeout(function () {
-            mirror.classList.add("done");
-            setTimeout(function () {
-              if (mirror.parentNode) mirror.parentNode.removeChild(mirror);
-              if (callback) callback();
-            }, REVEAL_MS);
-          }, REASSEMBLE_MS + frags.length * 45);
-        }, SHATTER_MS + HOLD_MS);
+      // Phase 2 — a held breath, then reassembly, center-out
+      later(function () {
+        ORDER.forEach(function (shardIdx, order) {
+          var s = shards[shardIdx];
+          if (!s) return;
+          s.style.transitionDelay = (order * 0.055).toFixed(3) + "s";
+          s.classList.add("home");
+        });
+      }, 2400);
+
+      // Phase 3 — clear delays, settle, then dissolve into chapter 01
+      later(function () {
+        shards.forEach(function (s) { s.style.transitionDelay = "0s"; });
+      }, 2400 + MOVE + STAGGER + 500);
+
+      later(function () {
+        finishPrologue(false);
+      }, 2400 + MOVE + STAGGER + 800);
+
+      // skip — a click or key enters immediately
+      prologue.addEventListener("click", function () { finishPrologue(true); });
+      document.addEventListener("keydown", function skipKey(e) {
+        if (prologueDone) {
+          document.removeEventListener("keydown", skipKey);
+          return;
+        }
+        if (e.key === "Escape" || e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
+          e.preventDefault();
+          finishPrologue(true);
+        }
       });
     });
   }
 
   /* ============================================================
-     STAIRCASE DECK — the spatial system
+     THE DECK — six compositions in depth
      ============================================================ */
+
   var deck = document.getElementById("deck");
   var panels = deck ? Array.prototype.slice.call(deck.querySelectorAll(".panel")) : [];
   var total = panels.length;
   var current = 0;
   var transitioning = false;
-  var TRANSITION_MS = 1150;
+  var TRANSITION_MS = 1200;
 
   var chapterCur = document.getElementById("chapter-cur");
-  var chapterTotal = document.getElementById("chapter-total");
+  var chapterTitle = document.getElementById("chapter-title");
   var railBtns = Array.prototype.slice.call(document.querySelectorAll(".rail-btn"));
   var navPrev = document.getElementById("nav-prev");
   var navNext = document.getElementById("nav-next");
+  var hint = document.getElementById("hint");
+  var firstMove = true;
 
-  if (chapterTotal) chapterTotal.textContent = pad2(total);
-
-  /* ---- position assignment ---- */
   function setPos(el, pos) {
     if (el._pos !== undefined) el.classList.remove("pos-" + el._pos);
     el._pos = pos;
@@ -147,24 +214,27 @@
 
   function applyPositions() {
     panels.forEach(function (p, i) {
-      // distance from current, wrapping around the ring
       var dist = (i - current + total) % total;
       if (dist > total / 2) dist -= total;
-      // map distance to a position slot
       var pos;
       if (dist === 0) pos = 0;
       else if (dist === -1) pos = 1;
       else if (dist === -2) pos = 2;
       else if (dist === 1) pos = 3;
       else if (dist === 2) pos = 4;
-      else pos = 5 + Math.min(2, Math.abs(dist) - 3);
+      else pos = 5;
       setPos(p, pos);
+      // far panels arrive a breath later — weight, not synchrony
+      p.style.transitionDelay = Math.abs(dist) >= 2 ? "0.06s" : "0s";
     });
   }
 
-  /* ---- chapter counter + rail state ---- */
   function updateMeta() {
     if (chapterCur) chapterCur.textContent = pad2(current + 1);
+    if (chapterTitle) {
+      var t = panels[current] && panels[current].getAttribute("data-title");
+      if (t) chapterTitle.textContent = "\u2002" + t;
+    }
     railBtns.forEach(function (btn, i) {
       btn.classList.toggle("active", i === current);
     });
@@ -172,9 +242,8 @@
     if (navNext) navNext.disabled = current === total - 1;
   }
 
-  /* ---- navigation ---- */
-  function goTo(index, instant) {
-    if (transitioning) return;
+  function goTo(index) {
+    if (transitioning || !prologueDone) return;
     if (index < 0 || index >= total) return;
     if (index === current) return;
 
@@ -183,199 +252,163 @@
     applyPositions();
     updateMeta();
 
-    // focus the active panel for keyboard users
-    var active = panels[current];
-    if (active && !instant) {
-      active.focus({ preventScroll: true });
+    if (firstMove && hint) {
+      hint.classList.add("off");
+      firstMove = false;
     }
 
-    setTimeout(function () {
-      transitioning = false;
-    }, instant ? 50 : TRANSITION_MS);
+    var active = panels[current];
+    if (active && !isMobile()) active.focus({ preventScroll: true });
+
+    setTimeout(function () { transitioning = false; }, TRANSITION_MS);
   }
 
   function next() { goTo(current + 1); }
   function prev() { goTo(current - 1); }
 
+  function revealDeck() {
+    if (!deck) return;
+    doc.classList.add("head-on");
+    applyPositions();
+    updateMeta();
+    // the deck surfaces out of the plate — staggered, weighted
+    panels.forEach(function (p, i) {
+      p.style.transitionDelay = (i * 0.09).toFixed(2) + "s";
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          p.classList.remove("pre");
+        });
+      });
+    });
+    deck.classList.add("on");
+    setTimeout(function () {
+      panels.forEach(function (p) { p.style.transitionDelay = "0s"; });
+      applyPositions();
+    }, 1400);
+    if (panels[0] && !isMobile()) panels[0].focus({ preventScroll: true });
+  }
+
   /* ============================================================
      INPUT — wheel, keyboard, touch, rail
      ============================================================ */
+
   var wheelLock = false;
   var wheelLockT = null;
 
   function handleWheel(e) {
-    if (wheelLock) {
-      e.preventDefault();
-      return;
-    }
+    if (!prologueDone || isMobile()) return;
+    if (wheelLock) { e.preventDefault(); return; }
     var dy = e.deltaY;
-    if (Math.abs(dy) < 8) return; // ignore micro-scrolls
+    if (Math.abs(dy) < 8) return;
 
     wheelLock = true;
-    if (dy > 0) next();
-    else prev();
-
+    if (dy > 0) next(); else prev();
     clearTimeout(wheelLockT);
-    wheelLockT = setTimeout(function () {
-      wheelLock = false;
-    }, 900);
+    wheelLockT = setTimeout(function () { wheelLock = false; }, 1000);
   }
 
-  if (deck && !reduceMotion) {
-    deck.addEventListener("wheel", handleWheel, { passive: false });
-  }
+  window.addEventListener("wheel", handleWheel, { passive: false });
 
   document.addEventListener("keydown", function (e) {
-    if (mirror && mirror.style.display !== "none" && !mirror.classList.contains("done")) return;
+    if (!prologueDone) return;
+    if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
+    if (isMobile()) return;
     if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") {
-      e.preventDefault();
-      next();
+      e.preventDefault(); next();
     } else if (e.key === "ArrowUp" || e.key === "PageUp") {
-      e.preventDefault();
-      prev();
+      e.preventDefault(); prev();
     } else if (e.key === "Home") {
-      e.preventDefault();
-      goTo(0);
+      e.preventDefault(); goTo(0);
     } else if (e.key === "End") {
-      e.preventDefault();
-      goTo(total - 1);
+      e.preventDefault(); goTo(total - 1);
     }
   });
 
-  /* ---- touch / swipe ---- */
-  var touchStartY = 0;
-  var touchStartX = 0;
-  var touchActive = false;
+  var touchStartY = 0, touchStartX = 0, touchActive = false;
 
-  if (deck) {
-    deck.addEventListener("touchstart", function (e) {
-      touchStartY = e.touches[0].clientY;
-      touchStartX = e.touches[0].clientX;
-      touchActive = true;
-    }, { passive: true });
+  window.addEventListener("touchstart", function (e) {
+    touchStartY = e.touches[0].clientY;
+    touchStartX = e.touches[0].clientX;
+    touchActive = true;
+  }, { passive: true });
 
-    deck.addEventListener("touchmove", function (e) {
-      if (!touchActive) return;
-      var dy = e.touches[0].clientY - touchStartY;
-      var dx = e.touches[0].clientX - touchStartX;
-      // vertical swipe dominates; horizontal swipes ignored
-      if (Math.abs(dy) > 60 && Math.abs(dy) > Math.abs(dx) * 1.4) {
-        touchActive = false;
-        if (dy < 0) next();
-        else prev();
-      }
-    }, { passive: true });
-
-    deck.addEventListener("touchend", function () {
+  window.addEventListener("touchmove", function (e) {
+    if (!touchActive || !prologueDone || isMobile()) return;
+    var dy = e.touches[0].clientY - touchStartY;
+    var dx = e.touches[0].clientX - touchStartX;
+    if (Math.abs(dy) > 60 && Math.abs(dy) > Math.abs(dx) * 1.4) {
       touchActive = false;
-    }, { passive: true });
-  }
+      if (dy < 0) next(); else prev();
+    }
+  }, { passive: true });
 
-  /* ---- rail buttons + wordmark ---- */
+  window.addEventListener("touchend", function () { touchActive = false; }, { passive: true });
+
   railBtns.forEach(function (btn, i) {
-    btn.addEventListener("click", function () {
-      goTo(i);
-    });
+    btn.addEventListener("click", function () { goTo(i); });
   });
 
   var wordmark = document.querySelector(".wordmark");
-  if (wordmark) {
-    wordmark.addEventListener("click", function () {
-      goTo(0);
-    });
-  }
-
-  /* ---- arrows ---- */
+  if (wordmark) wordmark.addEventListener("click", function () { goTo(0); });
   if (navPrev) navPrev.addEventListener("click", prev);
   if (navNext) navNext.addEventListener("click", next);
 
   /* ============================================================
-     POINTER PARALLAX — subtle depth on the active panel
+     POINTER PARALLAX — the room responds to the hand
      ============================================================ */
+
   var px = 0, py = 0, pxT = 0, pyT = 0;
-  var pointerSeen = false;
+  var lastPx = "", lastPy = "";
 
   if (finePointer && !reduceMotion) {
     window.addEventListener("pointermove", function (e) {
-      if (e.pointerType && e.pointerType !== "mouse") return;
       pxT = (e.clientX / window.innerWidth) * 2 - 1;
       pyT = (e.clientY / window.innerHeight) * 2 - 1;
-      pointerSeen = true;
     }, { passive: true });
   }
 
-  /* ============================================================
-     THE LOOP — parallax + atmosphere drift + head visibility
-     ============================================================ */
-  var head = document.querySelector(".site-head");
-  var lastPx = -1, lastPy = -1;
-  var lastAdx = -1, lastAdy = -1;
-  var atmoT = 0;
-
-  function frame(now) {
+  function frame() {
     if (finePointer && !reduceMotion) {
-      px += (pxT - px) * 0.05;
-      py += (pyT - py) * 0.05;
-      var pxR = px.toFixed(3);
-      var pyR = py.toFixed(3);
-      if (pxR !== lastPx) {
-        doc.style.setProperty("--px", pxR);
-        lastPx = pxR;
-      }
-      if (pyR !== lastPy) {
-        doc.style.setProperty("--py", pyR);
-        lastPy = pyR;
-      }
+      px += (pxT - px) * 0.045;
+      py += (pyT - py) * 0.045;
+      var pxr = px.toFixed(3), pyr = py.toFixed(3);
+      if (pxr !== lastPx) { doc.style.setProperty("--px", pxr); lastPx = pxr; }
+      if (pyr !== lastPy) { doc.style.setProperty("--py", pyr); lastPy = pyr; }
     }
-
-    // atmosphere drift — slow, controlled, subordinate
-    if (!reduceMotion) {
-      atmoT = now * 0.00006;
-      var adx = Math.sin(atmoT) * 30;
-      var ady = Math.cos(atmoT * 0.8) * 22;
-      var adxR = adx.toFixed(1);
-      var adyR = ady.toFixed(1);
-      if (adxR !== lastAdx) {
-        doc.style.setProperty("--adx", adxR);
-        lastAdx = adxR;
-      }
-      if (adyR !== lastAdy) {
-        doc.style.setProperty("--ady", adyR);
-        lastAdy = adyR;
-      }
-    }
-
     window.requestAnimationFrame(frame);
   }
 
   /* ============================================================
      INIT
      ============================================================ */
+
   function init() {
     doc.classList.remove("no-js");
     doc.classList.add("js");
 
-    if (reduceMotion || !panels.length) {
-      // reduced motion: show deck immediately, no mirror
-      if (mirror) mirror.style.display = "none";
-      applyPositions();
+    var desktop = !isMobile() && !reduceMotion;
+
+    if (desktop) {
+      panels.forEach(function (p) { p.classList.add("pre"); });
+      runPrologue();
+      window.requestAnimationFrame(frame);
+    } else {
+      prologueDone = true;
+      doc.classList.add("head-on");
+      panels.forEach(function (p) { p.classList.remove("pre"); });
       updateMeta();
-      return;
+      if (railBtns[0]) railBtns[0].classList.add("active");
+      if (deck) deck.classList.add("on");
     }
 
-    // hide deck until the mirror completes
-    if (deck) deck.style.visibility = "hidden";
-    if (head) head.style.opacity = "0";
-
-    runMirror(function () {
-      if (deck) deck.style.visibility = "visible";
-      if (head) head.style.opacity = "1";
-      applyPositions();
-      updateMeta();
-      if (panels[0]) panels[0].focus({ preventScroll: true });
-    });
-
-    window.requestAnimationFrame(frame);
+    // crossing from the mobile edition back to desktop mid-session
+    var onChange = function (e) {
+      if (!e.matches && prologueDone && deck && !deck.classList.contains("on")) {
+        revealDeck();
+      }
+    };
+    if (mobileQuery.addEventListener) mobileQuery.addEventListener("change", onChange);
+    else if (mobileQuery.addListener) mobileQuery.addListener(onChange);
   }
 
   init();
