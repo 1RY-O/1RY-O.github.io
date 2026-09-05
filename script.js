@@ -1,10 +1,9 @@
 /* ============================================================
-   PILLA SRI SAI RAHUL — experience engine
-   fracture → reassembly → exploration
-   The prologue cuts chapter 01 into shards; the shards
-   reassemble; the reassembled plate dissolves into the deck.
+   PILLA SRI SAI RAHUL — optical bench engine
+   FRACTURE → REASSEMBLY → IDENTITY → EXPLORATION
+   One scene. One master motion. Eight states in depth.
    Input: wheel · trackpad · keyboard · touch/swipe · rail
-   Motion: transform/opacity/filter only · reduced-motion safe
+   Motion: transform / opacity / filter only · reduced-motion safe
    ============================================================ */
 
 (function () {
@@ -13,71 +12,82 @@
   var doc = document.documentElement;
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-  var mobileQuery = window.matchMedia("(max-width: 900px)");
-
-  function pad2(n) { return (n < 10 ? "0" : "") + n; }
+  var mobileQuery = window.matchMedia("(max-width: 820px)");
 
   function isMobile() { return mobileQuery.matches; }
+  function pad2(n) { return (n < 10 ? "0" : "") + n; }
 
   /* ============================================================
-     PROLOGUE — the fractured plate
+     PROLOGUE — fracture → reassembly → identity
+     A single continuous transformation. The emblem surfaces,
+     breaks apart, and the fragments reassemble as the identity.
      ============================================================ */
 
   var prologue = document.getElementById("prologue");
   var stage = document.getElementById("prologue-stage");
   var plane = document.getElementById("prologue-plane");
-
-  /* 11 hand-cut shards — an intentional fracture pattern,
-     straight fracture lines meeting at irregular nodes.
-     Each entry: cut + scatter vector + surface quality. */
-  var SHARDS = [
-    { clip: "polygon(0% 0%, 34% 0%, 22% 26%, 0% 32%)",
-      dx: -210, dy: -150, dz: -240, rx: 12, ry: -8, rz: -6, o: 0.8, fb: 2.5, br: 0.85 },
-    { clip: "polygon(34% 0%, 66% 0%, 58% 22%, 22% 26%)",
-      dx: -60, dy: -215, dz: -320, rx: -8, ry: 6, rz: 4, o: 0.72, fb: 3, br: 0.8 },
-    { clip: "polygon(66% 0%, 100% 0%, 100% 30%, 78% 34%, 58% 22%)",
-      dx: 175, dy: -160, dz: -210, rx: 10, ry: 8, rz: 5, o: 0.78, fb: 2, br: 0.82 },
-    { clip: "polygon(0% 32%, 22% 26%, 58% 22%, 52% 52%, 18% 58%, 0% 64%)",
-      dx: -245, dy: -30, dz: -150, rx: -6, ry: -10, rz: 3, o: 0.88, fb: 1.5, br: 0.86 },
-    { clip: "polygon(58% 22%, 78% 34%, 74% 56%, 52% 52%)",
-      dx: -36, dy: -56, dz: -60, rx: 4, ry: -3, rz: -2, o: 0.95, fb: 0.8, br: 0.96 },
-    { clip: "polygon(78% 34%, 100% 30%, 100% 62%, 84% 66%, 74% 56%)",
-      dx: 235, dy: -40, dz: -260, rx: 7, ry: 9, rz: 6, o: 0.78, fb: 2.5, br: 0.8 },
-    { clip: "polygon(0% 64%, 18% 58%, 52% 52%, 46% 80%, 20% 86%, 0% 92%)",
-      dx: -190, dy: 130, dz: -230, rx: -9, ry: -7, rz: 4, o: 0.84, fb: 2, br: 0.84 },
-    { clip: "polygon(52% 52%, 74% 56%, 70% 78%, 46% 80%)",
-      dx: 34, dy: 150, dz: -90, rx: 5, ry: 4, rz: -3, o: 0.94, fb: 1.2, br: 0.93 },
-    { clip: "polygon(74% 56%, 84% 66%, 100% 62%, 100% 92%, 78% 96%, 70% 78%)",
-      dx: 205, dy: 140, dz: -300, rx: -7, ry: 9, rz: 5, o: 0.76, fb: 2.5, br: 0.79 },
-    { clip: "polygon(0% 92%, 20% 86%, 46% 80%, 54% 100%, 0% 100%)",
-      dx: -125, dy: 235, dz: -360, rx: 10, ry: -5, rz: -7, o: 0.68, fb: 3.5, br: 0.77 },
-    { clip: "polygon(46% 80%, 70% 78%, 78% 96%, 100% 92%, 100% 100%, 46% 100%)",
-      dx: 75, dy: 255, dz: -280, rx: -11, ry: 6, rz: 5, o: 0.7, fb: 3, br: 0.8 }
-  ];
-
-  /* reassembly order — center crystallizes first, the frame settles last */
-  var ORDER = [4, 7, 3, 5, 1, 8, 0, 2, 6, 9, 10];
-
-  var timers = [];
+  var emblemLayer = document.getElementById("emblem-layer");
+  var idLayer = document.getElementById("id-layer");
   var prologueDone = false;
   var finished = false;
+  var timers = [];
 
   function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
+  function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+
+  /* 11 hand-cut shards — an irregular fracture pattern.
+     Each entry: clip-path + scatter vector + surface quality. */
+  var SHARDS = [
+    { clip: "polygon(0% 0%, 32% 0%, 21% 27%, 0% 34%)",
+      dx: -205, dy: -165, dz: -260, rx: 11, ry: -7, rz: -6, o: 0.72, fb: 2.8, br: 0.82 },
+    { clip: "polygon(32% 0%, 64% 0%, 55% 21%, 21% 27%)",
+      dx: -70, dy: -230, dz: -330, rx: -8, ry: 5, rz: 4, o: 0.68, fb: 3.2, br: 0.78 },
+    { clip: "polygon(64% 0%, 100% 0%, 100% 30%, 77% 32%, 55% 21%)",
+      dx: 190, dy: -170, dz: -230, rx: 9, ry: 8, rz: 5, o: 0.74, fb: 2.4, br: 0.8 },
+    { clip: "polygon(0% 34%, 21% 27%, 55% 21%, 49% 51%, 16% 56%, 0% 62%)",
+      dx: -250, dy: -35, dz: -170, rx: -6, ry: -9, rz: 3, o: 0.84, fb: 1.8, br: 0.85 },
+    { clip: "polygon(55% 21%, 77% 32%, 73% 54%, 49% 51%)",
+      dx: -30, dy: -50, dz: -70, rx: 3, ry: -3, rz: -2, o: 0.94, fb: 0.8, br: 0.97 },
+    { clip: "polygon(77% 32%, 100% 30%, 100% 61%, 85% 64%, 73% 54%)",
+      dx: 245, dy: -45, dz: -280, rx: 7, ry: 9, rz: 6, o: 0.74, fb: 2.6, br: 0.79 },
+    { clip: "polygon(0% 62%, 16% 56%, 49% 51%, 42% 79%, 14% 84%, 0% 90%)",
+      dx: -210, dy: 135, dz: -250, rx: -9, ry: -7, rz: 4, o: 0.82, fb: 2.2, br: 0.83 },
+    { clip: "polygon(49% 51%, 73% 54%, 68% 76%, 42% 79%)",
+      dx: 45, dy: 155, dz: -100, rx: 5, ry: 4, rz: -3, o: 0.92, fb: 1.2, br: 0.93 },
+    { clip: "polygon(73% 54%, 85% 64%, 100% 61%, 100% 90%, 79% 95%, 68% 76%)",
+      dx: 215, dy: 145, dz: -310, rx: -7, ry: 9, rz: 5, o: 0.72, fb: 2.8, br: 0.78 },
+    { clip: "polygon(0% 90%, 14% 84%, 42% 79%, 49% 100%, 0% 100%)",
+      dx: -160, dy: 255, dz: -380, rx: 9, ry: -5, rz: -7, o: 0.62, fb: 3.6, br: 0.75 },
+    { clip: "polygon(42% 79%, 68% 76%, 79% 95%, 100% 90%, 100% 100%, 49% 100%)",
+      dx: 80, dy: 265, dz: -300, rx: -10, ry: 6, rz: 5, o: 0.66, fb: 3.2, br: 0.78 }
+  ];
+
+  /* reassembly order — the centre crystallises first, the frame settles last */
+  var ORDER = [4, 7, 3, 8, 5, 6, 2, 0, 9, 1, 10];
 
   function buildShards() {
-    var source = document.querySelector("#panel-1 .panel-frame");
-    if (!prologue || !stage || !plane || !source) return null;
+    var source = document.querySelector("#state-01 .plate");
+    var emblem = document.querySelector(".emblem");
+    if (!prologue || !stage || !plane || !source || !emblem) return null;
 
-    var clone = source.cloneNode(true);
-    plane.appendChild(clone);
+    var plateClone = source.cloneNode(true);
+    plateClone.classList.add("clone-force");
 
     SHARDS.forEach(function (s) {
       var shard = document.createElement("div");
       shard.className = "shard";
-      var fill = document.createElement("div");
-      fill.className = "shard-fill";
-      fill.appendChild(clone.cloneNode(true));
-      shard.appendChild(fill);
+
+      /* layer one — the emblem slice that surfaces with the fracture */
+      var emblemFill = document.createElement("div");
+      emblemFill.className = "shard-fill shard-fill--emblem";
+      emblemFill.appendChild(emblem.cloneNode(true));
+      shard.appendChild(emblemFill);
+
+      /* layer two — the identity slice that forms on reassembly */
+      var idFill = document.createElement("div");
+      idFill.className = "shard-fill shard-fill--id";
+      idFill.appendChild(plateClone.cloneNode(true));
+      shard.appendChild(idFill);
 
       shard.style.setProperty("--clip", s.clip);
       shard.style.setProperty("--dx", s.dx + "px");
@@ -87,23 +97,29 @@
       shard.style.setProperty("--ry", s.ry + "deg");
       shard.style.setProperty("--rz", s.rz + "deg");
       shard.style.setProperty("--o", s.o);
- ``     shard.style.setProperty("--fb", s.fb + "px");
+      shard.style.setProperty("--fb", s.fb + "px");
       shard.style.setProperty("--br", s.br);
 
       stage.appendChild(shard);
     });
 
+    /* the id-layer stays hidden — only its sharded fragments
+       are ever part of the composition */
     return Array.prototype.slice.call(stage.querySelectorAll(".shard"));
   }
 
   function finishPrologue(instant) {
     if (finished) return;
     finished = true;
-    timers.forEach(clearTimeout);
-    timers = [];
+    clearTimers();
 
     var shards = stage ? Array.prototype.slice.call(stage.querySelectorAll(".shard")) : [];
-    if (!instant) {
+    if (instant) {
+      shards.forEach(function (s) {
+        s.style.transition = "none";
+        s.classList.add("home", "instant");
+      });
+    } else {
       shards.forEach(function (s) {
         s.style.transitionDelay = "0s";
         s.classList.add("home");
@@ -115,7 +131,7 @@
     revealDeck();
     later(function () {
       if (prologue && prologue.parentNode) prologue.parentNode.removeChild(prologue);
-    }, 1000);
+    }, instant ? 60 : 1100);
   }
 
   function runPrologue() {
@@ -134,45 +150,46 @@
       return;
     }
 
-    // wait for type — the plate must fracture in its final face
     var fontsReady = (document.fonts && document.fonts.ready) ?
       Promise.race([
         document.fonts.ready,
-        new Promise(function (r) { setTimeout(r, 1500); })
+        new Promise(function (r) { setTimeout(r, 1800); })
       ]) :
       Promise.resolve();
 
     fontsReady.then(function () {
-      // Phase 1 — the fragments surface out of the dark
+      /* Phase 1 — a held breath, then the emblem tears apart */
       requestAnimationFrame(function () {
         requestAnimationFrame(function () {
-          shards.forEach(function (s) { s.classList.add("seen"); });
+          if (emblemLayer) emblemLayer.classList.add("fade");
         });
       });
 
-      var STAGGER = ORDER.length * 55;
-      var MOVE = 1600;
+      var HOLD = 900;    /* the emblem holding — anticipation */
 
-      // Phase 2 — a held breath, then reassembly, center-out
+      later(function () {
+        shards.forEach(function (s) { s.classList.add("seen"); });
+      }, HOLD);
+
+      var SCATTER = 1700;  /* the fractured field drifts — stillness in depth */
+
+      /* Phase 2 — reassembly, centre-out */
       later(function () {
         ORDER.forEach(function (shardIdx, order) {
           var s = shards[shardIdx];
           if (!s) return;
-          s.style.transitionDelay = (order * 0.055).toFixed(3) + "s";
+          s.style.transitionDelay = (order * 0.05).toFixed(3) + "s";
           s.classList.add("home");
         });
-      }, 2400);
+      }, HOLD + SCATTER);
 
-      // Phase 3 — clear delays, settle, then dissolve into chapter 01
+      /* Phase 3 — clear delays, then the plate becomes the deck */
       later(function () {
         shards.forEach(function (s) { s.style.transitionDelay = "0s"; });
-      }, 2400 + MOVE + STAGGER + 500);
-
-      later(function () {
         finishPrologue(false);
-      }, 2400 + MOVE + STAGGER + 800);
+      }, HOLD + SCATTER + 1400 + 600);
 
-      // skip — a click or key enters immediately
+      /* skip — a click or key enters immediately */
       prologue.addEventListener("click", function () { finishPrologue(true); });
       document.addEventListener("keydown", function skipKey(e) {
         if (prologueDone) {
@@ -188,15 +205,16 @@
   }
 
   /* ============================================================
-     THE DECK — six compositions in depth
+     THE DECK — eight states in depth
      ============================================================ */
 
   var deck = document.getElementById("deck");
-  var panels = deck ? Array.prototype.slice.call(deck.querySelectorAll(".panel")) : [];
-  var total = panels.length;
+  var world = document.getElementById("world");
+  var states = Array.prototype.slice.call(document.querySelectorAll(".state"));
+  var total = states.length;
   var current = 0;
   var transitioning = false;
-  var TRANSITION_MS = 1200;
+  var TRANS_MS = 1200;
 
   var chapterCur = document.getElementById("chapter-cur");
   var chapterTitle = document.getElementById("chapter-title");
@@ -204,35 +222,45 @@
   var navPrev = document.getElementById("nav-prev");
   var navNext = document.getElementById("nav-next");
   var hint = document.getElementById("hint");
+  var bgGrid = document.getElementById("bg-grid");
   var firstMove = true;
 
-  function setPos(el, pos) {
-    if (el._pos !== undefined) el.classList.remove("pos-" + el._pos);
-    el._pos = pos;
-    el.classList.add("pos-" + pos);
+  function slotFor(dist) {
+    if (dist === 0) return "s-0";
+    if (dist === -1) return "s-n1";
+    if (dist === -2) return "s-n2";
+    if (dist === -3) return "s-n3";
+    if (dist === 1) return "s-p1";
+    if (dist === 2) return "s-p2";
+    if (dist === 3) return "s-p3";
+    return "s-cull";
   }
 
-  function applyPositions() {
-    panels.forEach(function (p, i) {
-      var dist = (i - current + total) % total;
-      if (dist > total / 2) dist -= total;
-      var pos;
-      if (dist === 0) pos = 0;
-      else if (dist === -1) pos = 1;
-      else if (dist === -2) pos = 2;
-      else if (dist === 1) pos = 3;
-      else if (dist === 2) pos = 4;
-      else pos = 5;
-      setPos(p, pos);
-      // far panels arrive a breath later — weight, not synchrony
-      p.style.transitionDelay = Math.abs(dist) >= 2 ? "0.06s" : "0s";
+  function applySlots() {
+    states.forEach(function (s, i) {
+      var dist = i - current;
+      var cls = slotFor(dist);
+      var old = null;
+      for (var k = 0; k < s.classList.length; k++) {
+        var c = s.classList[k];
+        if (c.indexOf("s-") === 0) { old = c; break; }
+      }
+      if (old !== cls) {
+        if (old) s.classList.remove(old);
+        s.classList.add(cls);
+      }
+      if (i === current) {
+        s.removeAttribute("inert");
+      } else {
+        s.setAttribute("inert", "");
+      }
     });
   }
 
   function updateMeta() {
     if (chapterCur) chapterCur.textContent = pad2(current + 1);
     if (chapterTitle) {
-      var t = panels[current] && panels[current].getAttribute("data-title");
+      var t = states[current] && states[current].getAttribute("data-title");
       if (t) chapterTitle.textContent = "\u2002" + t;
     }
     railBtns.forEach(function (btn, i) {
@@ -248,19 +276,57 @@
     if (index === current) return;
 
     transitioning = true;
-    current = index;
-    applyPositions();
-    updateMeta();
+
+    /* Phase 0 — the whole scene gathers (anticipation) */
+    if (world && !isMobile()) world.classList.add("gather");
+
+    later(function () {
+      /* Phase 1 — states begin travelling through the room */
+      current = index;
+      applySlots();
+      updateMeta();
+
+      var arriving = states[current];
+
+      /* veil re-trigger — the arriving state's content clears
+         as it travels, then reassembles as it lands */
+      if (arriving) {
+        arriving.classList.remove("ready");
+        arriving.classList.remove("arrive");
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            arriving.classList.add("ready");
+            requestAnimationFrame(function () {
+              requestAnimationFrame(function () {
+                arriving.classList.add("arrive");
+              });
+            });
+          });
+        });
+      }
+
+      if (bgGrid) bgGrid.classList.add("shift");
+    }, 170);
+
+    later(function () {
+      if (bgGrid) bgGrid.classList.remove("shift");
+    }, 1000);
+
+    /* Phase 2 — the camera returns; the scene settles */
+    later(function () {
+      if (world && !isMobile()) world.classList.remove("gather");
+    }, 430);
+
+    later(function () {
+      transitioning = false;
+      var active = states[current];
+      if (active && !isMobile()) active.focus({ preventScroll: true });
+    }, TRANS_MS);
 
     if (firstMove && hint) {
       hint.classList.add("off");
       firstMove = false;
     }
-
-    var active = panels[current];
-    if (active && !isMobile()) active.focus({ preventScroll: true });
-
-    setTimeout(function () { transitioning = false; }, TRANSITION_MS);
   }
 
   function next() { goTo(current + 1); }
@@ -269,50 +335,48 @@
   function revealDeck() {
     if (!deck) return;
     doc.classList.add("head-on");
-    applyPositions();
+    applySlots();
     updateMeta();
-    // the deck surfaces out of the plate — staggered, weighted
-    panels.forEach(function (p, i) {
-      p.style.transitionDelay = (i * 0.09).toFixed(2) + "s";
-      requestAnimationFrame(function () {
-        requestAnimationFrame(function () {
-          p.classList.remove("pre");
-        });
-      });
-    });
+
+    var active = states[current];
+    if (active) {
+      active.classList.add("ready");
+      later(function () {
+        if (active && active === states[current]) active.classList.add("arrive");
+      }, 80);
+    }
+
     deck.classList.add("on");
-    setTimeout(function () {
-      panels.forEach(function (p) { p.style.transitionDelay = "0s"; });
-      applyPositions();
-    }, 1400);
-    if (panels[0] && !isMobile()) panels[0].focus({ preventScroll: true });
+    later(function () {
+      if (active && !isMobile()) active.focus({ preventScroll: true });
+    }, 650);
   }
 
   /* ============================================================
-     INPUT — wheel, keyboard, touch, rail
+     INPUT — wheel, keyboard, touch, rail, arrows
      ============================================================ */
 
   var wheelLock = false;
-  var wheelLockT = null;
+  var wheelTimer = null;
 
   function handleWheel(e) {
     if (!prologueDone || isMobile()) return;
-    if (wheelLock) { e.preventDefault(); return; }
+    if (transitioning || wheelLock) { e.preventDefault(); return; }
     var dy = e.deltaY;
     if (Math.abs(dy) < 8) return;
 
     wheelLock = true;
     if (dy > 0) next(); else prev();
-    clearTimeout(wheelLockT);
-    wheelLockT = setTimeout(function () { wheelLock = false; }, 1000);
+    clearTimeout(wheelTimer);
+    wheelTimer = setTimeout(function () { wheelLock = false; }, TRANS_MS + 100);
   }
 
   window.addEventListener("wheel", handleWheel, { passive: false });
 
   document.addEventListener("keydown", function (e) {
     if (!prologueDone) return;
-    if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
     if (isMobile()) return;
+    if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
     if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") {
       e.preventDefault(); next();
     } else if (e.key === "ArrowUp" || e.key === "PageUp") {
@@ -324,25 +388,55 @@
     }
   });
 
-  var touchStartY = 0, touchStartX = 0, touchActive = false;
+  var tStartY = 0, tStartX = 0, tActive = false, tScroll = false;
+
+  /* a swipe inside one of the mobile scrollable states scrolls
+     that state's content instead of navigating the deck */
+  function inScrollable(el) {
+    while (el && el !== document.body) {
+      var style = window.getComputedStyle(el);
+      if ((style.overflowY === "auto" || style.overflowY === "scroll") &&
+          el.scrollHeight > el.clientHeight + 4) {
+        return true;
+      }
+      el = el.parentNode;
+    }
+    return false;
+  }
 
   window.addEventListener("touchstart", function (e) {
-    touchStartY = e.touches[0].clientY;
-    touchStartX = e.touches[0].clientX;
-    touchActive = true;
+    tStartY = e.touches[0].clientY;
+    tStartX = e.touches[0].clientX;
+    tActive = true;
+    tScroll = inScrollable(e.target);
   }, { passive: true });
 
   window.addEventListener("touchmove", function (e) {
-    if (!touchActive || !prologueDone || isMobile()) return;
-    var dy = e.touches[0].clientY - touchStartY;
-    var dx = e.touches[0].clientX - touchStartX;
+    if (!tActive || !prologueDone) return;
+    if (transitioning) return;
+    var dy = e.touches[0].clientY - tStartY;
+    var dx = e.touches[0].clientX - tStartX;
+    if (tScroll) {
+      /* leave room for native scrolling inside the region */
+      if (Math.abs(dy) < 8) return;
+    }
     if (Math.abs(dy) > 60 && Math.abs(dy) > Math.abs(dx) * 1.4) {
-      touchActive = false;
+      if (tScroll) {
+        var sc = e.target;
+        while (sc && sc !== document.body) {
+          if ((sc.scrollTop > 0 && dy > 0) ||
+              (sc.scrollTop < sc.scrollHeight - sc.clientHeight - 2 && dy < 0)) {
+            return; /* the content is mid-scroll — let it breathe */
+          }
+          sc = sc.parentNode;
+        }
+      }
+      tActive = false;
       if (dy < 0) next(); else prev();
     }
   }, { passive: true });
 
-  window.addEventListener("touchend", function () { touchActive = false; }, { passive: true });
+  window.addEventListener("touchend", function () { tActive = false; }, { passive: true });
 
   railBtns.forEach(function (btn, i) {
     btn.addEventListener("click", function () { goTo(i); });
@@ -386,29 +480,14 @@
     doc.classList.remove("no-js");
     doc.classList.add("js");
 
-    var desktop = !isMobile() && !reduceMotion;
-
-    if (desktop) {
-      panels.forEach(function (p) { p.classList.add("pre"); });
+    if (isMobile() || reduceMotion) {
+      prologueDone = true;
+      if (prologue) prologue.style.display = "none";
+      revealDeck();
+    } else {
       runPrologue();
       window.requestAnimationFrame(frame);
-    } else {
-      prologueDone = true;
-      doc.classList.add("head-on");
-      panels.forEach(function (p) { p.classList.remove("pre"); });
-      updateMeta();
-      if (railBtns[0]) railBtns[0].classList.add("active");
-      if (deck) deck.classList.add("on");
     }
-
-    // crossing from the mobile edition back to desktop mid-session
-    var onChange = function (e) {
-      if (!e.matches && prologueDone && deck && !deck.classList.contains("on")) {
-        revealDeck();
-      }
-    };
-    if (mobileQuery.addEventListener) mobileQuery.addEventListener("change", onChange);
-    else if (mobileQuery.addListener) mobileQuery.addListener(onChange);
   }
 
   init();

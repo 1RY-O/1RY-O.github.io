@@ -1,69 +1,73 @@
 # Pilla Sri Sai Rahul — Personal Website
 
-Art-directed digital experience for https://1ry-o.github.io
+An art-directed **spatial digital experience** for https://1ry-o.github.io
 
-A cinematic, editorial portfolio built around a **broken-mirror opening sequence** and a **staircase depth deck** — five panels visible in spatial depth at any moment, with the active panel dominant and surrounding panels receding.
-
-## Design System
-
-- **Type**: Fraunces (display serif) · Inter (UI) · IBM Plex Mono (metadata)
-- **Palette**: Warm charcoal · restrained brass · bone
-- **Motion**: GPU-friendly transforms/opacity/filter only · rAF lerp · controlled inertia
-- **Atmosphere**: Subtle light blooms + translucent bubbles, subordinate to composition
+Not a scrolling portfolio. Not a carousel. The site is conceived as a single **optical bench** — a room of plates positioned along a shared axis of depth. You move *through* the environment; the states physically occupy different depths and travel between them.
 
 ## Experience
 
-1. **Broken Mirror** — the screen opens as a fractured mirror. Twelve shards hold partial glimpses of the identity. The shards scatter with depth, hold, then reassemble into the full name reveal.
-2. **Staircase Deck** — eight chapters arranged in a spatial depth system. Panels physically convey through positions as you navigate. The active panel is largest, sharpest, closest; neighbors recede with scale, blur, and opacity.
-3. **Chapters** — Identity · About · Lumis · Robotics/IoT · Hackathons · Experience · Skills · Contact
+1. **FRACTURE → REASSEMBLY → IDENTITY → EXPLORATION**
+   An optical alignment emblem surfaces out of the dark, is cut into 11 hand-placed 3D shards, holds in a fractured field, then converges — the emblem's fragments reassembling into the typographic identity itself. No cut: the reassembled object becomes the first state of the deck.
+
+2. **The Optical Bench** — eight states arranged in a spatial depth system:
+   - `Identity` — the name as the strongest typographic moment
+   - `Profile` — an editorial spread with an indexed fact register
+   - `Lumis` — a miniature case study (problem → idea → system → prototype)
+   - `Systems` — engineering documentation: signal-chain schematic + spec ledger
+   - `Field Log` — hackathons as an event log
+   - `Stations` — experience as two plaques on a spine (not a timeline)
+   - `Toolbox` — a technical index (no skill bars, no badges)
+   - `Contact` — a quiet closing plate
+
+   ~5 states participate in the composition at any moment: the active plate is largest, sharpest, closest; neighbours recede with blur, opacity, rotation and offset. States physically travel through the slots as you navigate — nothing fades out and back in.
+
+3. **Motion character** — one master curve for the whole scene: a gathering anticipation, acceleration, depth travel, weighted settling. The background grid and camera respond to the same progress. Long moments of stillness.
 
 ## Input
 
-- Mouse wheel / trackpad
-- Keyboard arrows, PageUp/Down, Home/End, Space
-- Touch swipe (vertical)
-- Chapter rail (right side)
-- Prev/next arrows (bottom center)
+- Mouse wheel / trackpad (one gesture = one transition)
+- Keyboard: arrows, PageUp/Down, Space, Home/End
+- Touch swipe (vertical) — mobile keeps the spatial model
+- Chapter rail (right) · prev/next arrows (bottom)
+
+## Design System
+
+- **Type**: Fraunces (display serif) · Instrument Sans (body) · IBM Plex Mono (metadata)
+- **Palette**: ink `#0a0a0c` · bone `#e9e5dd` · oxide `#c8723f` · steel `#7d8794`
+- **Motifs**: registration marks, ruler ticks, ghost chapter numerals, coordinate grid, mono spec registers — engineering precision as art direction, not decoration
+- **Atmosphere**: faint optical-bench grid, ️subtle blooms, ~4 drifting specks, film grain. Aimed restraint.
 
 ## Accessibility
 
-- `prefers-reduced-motion` — mirror skipped, deck static, no loops
+- `prefers-reduced-motion` — static exhibition, no prologue, no loops, content fully readable
 - Keyboard navigation with visible focus states
-- Semantic structure (`main`, `section`, `nav`, `dl`, `ol`)
-- No-JS fallback — static scrollable page
+- `inert` on non-active states; `aria-live` chapter announcer
+- No-JS fallback — static scrollable document
 
 ## Run locally
 
-Open `index.html` directly in a browser, or serve it:
-
 ```bash
-# Python
 python -m http.server 8000
-# then open http://localhost:8000
+# open http://localhost:8000
 ```
-
-Or use VS Code "Live Server".
 
 ## Deploy to GitHub Pages
 
-The upstream remote must point to a repo named **exactly** `1RY-O.github.io`
-so GitHub auto-publishes the site.
+The upstream remote must point to a repo named **exactly** `1RY-O.github.io`.
 
 ```bash
 git remote add origin https://github.com/1RY-O/1RY-O.github.io.git
 git branch -M main
 git add .
-git commit -m "feat: art-directed redesign"
+git commit -m "feat: optical bench spatial redesign"
 git push -u origin main
 ```
-
-Then the site is live at `https://1ry-o.github.io/`.
 
 ## Files
 
 | File | Purpose |
 |---|---|
-| `index.html` | All 8 chapters, mirror, atmosphere, navigation |
-| `styles.css` | Editorial depth system, mirror, deck, responsive, reduced-motion |
-| `script.js` | Mirror shatter/reassembly, deck physics, input handling, parallax |
-| `resume.pdf` | Downloadable resume (linked from masthead) |
+| `index.html` | The eight states, emblem prologue, HUD, atmosphere layers |
+| `styles.css` | Visual system, plate chrome, state compositions, slot geometry, responsiveness |
+| `script.js` | Prologue engine, spatial deck engine, input layer, parallax |
+| `resume.pdf` | Downloadable resume |
