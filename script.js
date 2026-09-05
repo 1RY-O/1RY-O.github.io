@@ -1,8 +1,9 @@
 /* ============================================================
-   Rahul Pilla — motion engine
-   One rAF loop · lerped scroll + pointer values · CSS-var driven
-   Deck rotation · split text · magnetic hover · tilt · reveals
-   Reduced-motion: everything static & instant
+   Rahul Pilla — motion engine v2
+   One rAF loop · lerped scroll + pointer · CSS-var driven
+   Boot curtain · masked hero type · rotating deck · pinned
+   Lumis case study · ghost numerals · magnets · tilt · cursor
+   Reduced motion: static page, no loops
    ============================================================ */
 
 (function () {
@@ -11,17 +12,25 @@
   var doc = document.documentElement;
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  var mqPin = window.matchMedia("(min-width: 901px)");
+  var head = document.querySelector(".site-head");
+
+  function clamp(v, min, max) { return v < min ? min : v > max ? max : v; }
+  function pad2(n) { return (n < 10 ? "0" : "") + n; }
 
   /* ---------- Index overlay (mobile menu) ---------- */
   var menuBtn = document.getElementById("menu-btn");
   var overlay = document.getElementById("menu-overlay");
+  var menuOpen = false;
 
   if (menuBtn && overlay) {
     function setMenu(open) {
+      menuOpen = open;
       overlay.classList.toggle("open", open);
       menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
       menuBtn.textContent = open ? "Close" : "Index";
       document.body.style.overflow = open ? "hidden" : "";
+      if (head) head.classList.remove("head-hidden"); // never trap the toggle
     }
     menuBtn.addEventListener("click", function () {
       setMenu(!overlay.classList.contains("open"));
@@ -40,6 +49,51 @@
   /* ---------- Footer year ---------- */
   var yearEl = document.querySelector(".js-year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  /* ============================================================
+     HERO TYPE — masked characters, one beat per line
+     ============================================================ */
+  function splitHero() {
+    var lines = document.querySelectorAll("#hero-display .line-in");
+    var global = 0;
+    var lineDelay = [0.05, 0.22, 0.39];
+    lines.forEach(function (line, li) {
+      line.style.setProperty("--d", (lineDelay[li] || 0) + "s");
+      var kids = Array.prototype.slice.call(line.childNodes);
+      kids.forEach(function (child) {
+        if (child.nodeType === 3) {
+          var frag = document.createDocumentFragment();
+          var text = child.textContent;
+          for (var i = 0; i < text.length; i++) {
+            var ch = text[i];
+            var mask = document.createElement("span");
+            mask.className = "c";
+            var inner = document.createElement("span");
+            inner.className = "ci";
+            inner.style.setProperty("--i", global++);
+            inner.textContent = ch === " " ? "\u00A0" : ch;
+            mask.appendChild(inner);
+            frag.appendChild(mask);
+          }
+          line.replaceChild(frag, child);
+        } else if (child.nodeType === 1) {
+          // accent words rise as a single masked unit — keeps the gradient whole
+          var m = document.createElement("span");
+          m.className = "c";
+          var w = document.createElement("span");
+          w.className = "ci";
+          w.style.setProperty("--i", global++);
+          w.appendChild(child.cloneNode(true));
+          m.appendChild(w);
+          line.replaceChild(m, child);
+        }
+      });
+      line.setAttribute("aria-hidden", "true");
+    });
+    var h1 = document.getElementById("hero-display");
+    if (h1) h1.setAttribute("aria-label", "I build things that move, sense & think.");
+  }
+  splitHero();
 
   /* ============================================================
      SPLIT TEXT — chars for "Lumis", words for the contact line
@@ -104,15 +158,18 @@
   });
 
   /* ============================================================
-     OBSERVERS — reveals · section heads · split lines · active nav
+     OBSERVERS — reveals · heads · splits · plate · active nav
      ============================================================ */
   var revealEls = document.querySelectorAll(".reveal");
   var headEls = document.querySelectorAll(".sec-head");
+  var stageEl = document.getElementById("lumis-stage");
+  var plateEl = document.querySelector(".plate");
 
   if (reduceMotion || !("IntersectionObserver" in window)) {
     revealEls.forEach(function (el) { el.classList.add("visible"); });
     headEls.forEach(function (el) { el.classList.add("in"); });
     splitEls.forEach(function (el) { el.classList.add("in"); });
+    if (plateEl) plateEl.classList.add("in");
   } else {
     var io = new IntersectionObserver(
       function (entries) {
@@ -152,6 +209,22 @@
       { threshold: 0.5 }
     );
     splitEls.forEach(function (el) { sio.observe(el); });
+
+    // the case-study frame opens when the stage arrives
+    if (stageEl && plateEl) {
+      var pio = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              plateEl.classList.add("in");
+              pio.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.22 }
+      );
+      pio.observe(stageEl);
+    }
   }
 
   /* ---------- Active section in masthead ---------- */
@@ -185,9 +258,10 @@
   }
 
   /* ============================================================
-     REDUCED MOTION — static page, no loops
+     REDUCED MOTION — stillness: static page, no loops
      ============================================================ */
   if (reduceMotion || !window.requestAnimationFrame) {
+    doc.classList.add("loaded");
     return;
   }
 
@@ -204,8 +278,7 @@
   var LEAVE_MS = 880;  // fade finishes before teleport to the back slot
   var order = cards.map(function (_, i) { return i; });
   var cycleStart = 0;
-
-  function pad2(n) { return (n < 10 ? "0" : "") + n; }
+  var deckReady = false;
 
   function setPos(el, pos) {
     if (el._pos !== undefined) el.classList.remove("pos-" + el._pos);
@@ -264,6 +337,7 @@
     }, 2400);
 
     cycleStart = performance.now();
+    deckReady = true;
   }
 
   /* ---------- pause the deck when the hero is off-screen ---------- */
@@ -279,39 +353,61 @@
   }
 
   /* ============================================================
-     MOTION LOOP — lerped scroll, drift, magnets, tilt, ring
+     MEASUREMENT — cached geometry, refreshed on resize/load
      ============================================================ */
   var barEl = document.getElementById("progress-bar");
   var vh = window.innerHeight;
   var docH = 1;
+  var pinEl = document.querySelector(".stage-pin");
+  var appBodyEl = document.querySelector(".app-body");
+  var pinExtra = 1;
+
+  var ghosts = [];
+  document.querySelectorAll(".ghost").forEach(function (g) {
+    var sec = g.closest(".sec");
+    if (sec) {
+      ghosts.push({
+        el: g,
+        sec: sec,
+        dir: g.getAttribute("data-dir") === "-1" ? -1 : 1
+      });
+    }
+  });
 
   function measure() {
     vh = Math.max(1, window.innerHeight);
     docH = Math.max(1, doc.scrollHeight - vh);
+    if (stageEl && pinEl) {
+      pinExtra = Math.max(1, stageEl.offsetHeight - pinEl.offsetHeight);
+    }
   }
   measure();
-  window.addEventListener("resize", measure);
+  var resizeT = null;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeT);
+    resizeT = setTimeout(measure, 120);
+  });
   window.addEventListener("load", measure);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
 
-  // smoothed state
-  var hp = 0, hpT = 0;      // hero progress 0..1
-  var par = 0, parT = 0;    // parallax px
-  var dx = 0, dy = 0, dxT = 0, dyT = 0; // pointer drift px
-  var lastHp = -1, lastPar = -1, lastDx = -1, lastDy = -1;
-
-  // pointer
+  /* ============================================================
+     POINTER — drift, magnets, tilt, cursor physics
+     ============================================================ */
   var mx = -100, my = -100;
-  var pnx = 0, pny = 0;     // pointer normalized -1..1 (viewport)
+  var pnx = 0, pny = 0;
   var pointerSeen = false;
 
-  var useCursor = finePointer;
-  var ringEl = null;
-  var ringX = 0, ringY = 0, ringScale = 1, ringScaleT = 1;
+  var dotEl = null, ringEl = null;
+  var dotX = 0, dotY = 0, ringX = 0, ringY = 0, ringScale = 1, ringScaleT = 1;
 
-  if (useCursor) {
+  if (finePointer) {
+    dotEl = document.createElement("div");
+    dotEl.className = "cursor-dot";
+    dotEl.setAttribute("aria-hidden", "true");
     ringEl = document.createElement("div");
     ringEl.className = "cursor-ring";
     ringEl.setAttribute("aria-hidden", "true");
+    document.body.appendChild(dotEl);
     document.body.appendChild(ringEl);
 
     window.addEventListener(
@@ -321,8 +417,7 @@
         mx = e.clientX;
         my = e.clientY;
         if (!pointerSeen) {
-          ringX = mx; // appear in place — never fly in from a corner
-          ringY = my;
+          dotX = mx; dotY = my; ringX = mx; ringY = my; // appear in place
         }
         pointerSeen = true;
         pnx = (e.clientX / window.innerWidth) * 2 - 1;
@@ -366,7 +461,7 @@
     });
   }
 
-  /* ---------- Lumis tilt + spotlight + local parallax ---------- */
+  /* ---------- Lumis tilt + spotlight ---------- */
   var plate = document.querySelector(".plate");
   var browserEl = document.querySelector(".browser");
   var rx = 0, ry = 0, rxT = 0, ryT = 0;
@@ -401,25 +496,92 @@
     });
   }
 
-  /* ---------- the loop ---------- */
+  /* ============================================================
+     BOOT CURTAIN — count, fill, lift, then hand over the stage
+     ============================================================ */
+  var loader = document.getElementById("loader");
+  var loadCount = document.getElementById("load-count");
+  var loadLine = document.getElementById("load-line");
+  var BOOT_MS = 1150;
+
+  function boot() {
+    doc.classList.add("loaded");
+    initDeck();
+    measure();
+  }
+
+  if (loader) {
+    document.body.style.overflow = "hidden";
+    var bootStart = 0;
+    function tickBoot(now) {
+      if (!bootStart) bootStart = now;
+      var p = clamp((now - bootStart) / BOOT_MS, 0, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      if (loadCount) loadCount.textContent = pad2(Math.round(eased * 100));
+      if (loadLine) loadLine.style.transform = "scaleX(" + eased.toFixed(4) + ")";
+      if (p < 1) {
+        requestAnimationFrame(tickBoot);
+      } else {
+        loader.classList.add("done");
+        document.body.style.overflow = "";
+        boot();
+        setTimeout(function () {
+          if (loader.parentNode) loader.parentNode.removeChild(loader);
+        }, 1000);
+      }
+    }
+    requestAnimationFrame(tickBoot);
+  } else {
+    boot();
+  }
+
+  /* ============================================================
+     THE LOOP — scroll choreography, deck, ghosts, pin, cursor
+     ============================================================ */
+  var hp = 0;                 // hero progress 0..1
+  var par = 0;                // parallax px
+  var vel = 0, velT = 0;      // scroll velocity skew (deg)
+  var dx = 0, dy = 0, dxT = 0, dyT = 0; // pointer drift px
+  var prevSy = window.scrollY || 0;
+  var lastHp = -1, lastPar = -1, lastDx = -1, lastDy = -1, lastVel = "";
+  var lastPinp = "-1", lastGp = {};
+
   function frame(now) {
     var sy = window.scrollY || window.pageYOffset || 0;
+    var dyScroll = sy - prevSy;
+    prevSy = sy;
 
-    // scroll choreography
-    hpT = Math.min(1, sy / vh);
-    parT = sy * -0.06;
-    hp += (hpT - hp) * 0.12;
-    par += (parT - par) * 0.12;
-    if (Math.abs(parT - par) < 0.05) par = parT;
+    // hero exit choreography
+    var hpTarget = clamp(sy / vh, 0, 1);
+    hp += (hpTarget - hp) * 0.12;
+    var parTarget = sy * -0.06;
+    par += (parTarget - par) * 0.12;
+    if (Math.abs(parTarget - par) < 0.05) par = parTarget;
 
     var hpR = hp.toFixed(4);
     var parR = par.toFixed(2);
     if (hpR !== lastHp) { doc.style.setProperty("--hp", hpR); lastHp = hpR; }
     if (parR !== lastPar) { doc.style.setProperty("--py", parR); lastPar = parR; }
 
+    // velocity skew — type leans into fast scrolls, settles when still
+    velT = clamp(dyScroll * 0.05, -2.4, 2.4);
+    vel += (velT - vel) * 0.1;
+    var velR = vel.toFixed(2);
+    if (velR !== lastVel) {
+      if (Math.abs(vel) > 0.02) doc.style.setProperty("--vel", velR + "deg");
+      else doc.style.setProperty("--vel", "0deg");
+      lastVel = velR;
+    }
+
     // progress hairline
     if (barEl) {
       barEl.style.transform = "scaleX(" + Math.min(1, sy / docH).toFixed(4) + ")";
+    }
+
+    // masthead physics — hide on dive, return on rise
+    if (!menuOpen && head) {
+      if (dyScroll > 6 && sy > vh * 0.9) head.classList.add("head-hidden");
+      else if (dyScroll < -6 || sy <= vh * 0.9) head.classList.remove("head-hidden");
     }
 
     // hero pointer drift
@@ -440,12 +602,48 @@
     if (dyR !== lastDy) { doc.style.setProperty("--dy", dyR); lastDy = dyR; }
 
     // deck cadence
-    if (cards.length && heroVisible) {
+    if (deckReady && cards.length && heroVisible) {
       var t = now - cycleStart;
       if (deckBar) {
         deckBar.style.transform = "scaleX(" + Math.min(1, t / INTERVAL).toFixed(4) + ")";
       }
       if (t >= INTERVAL) cycle(now);
+    }
+
+    // ghost numerals — depth behind each act
+    for (var gi = 0; gi < ghosts.length; gi++) {
+      var gh = ghosts[gi];
+      var gr = gh.sec.getBoundingClientRect();
+      if (gr.bottom < -80 || gr.top > vh + 80) continue;
+      var gp = clamp((vh - gr.top) / (vh + gr.height), 0, 1);
+      var gv = ((gp - 0.5) * -130 * gh.dir).toFixed(1);
+      if (lastGp[gi] !== gv) {
+        gh.el.style.setProperty("--gp", gv);
+        lastGp[gi] = gv;
+      }
+    }
+
+    // Lumis stage — manual pin, frame push, in-app drift
+    if (stageEl && pinEl && mqPin.matches) {
+      var sr = stageEl.getBoundingClientRect();
+      if (sr.top < 0 && sr.bottom > 0) {
+        var offset = clamp(-sr.top, 0, pinExtra);
+        pinEl.style.transform = "translate3d(0," + offset.toFixed(1) + "px,0)";
+        var pinp = offset / pinExtra;
+        var pinpR = pinp.toFixed(3);
+        if (pinpR !== lastPinp) {
+          pinEl.style.setProperty("--pinp", pinpR);
+          lastPinp = pinpR;
+        }
+        if (appBodyEl) {
+          pinEl.style.setProperty("--appj", ((0.5 - pinp) * 26).toFixed(1) + "px");
+        }
+      } else if (lastPinp !== "0") {
+        pinEl.style.transform = "translate3d(0,0,0)";
+        pinEl.style.setProperty("--pinp", "0");
+        if (appBodyEl) pinEl.style.setProperty("--appj", "13px");
+        lastPinp = "0";
+      }
     }
 
     // magnets
@@ -466,8 +664,7 @@
       m.el.style.setProperty("--my", m.cy.toFixed(2) + "px");
     }
 
-    // Lumis tilt + element-relative parallax (measured on the plate,
-    // which is never transformed — avoids a transform feedback loop)
+    // Lumis tilt + element-relative parallax
     rx += (rxT - rx) * 0.1;
     ry += (ryT - ry) * 0.1;
     if (Math.abs(rxT - rx) < 0.01) rx = rxT;
@@ -484,16 +681,22 @@
       browserEl.style.setProperty("--bpy", bpy.toFixed(2) + "px");
     }
 
-    // cursor ring
-    if (useCursor) {
+    // cursor physics — dot leads, ring trails
+    if (finePointer) {
       if (pointerSeen) {
+        dotX += (mx - dotX) * 0.55;
+        dotY += (my - dotY) * 0.55;
         ringX += (mx - ringX) * 0.16;
         ringY += (my - ringY) * 0.16;
         ringScale += (ringScaleT - ringScale) * 0.14;
+        dotEl.style.opacity = "1";
         ringEl.style.opacity = "1";
+        dotEl.style.transform =
+          "translate3d(" + (dotX - 3).toFixed(1) + "px," + (dotY - 3).toFixed(1) + "px,0)";
         ringEl.style.transform =
-          "translate3d(" + (ringX - 16).toFixed(1) + "px," + (ringY - 16).toFixed(1) + "px,0) scale(" + ringScale.toFixed(3) + ")";
+          "translate3d(" + (ringX - 17).toFixed(1) + "px," + (ringY - 17).toFixed(1) + "px,0) scale(" + ringScale.toFixed(3) + ")";
       } else {
+        dotEl.style.opacity = "0";
         ringEl.style.opacity = "0";
       }
     }
@@ -501,6 +704,5 @@
     window.requestAnimationFrame(frame);
   }
 
-  initDeck();
   window.requestAnimationFrame(frame);
 })();

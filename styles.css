@@ -1,8 +1,9 @@
 /* ============================================================
-   RAHUL PILLA — cinematic motion system
+   RAHUL PILLA — cinematic motion system · v2
    Elevated ink canvas · violet + lime light · rotating card deck
+   Boot curtain · masked type · ghost numerals · pinned case study
    Type:  Inter (UI + display) · IBM Plex Mono (labels)
-   Motion: transform/opacity only · rAF lerp · reduced-motion safe
+   Motion: transform/opacity/clip only · rAF lerp · reduced-motion safe
    ============================================================ */
 
 :root {
@@ -107,7 +108,7 @@ body::after {
 a { color: inherit; }
 
 .skip-link {
-  position: absolute; left: -999px; top: 0; z-index: 600;
+  position: absolute; left: -999px; top: 0; z-index: 950;
   background: var(--violet); color: #fff;
   font-family: var(--mono); font-size: 0.85rem;
   padding: 10px 18px; border-radius: 0 0 var(--r-md) 0;
@@ -121,14 +122,50 @@ a { color: inherit; }
 }
 
 /* ============================================================
-   MASTHEAD — floating pill nav
+   BOOT CURTAIN — the first act
+   ============================================================ */
+.loader {
+  position: fixed; inset: 0; z-index: 900;
+  background: #0d0d11;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.9s var(--ease), visibility 0s linear 0.9s;
+  will-change: transform;
+}
+.loader.done { transform: translateY(-101%); visibility: hidden; }
+html.no-js .loader { display: none; }
+
+.loader-mark {
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  font-weight: 700; letter-spacing: -0.02em;
+}
+.loader-count {
+  position: absolute; bottom: 34px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.72rem; letter-spacing: 0.18em;
+  color: var(--text-dim);
+}
+.loader-line {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 2px; background: rgba(255, 255, 255, 0.07);
+}
+.loader-line i {
+  display: block; height: 100%;
+  transform: scaleX(0); transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--violet), var(--lime));
+}
+
+/* ============================================================
+   MASTHEAD — floating pill nav + scroll physics
    ============================================================ */
 .site-head {
   position: fixed; inset: 16px 0 auto 0; z-index: 300;
   display: flex; justify-content: center;
   pointer-events: none;
   height: auto;
+  transition: transform 0.55s var(--ease);
+  will-change: transform;
 }
+.site-head.head-hidden { transform: translate3d(0, -180%, 0); }
 .head-row {
   pointer-events: auto;
   display: flex; align-items: center; gap: 6px;
@@ -229,8 +266,9 @@ a { color: inherit; }
 .hero-inner {
   position: relative;
   z-index: 2;
-  opacity: calc(1 - (var(--hp, 0) * 1.12));
-  transform: translate3d(0, calc(var(--hp, 0) * -64px), 0);
+  opacity: calc(1 - var(--hp, 0) * 0.85);
+  transform: translate3d(0, calc(var(--hp, 0) * -70px), 0);
+  will-change: transform, opacity;
 }
 
 .eyebrow {
@@ -251,7 +289,7 @@ a { color: inherit; }
   text-wrap: balance;
   position: relative;
   z-index: 2;
-  transform: translate3d(0, calc(var(--py, 0) * 1px), 0);
+  transform: translate3d(0, calc(var(--py, 0) * 1px), 0) skewY(var(--vel, 0deg));
   will-change: transform;
 }
 .display .line { display: block; }
@@ -261,6 +299,26 @@ a { color: inherit; }
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+/* ---- scroll cue — a single falling line, nothing more ---- */
+.scroll-cue {
+  position: absolute;
+  bottom: 86px; left: 50%;
+  width: 1px; height: 46px;
+  overflow: hidden;
+  z-index: 3;
+  pointer-events: none;
+}
+.scroll-cue::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent, var(--text-dim));
+  animation: cue 2.4s var(--ease) infinite;
+}
+@keyframes cue {
+  0% { transform: translateY(-101%); }
+  62%, 100% { transform: translateY(101%); }
 }
 
 /* ------------------------------------------------------------
@@ -276,7 +334,7 @@ a { color: inherit; }
   pointer-events: none;
   transform: translate3d(
       calc(var(--dx, 0) * 1px),
-      calc((var(--py, 0) * 1px) + (var(--dy, 0) * 1px)),
+      calc((var(--py, 0) * 1px) + (var(--dy, 0) * 1px) - (var(--hp, 0) * 46px)),
       0
     )
     scale(calc(1 - (var(--hp, 0) * 0.05)));
@@ -406,7 +464,7 @@ a { color: inherit; }
   border-radius: 2px;
 }
 
-/* no-JS / pre-rotation fallback: flagship slide only */
+/* no-JS fallback: flagship slide only */
 html.no-js .hcard { opacity: 0; }
 html.no-js .hcard--violet { opacity: 1; transform: rotate(5deg); }
 html.no-js .deck-meta { display: none; }
@@ -483,9 +541,32 @@ html.no-js .deck-meta { display: none; }
 .foot-links a:hover { color: var(--violet); }
 
 /* ============================================================
-   SECTIONS
+   SECTIONS + GHOST NUMERALS — spatial transitions between acts
    ============================================================ */
-.sec { padding: clamp(72px, 11vh, 128px) 0; }
+.sec {
+  padding: clamp(72px, 11vh, 128px) 0;
+  position: relative;
+  overflow: hidden;
+}
+.sec > .wrap { position: relative; z-index: 1; }
+
+.ghost {
+  position: absolute;
+  top: 2%;
+  right: calc(var(--pad) * -0.4);
+  z-index: 0;
+  font-weight: 700;
+  font-size: clamp(10rem, 26vw, 22rem);
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.055);
+  pointer-events: none;
+  user-select: none;
+  transform: translate3d(0, calc(var(--gp, 0) * 1px), 0);
+  will-change: transform;
+}
+.ghost[data-dir="-1"] { right: auto; left: calc(var(--pad) * -0.4); }
 
 .sec-head {
   display: flex; align-items: baseline; gap: 18px;
@@ -529,8 +610,14 @@ html.js .sec-head.in > :nth-child(3) { transition-delay: 0.2s; }
 }
 
 /* ============================================================
-   01 — LUMIS, the flagship plate
+   01 — LUMIS, the flagship case study
+   Pinned stage · clip-reveal · frame push · pin progress rule
    ============================================================ */
+.stage { position: relative; height: calc(100vh + 70vh); }
+.stage-pin { position: relative; will-change: transform; }
+/* optically center the pinned frame in the viewport */
+.stage-pin > .plate { margin-top: max(24px, calc(50vh - 340px)); }
+
 .plate {
   background:
     radial-gradient(900px 480px at 85% -20%, rgba(124, 58, 237, 0.16) 0%, transparent 60%),
@@ -541,6 +628,34 @@ html.js .sec-head.in > :nth-child(3) { transition-delay: 0.2s; }
   position: relative;
   overflow: hidden;
 }
+
+/* cinematic entrance: mask opens outward while the frame settles */
+html.js .plate {
+  clip-path: inset(12% 5% 12% 5% round 28px);
+  opacity: 0;
+  transform: scale(calc(1.045 - var(--pinp, 0) * 0.035))
+    translate3d(0, calc(26px - var(--pinp, 0) * 26px), 0);
+  transition: clip-path 1.15s var(--ease), opacity 0.7s ease;
+}
+html.js .plate.in {
+  clip-path: inset(0% 0% 0% 0% round var(--r-lg));
+  opacity: 1;
+}
+
+/* pin progress rule — reads like a case-study timeline */
+.pin-bar {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  z-index: 5;
+  background: rgba(255, 255, 255, 0.06);
+}
+.pin-bar i {
+  display: block; height: 100%;
+  transform: scaleX(var(--pinp, 0));
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--violet), var(--lime));
+}
+
 .plate::after {
   content: "";
   position: absolute; inset: 0;
@@ -650,12 +765,17 @@ html.js .sec-head.in > :nth-child(3) { transition-delay: 0.2s; }
 .app-nav { font-family: var(--mono); font-size: 0.66rem; color: #8b8577; letter-spacing: 0.04em; }
 .app-new { font-family: var(--mono); font-size: 0.66rem; color: #34322d; border: 1px solid #c9c2b0; padding: 3px 10px; border-radius: var(--r-pill); }
 
-.app-body { padding: 20px 2px 22px; }
+.app-body {
+  padding: 20px 2px 22px;
+  transform: translate3d(0, var(--appj, 0px), 0);
+  will-change: transform;
+}
 .app-date { font-family: var(--mono); font-size: 0.66rem; color: #8b8577; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
 .app-entry-title { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 10px; }
 .app-entry-text { font-size: 0.9rem; line-height: 1.6; color: #55524a; margin-bottom: 14px; max-width: 34em; }
 .app-line { display: block; height: 7px; background: #e0dacb; border-radius: 4px; margin-bottom: 8px; }
 .app-line.w80 { width: 80%; }
+.app-line.w70 { width: 70%; }
 .app-line.w60 { width: 60%; }
 
 .app-reflect {
@@ -679,7 +799,7 @@ html.js .sec-head.in > :nth-child(3) { transition-delay: 0.2s; }
 }
 
 /* ============================================================
-   BENCH + RECORD rows
+   BENCH + RECORD rows — masked light sweep on hover
    ============================================================ */
 .bench { margin-top: clamp(56px, 8vh, 88px); }
 .bench-label {
@@ -699,6 +819,7 @@ html.js .sec-head.in > :nth-child(3) { transition-delay: 0.2s; }
   border-bottom: 1px solid var(--line);
   border-radius: var(--r-md);
   position: relative;
+  overflow: hidden;
   transition: background 0.25s;
 }
 .row::before {
@@ -711,8 +832,20 @@ html.js .sec-head.in > :nth-child(3) { transition-delay: 0.2s; }
   transform-origin: 0 0;
   transition: transform 0.35s var(--ease);
   opacity: 0.85;
+  z-index: 1;
 }
 .row:hover::before { transform: scaleY(1); }
+.row::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(100deg, transparent 15%, rgba(255, 255, 255, 0.05) 48%, transparent 78%);
+  transform: translateX(-112%);
+  pointer-events: none;
+}
+.row:hover::after {
+  transform: translateX(112%);
+  transition: transform 0.9s var(--ease);
+}
 .rows--plain .row { grid-template-columns: minmax(0, 1fr) auto; }
 
 .row:first-child { border-top: 1px solid var(--line); }
@@ -798,20 +931,42 @@ html.js .sec-head.in > :nth-child(3) { transition-delay: 0.2s; }
   border: 1px solid var(--line);
   border-radius: var(--r-md);
   padding: 20px 22px;
-  transition: border-color 0.25s, transform 0.25s var(--ease), background 0.25s;
+  position: relative;
+  overflow: hidden;
 }
-.tool:hover { border-color: rgba(139, 92, 246, 0.4); transform: translateY(-3px); background: var(--surface-2); }
+.tool::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--violet), transparent 70%);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 0.5s var(--ease);
+}
+.tool:hover::before { transform: scaleX(1); }
 .tool dt {
   font-family: var(--mono);
   font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--text-faint); margin-bottom: 8px;
+  transition: color 0.3s ease, transform 0.4s var(--ease);
 }
+.tool:hover dt { color: var(--violet); transform: translateX(4px); }
 .tool dd { font-size: 0.94rem; line-height: 1.6; color: var(--text-dim); }
 
 /* ============================================================
-   05 — CONTACT
+   05 — CONTACT — headline + orb composition
    ============================================================ */
 .contact { padding-bottom: 48px; }
+
+.contact-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(28px, 5vw, 72px);
+  flex-wrap: wrap;
+  margin-bottom: clamp(32px, 6vh, 56px);
+}
+.contact-hero .contact-title { margin-bottom: 0; }
 
 .contact-title {
   font-size: clamp(2.4rem, 6.5vw, 5rem);
@@ -826,6 +981,34 @@ html.js .sec-head.in > :nth-child(3) { transition-delay: 0.2s; }
   color: transparent;
   font-style: normal;
 }
+
+.contact-orb {
+  position: relative;
+  width: clamp(124px, 14vw, 172px);
+  aspect-ratio: 1;
+  flex-shrink: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 2px;
+  text-decoration: none;
+  overflow: hidden;
+}
+.contact-orb::before {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(160deg, #7c3aed 0%, #2e1065 100%);
+  transform: translateY(102%);
+  transition: transform 0.6s var(--ease);
+}
+.contact-orb:hover::before { transform: translateY(0); }
+.orb-txt, .orb-arrow { position: relative; z-index: 1; transition: color 0.35s ease; }
+.orb-txt { font-weight: 600; font-size: 1.06rem; letter-spacing: -0.01em; }
+.orb-arrow { font-size: 1.15rem; }
+.contact-orb:hover { border-color: transparent; }
+.contact-orb:hover .orb-txt, .contact-orb:hover .orb-arrow { color: #fff; }
 
 .contact-mail-line { margin-bottom: clamp(32px, 6vh, 56px); }
 .contact-mail {
@@ -864,29 +1047,38 @@ html.js .sec-head.in > :nth-child(3) { transition-delay: 0.2s; }
 .colophon .ast { color: var(--violet); }
 
 /* ============================================================
-   MOTION — entrance choreography
+   MOTION — boot-gated entrance choreography
+   JS splits hero lines into masked characters; every beat waits
+   for html.loaded so the curtain owns the first act.
    ============================================================ */
-.line-in {
-  display: inline-block;
-  transform: translateY(112%) rotate(1.5deg);
-  transform-origin: 0 100%;
-  animation: rise 0.95s var(--ease) forwards;
-}
-.display .line { overflow: hidden; padding: 0.05em 0 0.07em; margin: -0.05em 0 -0.07em; }
-.line:nth-child(1) .line-in { animation-delay: 0.1s; }
-.line:nth-child(2) .line-in { animation-delay: 0.22s; }
-.line:nth-child(3) .line-in { animation-delay: 0.34s; }
-@keyframes rise { to { transform: translateY(0) rotate(0deg); } }
+.line-in { display: inline-block; }
+.display .line { display: block; }
 
-.eyebrow, .hero-low, .hero-foot, .hero-cards {
-  opacity: 0;
-  animation: fade 0.9s ease forwards;
+.line-in .c {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding: 0.06em 0 0.12em;
+  margin: -0.06em 0 -0.12em;
 }
-.eyebrow { animation-delay: 0.05s; }
-.hero-cards { animation-delay: 0.4s; }
-.hero-low { animation-delay: 0.5s; }
-.hero-foot { animation-delay: 0.7s; }
-@keyframes fade { to { opacity: 1; } }
+.line-in .ci {
+  display: inline-block;
+  transform: translateY(118%) rotate(5deg);
+  transform-origin: 0 100%;
+  transition: transform 0.9s var(--ease);
+  transition-delay: calc(var(--d, 0s) + var(--i, 0) * 0.026s);
+  will-change: transform;
+}
+html.loaded .line-in .ci { transform: translateY(0) rotate(0deg); }
+
+html.js .eyebrow, html.js .hero-low, html.js .hero-foot, html.js .hero-cards {
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+html.loaded .eyebrow { opacity: 1; transition-delay: 0.15s; }
+html.loaded .hero-cards { opacity: 1; transition-delay: 0.55s; }
+html.loaded .hero-low { opacity: 1; transition-delay: 0.7s; }
+html.loaded .hero-foot { opacity: 1; transition-delay: 0.9s; }
 
 /* scroll reveals */
 html.js .reveal {
@@ -946,12 +1138,24 @@ html.js .magnet {
   will-change: transform;
 }
 
-/* trailing cursor ring (fine pointers only; native cursor stays) */
+/* cursor — precise dot + soft trailing ring (fine pointers only) */
+.cursor-dot {
+  position: fixed;
+  top: 0; left: 0;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--text);
+  z-index: 701;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  will-change: transform;
+}
 .cursor-ring {
   position: fixed;
   top: 0; left: 0;
-  width: 32px; height: 32px;
-  border: 1.5px solid rgba(167, 139, 250, 0.6);
+  width: 34px; height: 34px;
+  border: 1px solid rgba(167, 139, 250, 0.55);
   border-radius: 50%;
   pointer-events: none;
   z-index: 700;
@@ -960,7 +1164,7 @@ html.js .magnet {
   will-change: transform;
 }
 @media (hover: none), (pointer: coarse) {
-  .cursor-ring { display: none; }
+  .cursor-dot, .cursor-ring { display: none; }
 }
 
 /* no-JS fallback: restore simple hover lifts */
@@ -981,6 +1185,22 @@ html.no-js .plate-quiet:hover { transform: translateY(-2px); }
     height: clamp(330px, 48vw, 460px);
     top: calc(50% - clamp(330px, 48vw, 460px) * 0.58);
   }
+}
+
+@media (max-width: 900px) {
+  /* unpin the case study on small screens — scroll stays native */
+  .stage { height: auto !important; }
+  .stage-pin { transform: none !important; }
+  .stage-pin > .plate { margin-top: 0; }
+  .plate {
+    clip-path: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none;
+  }
+  .pin-bar { display: none; }
+  .scroll-cue { display: none; }
+  .contact-hero { flex-direction: column; align-items: flex-start; }
 }
 
 @media (max-width: 820px) {
@@ -1037,16 +1257,34 @@ html.no-js .plate-quiet:hover { transform: translateY(-2px); }
 }
 
 /* ============================================================
-   REDUCED MOTION — everything instant, deck static
+   REDUCED MOTION — stillness: everything instant, deck static
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .line-in { animation: none; transform: none; }
-  .eyebrow, .hero-low, .hero-foot, .hero-cards { animation: none; opacity: 1; }
+  .loader { display: none; }
+  .line-in .ci { transform: none !important; transition: none !important; }
+  html.js .eyebrow, html.js .hero-low, html.js .hero-foot, html.js .hero-cards {
+    opacity: 1 !important;
+    transition: none !important;
+  }
   .hero-inner, .display, .hero-low, .browser, .hero-cards { transform: none !important; }
   .hcard { transition: none !important; opacity: 0 !important; }
   .hcard--violet { opacity: 1 !important; transform: rotate(5deg) !important; }
   .deck-meta { display: none; }
+  .ghost { transform: none !important; }
+  .stage { height: auto !important; }
+  .stage-pin { transform: none !important; }
+  .stage-pin > .plate { margin-top: 0; }
+  .plate {
+    clip-path: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .pin-bar { display: none; }
+  .row::after { display: none; }
+  .site-head { transition: none; }
+  .scroll-cue { display: none; }
   html.js .reveal, html.js [data-split] .wi, html.js .sec-head > * {
     opacity: 1 !important;
     transform: none !important;
@@ -1054,7 +1292,7 @@ html.no-js .plate-quiet:hover { transform: translateY(-2px); }
   }
   html.js .sec-head::before { transform: none !important; transition: none !important; }
   html.js .magnet { transform: none !important; }
-  .cursor-ring { display: none; }
+  .cursor-dot, .cursor-ring { display: none; }
   .row::before { display: none; }
   .progress, .plate::after { display: none; }
   .menu-overlay, .menu-list a { transition: none; }

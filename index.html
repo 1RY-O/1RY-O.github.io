@@ -19,6 +19,13 @@
 <body id="top">
   <a class="skip-link" href="#main">Skip to content</a>
 
+  <!-- ============ BOOT CURTAIN ============ -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader-mark">R<span class="ast">*</span></div>
+    <div class="loader-count mono"><span id="load-count">00</span></div>
+    <div class="loader-line"><i id="load-line"></i></div>
+  </div>
+
   <div class="progress" aria-hidden="true"><i id="progress-bar"></i></div>
 
   <!-- ============ MASTHEAD ============ -->
@@ -125,6 +132,8 @@
         </div>
       </div>
 
+      <div class="scroll-cue" aria-hidden="true"></div>
+
       <div class="hero-foot">
         <div class="wrap foot-row mono">
           <span>Hyderabad, India</span>
@@ -140,6 +149,7 @@
 
     <!-- ============ 01 · SELECTED WORK ============ -->
     <section id="work" class="sec">
+      <span class="ghost" aria-hidden="true" data-dir="1">01</span>
       <div class="wrap">
         <header class="sec-head">
           <span class="sec-num mono">01</span>
@@ -148,9 +158,12 @@
         </header>
       </div>
 
-      <!-- Lumis — hero plate -->
+      <!-- Lumis — flagship case study, pinned & clip-revealed -->
       <div class="wrap">
+        <div class="stage" id="lumis-stage">
+        <div class="stage-pin">
         <div class="plate">
+        <div class="pin-bar" aria-hidden="true"><i></i></div>
         <div class="plate-grid">
           <div class="plate-copy reveal">
             <p class="plate-tag mono">Lumis — think without the noise</p>
@@ -188,10 +201,20 @@
                   <span class="mono app-reflect-label">reflection</span>
                   <p>You debug best at dawn. Protect the morning block.</p>
                 </div>
+                <p class="app-date mono" style="margin-top:22px">Thu · Sep 03</p>
+                <p class="app-entry-title">Wiring day</p>
+                <p class="app-entry-text">Mapped the MQTT topics for the rig. Publish, subscribe, sleep — same loop as writing.</p>
+                <span class="app-line w70"></span>
+                <div class="app-reflect">
+                  <span class="mono app-reflect-label">reflection</span>
+                  <p>Hardware journals like software does. Log the state, not the mood.</p>
+                </div>
               </div>
               <div class="app-foot mono"><span>412 words</span><span>3 min read</span></div>
             </div>
           </figure>
+        </div>
+        </div>
         </div>
         </div>
       </div>
@@ -225,6 +248,7 @@
 
     <!-- ============ 02 · PROFILE ============ -->
     <section id="profile" class="sec">
+      <span class="ghost" aria-hidden="true" data-dir="-1">02</span>
       <div class="wrap">
         <header class="sec-head">
           <span class="sec-num mono">02</span>
@@ -258,6 +282,7 @@
 
     <!-- ============ 03 · TOOLBOX ============ -->
     <section id="toolbox" class="sec">
+      <span class="ghost" aria-hidden="true" data-dir="1">03</span>
       <div class="wrap">
         <header class="sec-head">
           <span class="sec-num mono">03</span>
@@ -278,6 +303,7 @@
 
     <!-- ============ 04 · RECORD ============ -->
     <section id="record" class="sec">
+      <span class="ghost" aria-hidden="true" data-dir="-1">04</span>
       <div class="wrap">
         <header class="sec-head">
           <span class="sec-num mono">04</span>
@@ -320,6 +346,7 @@
 
     <!-- ============ 05 · CONTACT ============ -->
     <footer id="contact" class="sec contact">
+      <span class="ghost" aria-hidden="true" data-dir="1">05</span>
       <div class="wrap">
         <header class="sec-head">
           <span class="sec-num mono">05</span>
@@ -327,7 +354,13 @@
           <span class="sec-note mono">replies fast</span>
         </header>
 
-        <h2 class="contact-title reveal" data-split="words">Let’s make something<br />that <em class="acc">thinks.</em></h2>
+        <div class="contact-hero">
+          <h2 class="contact-title reveal" data-split="words">Let’s make something<br />that <em class="acc">thinks.</em></h2>
+          <a class="contact-orb magnet" href="mailto:fabledadventurer.pssr@gmail.com">
+            <span class="orb-txt">Say hi</span>
+            <span class="orb-arrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
 
         <p class="contact-mail-line reveal" style="--d:.1s">
           <a class="contact-mail magnet" href="mailto:fabledadventurer.pssr@gmail.com">fabledadventurer.pssr@gmail.com</a>
@@ -351,6 +384,11 @@
   <script>
     document.documentElement.classList.remove("no-js");
     document.documentElement.classList.add("js");
+    /* safety net — never trap content behind the boot curtain */
+    setTimeout(function () {
+      document.documentElement.classList.add("loaded");
+      document.body.style.overflow = "";
+    }, 2600);
   </script>
 
   <script src="script.js"></script>
