@@ -1,69 +1,50 @@
-/* Personal site interactions */
+/* ============================================================
+   Rahul Pilla — site interactions
+   Index overlay · scroll reveals · active-section mark · year
+   ============================================================ */
 
 (function () {
   "use strict";
 
-  /* ---------- Typing effect ---------- */
-  var typedEl = document.getElementById("typed");
-  if (typedEl) {
-    var roles = [
-      "Mechatronics Student",
-      "Robotics Builder",
-      "Embedded Systems Tinkerer",
-      "IoT Developer",
-      "AI Integration Enthusiast",
-      "Open Source Contributor",
-    ];
-    var roleIndex = 0;
-    var charIndex = 0;
-    var deleting = false;
+  /* JS is available: unlock reveal styles */
+  document.documentElement.classList.remove("no-js");
+  document.documentElement.classList.add("js");
 
-    function tick() {
-      var current = roles[roleIndex];
-      if (deleting) {
-        charIndex--;
-      } else {
-        charIndex++;
-      }
-      typedEl.textContent = current.slice(0, charIndex);
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      var delay = deleting ? 40 : 85;
-      if (!deleting && charIndex === current.length) {
-        delay = 1600;
-        deleting = true;
-      } else if (deleting && charIndex === 0) {
-        deleting = false;
-        roleIndex = (roleIndex + 1) % roles.length;
-        delay = 350;
-      }
-      setTimeout(tick, delay);
+  /* ---------- Index overlay (mobile menu) ---------- */
+  var menuBtn = document.getElementById("menu-btn");
+  var overlay = document.getElementById("menu-overlay");
+
+  if (menuBtn && overlay) {
+    function setMenu(open) {
+      overlay.classList.toggle("open", open);
+      menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      menuBtn.textContent = open ? "Close" : "Index";
+      document.body.style.overflow = open ? "hidden" : "";
     }
-    setTimeout(tick, 600);
-  }
 
-  /* ---------- Mobile nav toggle ---------- */
-  var toggle = document.getElementById("nav-toggle");
-  var links = document.getElementById("nav-links");
-  if (toggle && links) {
-    function closeNav() {
-      links.classList.remove("open");
-      toggle.setAttribute("aria-expanded", "false");
-    }
-    toggle.addEventListener("click", function () {
-      var open = links.classList.toggle("open");
-      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    menuBtn.addEventListener("click", function () {
+      setMenu(!overlay.classList.contains("open"));
     });
-    links.addEventListener("click", function (e) {
-      if (e.target && e.target.tagName === "A") closeNav();
+
+    overlay.addEventListener("click", function (e) {
+      if (e.target.closest("a")) setMenu(false);
     });
+
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") closeNav();
+      if (e.key === "Escape" && overlay.classList.contains("open")) {
+        setMenu(false);
+        menuBtn.focus();
+      }
     });
   }
 
-  /* ---------- Scroll reveal ---------- */
+  /* ---------- Scroll reveals ---------- */
   var revealEls = document.querySelectorAll(".reveal");
-  if ("IntersectionObserver" in window) {
+  if (reduceMotion || !("IntersectionObserver" in window)) {
+    revealEls.forEach(function (el) { el.classList.add("visible"); });
+  } else {
     var io = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
@@ -73,43 +54,41 @@
           }
         });
       },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+      { threshold: 0.1, rootMargin: "0px 0px -36px 0px" }
     );
-    revealEls.forEach(function (el) {
-      io.observe(el);
-    });
-  } else {
-    revealEls.forEach(function (el) {
-      el.classList.add("visible");
-    });
+    revealEls.forEach(function (el) { io.observe(el); });
   }
 
-  /* ---------- Nav link active state ---------- */
-  var sections = document.querySelectorAll("main section[id]");
-  var navAnchors = Array.prototype.slice.call(document.querySelectorAll(".nav-links a"));
+  /* ---------- Active section in masthead ---------- */
+  var map = { work: null, profile: null, contact: null };
+  Object.keys(map).forEach(function (id) {
+    var link = document.querySelector('.head-nav a[href="#' + id + '"]');
+    if (link) map[id] = link;
+  });
+
   if ("IntersectionObserver" in window) {
     var activeIo = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
+          var link = map[entry.target.id];
+          if (!link) return;
           if (entry.isIntersecting) {
-            navAnchors.forEach(function (a) {
-              var on = a.getAttribute("href") === "#" + entry.target.id;
-              a.style.color = on ? "var(--cyan)" : "";
+            Object.keys(map).forEach(function (k) {
+              if (map[k]) map[k].style.color = "";
             });
+            link.style.color = "var(--accent)";
           }
         });
       },
       { rootMargin: "-45% 0px -50% 0px" }
     );
-    sections.forEach(function (s) {
-      activeIo.observe(s);
+    Object.keys(map).forEach(function (id) {
+      var sec = document.getElementById(id);
+      if (sec) activeIo.observe(sec);
     });
   }
 
-  /* ---------- Active year ---------- */
-  var yearEls = document.querySelectorAll(".js-year");
-  var year = new Date().getFullYear();
-  yearEls.forEach(function (el) {
-    el.textContent = year;
-  });
+  /* ---------- Footer year ---------- */
+  var yearEl = document.querySelector(".js-year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
 })();

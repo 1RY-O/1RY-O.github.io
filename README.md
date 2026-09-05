@@ -1,12 +1,15 @@
 # Pilla Sri Sai Rahul — Personal Website
 
-Dark developer-themed portfolio for https://1ry-o.github.io
+Editorial "paper-and-ink" portfolio for https://1ry-o.github.io
 
-Built with plain HTML/CSS/JS — no frameworks, no build tools, no dependencies.
+Warm ivory paper, near-black ink, one vermilion accent. Set in Fraunces
+(display serif) and IBM Plex Mono. Lumis is presented as a full-bleed dark
+"plate" with a hand-crafted product mock. Built with plain HTML/CSS/JS —
+no frameworks, no build tools, no dependencies.
 
 ## Sections
 
-About · Education · Projects (Lumis) · Experience · Skills · Certifications · Hackathons & Community · Contact
+Hero (cover) · 01 Selected work (Lumis flagship + bench) · 02 Profile · 03 Toolbox · 04 Record · 05 Contact
 
 ## Run locally
 
@@ -29,18 +32,17 @@ so GitHub auto-publishes the site.
 git remote add origin https://github.com/1RY-O/1RY-O.github.io.git
 git branch -M main
 git add .
-git commit -m "feat: launch personal site"
+git commit -m "feat: editorial redesign"
 git push -u origin main
 ```
 
-Then the site is live at `https://1ry-o.github.io/` (no Settings needed for
-a `<username>.github.io` repo).
+Then the site is live at `https://1ry-o.github.io/`.
 
 ## Files
 
 | File | Purpose |
 |---|---|
-| `index.html` | All page sections |
-| `styles.css` | Dark theme, terminal hero, responsive layout |
-| `script.js` | Typing effect, nav toggle, scroll reveal, active nav state |
-| `resume.pdf` | Downloadable resume (the button links here) |
+| `index.html` | All page sections (semantic, numbered-monograph structure) |
+| `styles.css` | Paper/ink editorial system, Lumis plate, motion, responsive layout |
+| `script.js` | Index overlay, scroll reveals, active nav state, footer year |
+| `resume.pdf` | Downloadable resume (linked from masthead, hero, contact) |
