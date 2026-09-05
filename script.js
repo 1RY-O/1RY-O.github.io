@@ -1,9 +1,8 @@
 /* ============================================================
-   Rahul Pilla — motion engine v2
-   One rAF loop · lerped scroll + pointer · CSS-var driven
-   Boot curtain · masked hero type · rotating deck · pinned
-   Lumis case study · ghost numerals · magnets · tilt · cursor
-   Reduced motion: static page, no loops
+   PILLA SRI SAI RAHUL — experience engine
+   Broken-mirror opening · staircase depth deck · controlled inertia
+   Input: wheel · trackpad · keyboard · touch/swipe · rail
+   Motion: transform/opacity/filter only · rAF lerp · reduced-motion safe
    ============================================================ */
 
 (function () {
@@ -12,274 +11,134 @@
   var doc = document.documentElement;
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-  var mqPin = window.matchMedia("(min-width: 901px)");
-  var head = document.querySelector(".site-head");
 
   function clamp(v, min, max) { return v < min ? min : v > max ? max : v; }
   function pad2(n) { return (n < 10 ? "0" : "") + n; }
 
-  /* ---------- Index overlay (mobile menu) ---------- */
-  var menuBtn = document.getElementById("menu-btn");
-  var overlay = document.getElementById("menu-overlay");
-  var menuOpen = false;
+  /* ============================================================
+     BROKEN MIRROR — shatter, scatter, reassemble
+     ============================================================ */
+  var mirror = document.getElementById("mirror");
+  var mirrorStage = document.getElementById("mirror-stage");
+  var mirrorPlane = document.getElementById("mirror-plane");
 
-  if (menuBtn && overlay) {
-    function setMenu(open) {
-      menuOpen = open;
-      overlay.classList.toggle("open", open);
-      menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
-      menuBtn.textContent = open ? "Close" : "Index";
-      document.body.style.overflow = open ? "hidden" : "";
-      if (head) head.classList.remove("head-hidden"); // never trap the toggle
-    }
-    menuBtn.addEventListener("click", function () {
-      setMenu(!overlay.classList.contains("open"));
-    });
-    overlay.addEventListener("click", function (e) {
-      if (e.target.closest("a")) setMenu(false);
-    });
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && overlay.classList.contains("open")) {
-        setMenu(false);
-        menuBtn.focus();
+  var SHATTER_MS = 900;      // fragments fly apart
+  var HOLD_MS = 500;         // brief stillness in the broken state
+  var REASSEMBLE_MS = 1900;  // fragments return home
+  var REVEAL_MS = 1100;      // mirror fades, deck takes over
+
+  function buildFragments() {
+    if (!mirror || !mirrorStage || !mirrorPlane) return;
+
+    // 12 fragments — a 4×3 grid, each a piece of the whole
+    var cols = 4, rows = 3;
+    var frags = [];
+    var planeHTML = mirrorPlane.innerHTML;
+
+    mirrorPlane.style.display = "none";
+
+    for (var r = 0; r < rows; r++) {
+      for (var c = 0; c < cols; c++) {
+        var f = document.createElement("div");
+        f.className = "frag";
+        f.innerHTML = planeHTML;
+
+        // clip-path defines the visible shard
+        var x0 = (c / cols) * 100;
+        var y0 = (r / rows) * 100;
+        var x1 = ((c + 1) / cols) * 100;
+        var y1 = ((r + 1) / rows) * 100;
+        f.style.clipPath =
+          "polygon(" + x0 + "% " + y0 + "%, " + x1 + "% " + y0 + "%, " +
+          x1 + "% " + y1 + "%, " + x0 + "% " + y1 + "%)";
+
+        // scattered transform — depth, rotation, drift
+        var dx = (Math.random() - 0.5) * 220;
+        var dy = (Math.random() - 0.5) * 160;
+        var dz = (Math.random() - 0.5) * 300;
+        var rot = (Math.random() - 0.5) * 14;
+        var scale = 0.82 + Math.random() * 0.3;
+        var blur = 1 + Math.random() * 3;
+        var op = 0.55 + Math.random() * 0.4;
+
+        f.style.setProperty("--fx", dx.toFixed(1) + "px");
+        f.style.setProperty("--fy", dy.toFixed(1) + "px");
+        f.style.setProperty("--fz", dz.toFixed(1) + "px");
+        f.style.setProperty("--fr", rot.toFixed(2) + "deg");
+        f.style.setProperty("--fs", scale.toFixed(3));
+        f.style.setProperty("--fb", blur.toFixed(2));
+        f.style.setProperty("--fo", op.toFixed(2));
+
+        // staggered scatter timing
+        f.style.transitionDelay = (Math.random() * 0.15).toFixed(2) + "s";
+
+        mirrorStage.appendChild(f);
+        frags.push(f);
       }
-    });
-  }
-
-  /* ---------- Footer year ---------- */
-  var yearEl = document.querySelector(".js-year");
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
-
-  /* ============================================================
-     HERO TYPE — masked characters, one beat per line
-     ============================================================ */
-  function splitHero() {
-    var lines = document.querySelectorAll("#hero-display .line-in");
-    var global = 0;
-    var lineDelay = [0.05, 0.22, 0.39];
-    lines.forEach(function (line, li) {
-      line.style.setProperty("--d", (lineDelay[li] || 0) + "s");
-      var kids = Array.prototype.slice.call(line.childNodes);
-      kids.forEach(function (child) {
-        if (child.nodeType === 3) {
-          var frag = document.createDocumentFragment();
-          var text = child.textContent;
-          for (var i = 0; i < text.length; i++) {
-            var ch = text[i];
-            var mask = document.createElement("span");
-            mask.className = "c";
-            var inner = document.createElement("span");
-            inner.className = "ci";
-            inner.style.setProperty("--i", global++);
-            inner.textContent = ch === " " ? "\u00A0" : ch;
-            mask.appendChild(inner);
-            frag.appendChild(mask);
-          }
-          line.replaceChild(frag, child);
-        } else if (child.nodeType === 1) {
-          // accent words rise as a single masked unit — keeps the gradient whole
-          var m = document.createElement("span");
-          m.className = "c";
-          var w = document.createElement("span");
-          w.className = "ci";
-          w.style.setProperty("--i", global++);
-          w.appendChild(child.cloneNode(true));
-          m.appendChild(w);
-          line.replaceChild(m, child);
-        }
-      });
-      line.setAttribute("aria-hidden", "true");
-    });
-    var h1 = document.getElementById("hero-display");
-    if (h1) h1.setAttribute("aria-label", "I build things that move, sense & think.");
-  }
-  splitHero();
-
-  /* ============================================================
-     SPLIT TEXT — chars for "Lumis", words for the contact line
-     ============================================================ */
-  function splitChars(el) {
-    var text = el.textContent;
-    el.setAttribute("aria-label", text);
-    el.textContent = "";
-    var wrap = document.createElement("span");
-    wrap.setAttribute("aria-hidden", "true");
-    for (var i = 0; i < text.length; i++) {
-      var m = document.createElement("span");
-      m.className = "ch";
-      var w = document.createElement("span");
-      w.className = "wi";
-      w.style.setProperty("--i", i);
-      w.textContent = text[i] === " " ? "\u00A0" : text[i];
-      m.appendChild(w);
-      wrap.appendChild(m);
     }
-    el.appendChild(wrap);
+
+    return frags;
   }
 
-  function splitWords(el) {
-    el.setAttribute("aria-label", el.textContent.replace(/\s+/g, " ").trim());
-    var idx = 0;
-    function walk(node) {
-      var kids = Array.prototype.slice.call(node.childNodes);
-      kids.forEach(function (child) {
-        if (child.nodeType === 3) {
-          var parts = child.textContent.split(/(\s+)/);
-          var frag = document.createDocumentFragment();
-          parts.forEach(function (p) {
-            if (!p) return;
-            if (/^\s+$/.test(p)) {
-              frag.appendChild(document.createTextNode(" "));
-              return;
-            }
-            var m = document.createElement("span");
-            m.className = "w";
-            m.setAttribute("aria-hidden", "true");
-            var w = document.createElement("span");
-            w.className = "wi";
-            w.style.setProperty("--i", idx++);
-            w.textContent = p;
-            m.appendChild(w);
-            frag.appendChild(m);
+  function runMirror(callback) {
+    if (reduceMotion || !mirror || !mirrorStage) {
+      if (mirror) mirror.style.display = "none";
+      if (callback) callback();
+      return;
+    }
+
+    var frags = buildFragments();
+    if (!frags || !frags.length) {
+      if (mirror) mirror.style.display = "none";
+      if (callback) callback();
+      return;
+    }
+
+    // Phase 1 — shatter: fragments fly apart
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        frags.forEach(function (f) { f.classList.add("scattered"); });
+
+        // Phase 2 — reassemble after a beat of stillness
+        setTimeout(function () {
+          frags.forEach(function (f, i) {
+            f.style.transitionDelay = (i * 0.045).toFixed(2) + "s";
+            f.classList.remove("scattered");
+            f.classList.add("reassembled");
           });
-          node.replaceChild(frag, child);
-        } else if (child.nodeType === 1 && child.tagName !== "BR") {
-          walk(child);
-        }
+
+          // Phase 3 — mirror lifts, deck takes over
+          setTimeout(function () {
+            mirror.classList.add("done");
+            setTimeout(function () {
+              if (mirror.parentNode) mirror.parentNode.removeChild(mirror);
+              if (callback) callback();
+            }, REVEAL_MS);
+          }, REASSEMBLE_MS + frags.length * 45);
+        }, SHATTER_MS + HOLD_MS);
       });
-    }
-    walk(el);
-  }
-
-  var splitEls = document.querySelectorAll("[data-split]");
-  splitEls.forEach(function (el) {
-    if (el.getAttribute("data-split") === "chars") splitChars(el);
-    else splitWords(el);
-  });
-
-  /* ============================================================
-     OBSERVERS — reveals · heads · splits · plate · active nav
-     ============================================================ */
-  var revealEls = document.querySelectorAll(".reveal");
-  var headEls = document.querySelectorAll(".sec-head");
-  var stageEl = document.getElementById("lumis-stage");
-  var plateEl = document.querySelector(".plate");
-
-  if (reduceMotion || !("IntersectionObserver" in window)) {
-    revealEls.forEach(function (el) { el.classList.add("visible"); });
-    headEls.forEach(function (el) { el.classList.add("in"); });
-    splitEls.forEach(function (el) { el.classList.add("in"); });
-    if (plateEl) plateEl.classList.add("in");
-  } else {
-    var io = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            io.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -36px 0px" }
-    );
-    revealEls.forEach(function (el) { io.observe(el); });
-
-    var hio = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("in");
-            hio.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.6 }
-    );
-    headEls.forEach(function (el) { hio.observe(el); });
-
-    var sio = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("in");
-            sio.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.5 }
-    );
-    splitEls.forEach(function (el) { sio.observe(el); });
-
-    // the case-study frame opens when the stage arrives
-    if (stageEl && plateEl) {
-      var pio = new IntersectionObserver(
-        function (entries) {
-          entries.forEach(function (entry) {
-            if (entry.isIntersecting) {
-              plateEl.classList.add("in");
-              pio.unobserve(entry.target);
-            }
-          });
-        },
-        { threshold: 0.22 }
-      );
-      pio.observe(stageEl);
-    }
-  }
-
-  /* ---------- Active section in masthead ---------- */
-  var ids = ["work", "profile", "toolbox", "record", "contact"];
-  var navMap = {};
-  ids.forEach(function (id) {
-    var link = document.querySelector('.head-nav a[href="#' + id + '"]');
-    if (link) navMap[id] = link;
-  });
-
-  if ("IntersectionObserver" in window) {
-    var activeIo = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          var link = navMap[entry.target.id];
-          if (!link) return;
-          if (entry.isIntersecting) {
-            ids.forEach(function (k) {
-              if (navMap[k]) navMap[k].classList.remove("active");
-            });
-            link.classList.add("active");
-          }
-        });
-      },
-      { rootMargin: "-45% 0px -50% 0px" }
-    );
-    ids.forEach(function (id) {
-      var sec = document.getElementById(id);
-      if (sec) activeIo.observe(sec);
     });
   }
 
   /* ============================================================
-     REDUCED MOTION — stillness: static page, no loops
+     STAIRCASE DECK — the spatial system
      ============================================================ */
-  if (reduceMotion || !window.requestAnimationFrame) {
-    doc.classList.add("loaded");
-    return;
-  }
+  var deck = document.getElementById("deck");
+  var panels = deck ? Array.prototype.slice.call(deck.querySelectorAll(".panel")) : [];
+  var total = panels.length;
+  var current = 0;
+  var transitioning = false;
+  var TRANSITION_MS = 1150;
 
-  /* ============================================================
-     ROTATING DECK — six slides, dealt forward in a loop
-     ============================================================ */
-  var deckEl = document.querySelector(".hero-cards");
-  var cards = deckEl ? Array.prototype.slice.call(deckEl.querySelectorAll(".hcard")) : [];
-  var deckCur = document.getElementById("deck-cur");
-  var deckTotal = document.getElementById("deck-total");
-  var deckBar = document.getElementById("deck-bar");
+  var chapterCur = document.getElementById("chapter-cur");
+  var chapterTotal = document.getElementById("chapter-total");
+  var railBtns = Array.prototype.slice.call(document.querySelectorAll(".rail-btn"));
+  var navPrev = document.getElementById("nav-prev");
+  var navNext = document.getElementById("nav-next");
 
-  var INTERVAL = 4200; // ms per slide
-  var LEAVE_MS = 880;  // fade finishes before teleport to the back slot
-  var order = cards.map(function (_, i) { return i; });
-  var cycleStart = 0;
-  var deckReady = false;
+  if (chapterTotal) chapterTotal.textContent = pad2(total);
 
+  /* ---- position assignment ---- */
   function setPos(el, pos) {
     if (el._pos !== undefined) el.classList.remove("pos-" + el._pos);
     el._pos = pos;
@@ -287,422 +146,237 @@
   }
 
   function applyPositions() {
-    order.forEach(function (cardIdx, pos) {
-      setPos(cards[cardIdx], pos);
+    panels.forEach(function (p, i) {
+      // distance from current, wrapping around the ring
+      var dist = (i - current + total) % total;
+      if (dist > total / 2) dist -= total;
+      // map distance to a position slot
+      var pos;
+      if (dist === 0) pos = 0;
+      else if (dist === -1) pos = 1;
+      else if (dist === -2) pos = 2;
+      else if (dist === 1) pos = 3;
+      else if (dist === 2) pos = 4;
+      else pos = 5 + Math.min(2, Math.abs(dist) - 3);
+      setPos(p, pos);
     });
   }
 
-  function cycle(now) {
-    var frontIdx = order.shift(); // remove front card…
-    order.push(frontIdx);         // …queue it for the back
-
-    // everyone else glides one slot forward
-    order.forEach(function (cardIdx, pos) {
-      if (cardIdx !== frontIdx) setPos(cards[cardIdx], pos);
+  /* ---- chapter counter + rail state ---- */
+  function updateMeta() {
+    if (chapterCur) chapterCur.textContent = pad2(current + 1);
+    railBtns.forEach(function (btn, i) {
+      btn.classList.toggle("active", i === current);
     });
-
-    // front card sails off the top of the fan
-    var frontEl = cards[frontIdx];
-    if (frontEl._pos !== undefined) frontEl.classList.remove("pos-" + frontEl._pos);
-    frontEl._pos = undefined;
-    frontEl.classList.add("leaving");
-
-    // counter shows the incoming front card
-    if (deckCur) deckCur.textContent = pad2(order[0] + 1);
-
-    // once faded, snap (invisibly) to the back slot
-    setTimeout(function () {
-      frontEl.classList.remove("leaving");
-      frontEl.classList.add("no-t");
-      setPos(frontEl, order.length - 1);
-      void frontEl.offsetWidth; // commit the teleport without transition
-      frontEl.classList.remove("no-t");
-    }, LEAVE_MS);
-
-    cycleStart = now;
+    if (navPrev) navPrev.disabled = current === 0;
+    if (navNext) navNext.disabled = current === total - 1;
   }
 
-  function initDeck() {
-    if (!cards.length) return;
-    if (deckTotal) deckTotal.textContent = pad2(cards.length);
+  /* ---- navigation ---- */
+  function goTo(index, instant) {
+    if (transitioning) return;
+    if (index < 0 || index >= total) return;
+    if (index === current) return;
 
-    // staggered bloom from the base (hidden) state into the fan
-    cards.forEach(function (el, i) {
-      el.style.transitionDelay = (0.35 + i * 0.08).toFixed(2) + "s";
-    });
+    transitioning = true;
+    current = index;
     applyPositions();
-    if (deckCur) deckCur.textContent = pad2(order[0] + 1);
+    updateMeta();
+
+    // focus the active panel for keyboard users
+    var active = panels[current];
+    if (active && !instant) {
+      active.focus({ preventScroll: true });
+    }
+
     setTimeout(function () {
-      cards.forEach(function (el) { el.style.transitionDelay = ""; });
-    }, 2400);
-
-    cycleStart = performance.now();
-    deckReady = true;
+      transitioning = false;
+    }, instant ? 50 : TRANSITION_MS);
   }
 
-  /* ---------- pause the deck when the hero is off-screen ---------- */
-  var heroVisible = true;
-  var heroEl = document.querySelector(".hero");
-  if (heroEl && "IntersectionObserver" in window) {
-    new IntersectionObserver(
-      function (entries) {
-        heroVisible = entries[0].isIntersecting;
-      },
-      { threshold: 0.02 }
-    ).observe(heroEl);
-  }
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
 
   /* ============================================================
-     MEASUREMENT — cached geometry, refreshed on resize/load
+     INPUT — wheel, keyboard, touch, rail
      ============================================================ */
-  var barEl = document.getElementById("progress-bar");
-  var vh = window.innerHeight;
-  var docH = 1;
-  var pinEl = document.querySelector(".stage-pin");
-  var appBodyEl = document.querySelector(".app-body");
-  var pinExtra = 1;
+  var wheelLock = false;
+  var wheelLockT = null;
 
-  var ghosts = [];
-  document.querySelectorAll(".ghost").forEach(function (g) {
-    var sec = g.closest(".sec");
-    if (sec) {
-      ghosts.push({
-        el: g,
-        sec: sec,
-        dir: g.getAttribute("data-dir") === "-1" ? -1 : 1
-      });
+  function handleWheel(e) {
+    if (wheelLock) {
+      e.preventDefault();
+      return;
+    }
+    var dy = e.deltaY;
+    if (Math.abs(dy) < 8) return; // ignore micro-scrolls
+
+    wheelLock = true;
+    if (dy > 0) next();
+    else prev();
+
+    clearTimeout(wheelLockT);
+    wheelLockT = setTimeout(function () {
+      wheelLock = false;
+    }, 900);
+  }
+
+  if (deck && !reduceMotion) {
+    deck.addEventListener("wheel", handleWheel, { passive: false });
+  }
+
+  document.addEventListener("keydown", function (e) {
+    if (mirror && mirror.style.display !== "none" && !mirror.classList.contains("done")) return;
+    if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") {
+      e.preventDefault();
+      next();
+    } else if (e.key === "ArrowUp" || e.key === "PageUp") {
+      e.preventDefault();
+      prev();
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      goTo(0);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      goTo(total - 1);
     }
   });
 
-  function measure() {
-    vh = Math.max(1, window.innerHeight);
-    docH = Math.max(1, doc.scrollHeight - vh);
-    if (stageEl && pinEl) {
-      pinExtra = Math.max(1, stageEl.offsetHeight - pinEl.offsetHeight);
-    }
+  /* ---- touch / swipe ---- */
+  var touchStartY = 0;
+  var touchStartX = 0;
+  var touchActive = false;
+
+  if (deck) {
+    deck.addEventListener("touchstart", function (e) {
+      touchStartY = e.touches[0].clientY;
+      touchStartX = e.touches[0].clientX;
+      touchActive = true;
+    }, { passive: true });
+
+    deck.addEventListener("touchmove", function (e) {
+      if (!touchActive) return;
+      var dy = e.touches[0].clientY - touchStartY;
+      var dx = e.touches[0].clientX - touchStartX;
+      // vertical swipe dominates; horizontal swipes ignored
+      if (Math.abs(dy) > 60 && Math.abs(dy) > Math.abs(dx) * 1.4) {
+        touchActive = false;
+        if (dy < 0) next();
+        else prev();
+      }
+    }, { passive: true });
+
+    deck.addEventListener("touchend", function () {
+      touchActive = false;
+    }, { passive: true });
   }
-  measure();
-  var resizeT = null;
-  window.addEventListener("resize", function () {
-    clearTimeout(resizeT);
-    resizeT = setTimeout(measure, 120);
+
+  /* ---- rail buttons + wordmark ---- */
+  railBtns.forEach(function (btn, i) {
+    btn.addEventListener("click", function () {
+      goTo(i);
+    });
   });
-  window.addEventListener("load", measure);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+
+  var wordmark = document.querySelector(".wordmark");
+  if (wordmark) {
+    wordmark.addEventListener("click", function () {
+      goTo(0);
+    });
+  }
+
+  /* ---- arrows ---- */
+  if (navPrev) navPrev.addEventListener("click", prev);
+  if (navNext) navNext.addEventListener("click", next);
 
   /* ============================================================
-     POINTER — drift, magnets, tilt, cursor physics
+     POINTER PARALLAX — subtle depth on the active panel
      ============================================================ */
-  var mx = -100, my = -100;
-  var pnx = 0, pny = 0;
+  var px = 0, py = 0, pxT = 0, pyT = 0;
   var pointerSeen = false;
 
-  var dotEl = null, ringEl = null;
-  var dotX = 0, dotY = 0, ringX = 0, ringY = 0, ringScale = 1, ringScaleT = 1;
-
-  if (finePointer) {
-    dotEl = document.createElement("div");
-    dotEl.className = "cursor-dot";
-    dotEl.setAttribute("aria-hidden", "true");
-    ringEl = document.createElement("div");
-    ringEl.className = "cursor-ring";
-    ringEl.setAttribute("aria-hidden", "true");
-    document.body.appendChild(dotEl);
-    document.body.appendChild(ringEl);
-
-    window.addEventListener(
-      "pointermove",
-      function (e) {
-        if (e.pointerType && e.pointerType !== "mouse") return;
-        mx = e.clientX;
-        my = e.clientY;
-        if (!pointerSeen) {
-          dotX = mx; dotY = my; ringX = mx; ringY = my; // appear in place
-        }
-        pointerSeen = true;
-        pnx = (e.clientX / window.innerWidth) * 2 - 1;
-        pny = (e.clientY / window.innerHeight) * 2 - 1;
-        var t = e.target;
-        var hot = t && t.closest && t.closest("a, button, .row, .tool");
-        ringScaleT = hot ? 1.9 : 1;
-      },
-      { passive: true }
-    );
-    document.documentElement.addEventListener("mouseleave", function () {
-      pointerSeen = false;
-    });
-  }
-
-  /* ---------- magnetic hover ---------- */
-  var magnets = [];
-  if (finePointer) {
-    document.querySelectorAll(".magnet").forEach(function (el) {
-      var m = { el: el, cx: 0, cy: 0, tx: 0, ty: 0, live: false };
-      el.addEventListener("pointerenter", function (e) {
-        if (e.pointerType && e.pointerType !== "mouse") return;
-        m.live = true;
-      });
-      el.addEventListener(
-        "pointermove",
-        function (e) {
-          if (!m.live) return;
-          var r = el.getBoundingClientRect();
-          m.tx = ((e.clientX - (r.left + r.width / 2)) / (r.width / 2)) * 10;
-          m.ty = ((e.clientY - (r.top + r.height / 2)) / (r.height / 2)) * 8;
-        },
-        { passive: true }
-      );
-      el.addEventListener("pointerleave", function () {
-        m.live = false;
-        m.tx = 0;
-        m.ty = 0;
-      });
-      magnets.push(m);
-    });
-  }
-
-  /* ---------- Lumis tilt + spotlight ---------- */
-  var plate = document.querySelector(".plate");
-  var browserEl = document.querySelector(".browser");
-  var rx = 0, ry = 0, rxT = 0, ryT = 0;
-  var plateVisible = false;
-
-  if (plate && "IntersectionObserver" in window) {
-    new IntersectionObserver(
-      function (entries) {
-        plateVisible = entries[0].isIntersecting;
-      },
-      { rootMargin: "120px 0px 120px 0px" }
-    ).observe(plate);
-  }
-
-  if (plate && browserEl && finePointer) {
-    plate.addEventListener(
-      "pointermove",
-      function (e) {
-        var r = plate.getBoundingClientRect();
-        var nx = (e.clientX - r.left) / r.width - 0.5;
-        var ny = (e.clientY - r.top) / r.height - 0.5;
-        ryT = nx * 7;
-        rxT = -ny * 6;
-        plate.style.setProperty("--gx", ((nx + 0.5) * 100).toFixed(1) + "%");
-        plate.style.setProperty("--gy", ((ny + 0.5) * 100).toFixed(1) + "%");
-      },
-      { passive: true }
-    );
-    plate.addEventListener("pointerleave", function () {
-      rxT = 0;
-      ryT = 0;
-    });
+  if (finePointer && !reduceMotion) {
+    window.addEventListener("pointermove", function (e) {
+      if (e.pointerType && e.pointerType !== "mouse") return;
+      pxT = (e.clientX / window.innerWidth) * 2 - 1;
+      pyT = (e.clientY / window.innerHeight) * 2 - 1;
+      pointerSeen = true;
+    }, { passive: true });
   }
 
   /* ============================================================
-     BOOT CURTAIN — count, fill, lift, then hand over the stage
+     THE LOOP — parallax + atmosphere drift + head visibility
      ============================================================ */
-  var loader = document.getElementById("loader");
-  var loadCount = document.getElementById("load-count");
-  var loadLine = document.getElementById("load-line");
-  var BOOT_MS = 1150;
-
-  function boot() {
-    doc.classList.add("loaded");
-    initDeck();
-    measure();
-  }
-
-  if (loader) {
-    document.body.style.overflow = "hidden";
-    var bootStart = 0;
-    function tickBoot(now) {
-      if (!bootStart) bootStart = now;
-      var p = clamp((now - bootStart) / BOOT_MS, 0, 1);
-      var eased = 1 - Math.pow(1 - p, 3);
-      if (loadCount) loadCount.textContent = pad2(Math.round(eased * 100));
-      if (loadLine) loadLine.style.transform = "scaleX(" + eased.toFixed(4) + ")";
-      if (p < 1) {
-        requestAnimationFrame(tickBoot);
-      } else {
-        loader.classList.add("done");
-        document.body.style.overflow = "";
-        boot();
-        setTimeout(function () {
-          if (loader.parentNode) loader.parentNode.removeChild(loader);
-        }, 1000);
-      }
-    }
-    requestAnimationFrame(tickBoot);
-  } else {
-    boot();
-  }
-
-  /* ============================================================
-     THE LOOP — scroll choreography, deck, ghosts, pin, cursor
-     ============================================================ */
-  var hp = 0;                 // hero progress 0..1
-  var par = 0;                // parallax px
-  var vel = 0, velT = 0;      // scroll velocity skew (deg)
-  var dx = 0, dy = 0, dxT = 0, dyT = 0; // pointer drift px
-  var prevSy = window.scrollY || 0;
-  var lastHp = -1, lastPar = -1, lastDx = -1, lastDy = -1, lastVel = "";
-  var lastPinp = "-1", lastGp = {};
+  var head = document.querySelector(".site-head");
+  var lastPx = -1, lastPy = -1;
+  var lastAdx = -1, lastAdy = -1;
+  var atmoT = 0;
 
   function frame(now) {
-    var sy = window.scrollY || window.pageYOffset || 0;
-    var dyScroll = sy - prevSy;
-    prevSy = sy;
-
-    // hero exit choreography
-    var hpTarget = clamp(sy / vh, 0, 1);
-    hp += (hpTarget - hp) * 0.12;
-    var parTarget = sy * -0.06;
-    par += (parTarget - par) * 0.12;
-    if (Math.abs(parTarget - par) < 0.05) par = parTarget;
-
-    var hpR = hp.toFixed(4);
-    var parR = par.toFixed(2);
-    if (hpR !== lastHp) { doc.style.setProperty("--hp", hpR); lastHp = hpR; }
-    if (parR !== lastPar) { doc.style.setProperty("--py", parR); lastPar = parR; }
-
-    // velocity skew — type leans into fast scrolls, settles when still
-    velT = clamp(dyScroll * 0.05, -2.4, 2.4);
-    vel += (velT - vel) * 0.1;
-    var velR = vel.toFixed(2);
-    if (velR !== lastVel) {
-      if (Math.abs(vel) > 0.02) doc.style.setProperty("--vel", velR + "deg");
-      else doc.style.setProperty("--vel", "0deg");
-      lastVel = velR;
-    }
-
-    // progress hairline
-    if (barEl) {
-      barEl.style.transform = "scaleX(" + Math.min(1, sy / docH).toFixed(4) + ")";
-    }
-
-    // masthead physics — hide on dive, return on rise
-    if (!menuOpen && head) {
-      if (dyScroll > 6 && sy > vh * 0.9) head.classList.add("head-hidden");
-      else if (dyScroll < -6 || sy <= vh * 0.9) head.classList.remove("head-hidden");
-    }
-
-    // hero pointer drift
-    if (heroVisible && pointerSeen) {
-      dxT = pnx * -14;
-      dyT = pny * -10;
-    } else {
-      dxT = 0;
-      dyT = 0;
-    }
-    dx += (dxT - dx) * 0.06;
-    dy += (dyT - dy) * 0.06;
-    if (Math.abs(dxT - dx) < 0.05) dx = dxT;
-    if (Math.abs(dyT - dy) < 0.05) dy = dyT;
-    var dxR = dx.toFixed(2);
-    var dyR = dy.toFixed(2);
-    if (dxR !== lastDx) { doc.style.setProperty("--dx", dxR); lastDx = dxR; }
-    if (dyR !== lastDy) { doc.style.setProperty("--dy", dyR); lastDy = dyR; }
-
-    // deck cadence
-    if (deckReady && cards.length && heroVisible) {
-      var t = now - cycleStart;
-      if (deckBar) {
-        deckBar.style.transform = "scaleX(" + Math.min(1, t / INTERVAL).toFixed(4) + ")";
+    if (finePointer && !reduceMotion) {
+      px += (pxT - px) * 0.05;
+      py += (pyT - py) * 0.05;
+      var pxR = px.toFixed(3);
+      var pyR = py.toFixed(3);
+      if (pxR !== lastPx) {
+        doc.style.setProperty("--px", pxR);
+        lastPx = pxR;
       }
-      if (t >= INTERVAL) cycle(now);
-    }
-
-    // ghost numerals — depth behind each act
-    for (var gi = 0; gi < ghosts.length; gi++) {
-      var gh = ghosts[gi];
-      var gr = gh.sec.getBoundingClientRect();
-      if (gr.bottom < -80 || gr.top > vh + 80) continue;
-      var gp = clamp((vh - gr.top) / (vh + gr.height), 0, 1);
-      var gv = ((gp - 0.5) * -130 * gh.dir).toFixed(1);
-      if (lastGp[gi] !== gv) {
-        gh.el.style.setProperty("--gp", gv);
-        lastGp[gi] = gv;
+      if (pyR !== lastPy) {
+        doc.style.setProperty("--py", pyR);
+        lastPy = pyR;
       }
     }
 
-    // Lumis stage — manual pin, frame push, in-app drift
-    if (stageEl && pinEl && mqPin.matches) {
-      var sr = stageEl.getBoundingClientRect();
-      if (sr.top < 0 && sr.bottom > 0) {
-        var offset = clamp(-sr.top, 0, pinExtra);
-        pinEl.style.transform = "translate3d(0," + offset.toFixed(1) + "px,0)";
-        var pinp = offset / pinExtra;
-        var pinpR = pinp.toFixed(3);
-        if (pinpR !== lastPinp) {
-          pinEl.style.setProperty("--pinp", pinpR);
-          lastPinp = pinpR;
-        }
-        if (appBodyEl) {
-          pinEl.style.setProperty("--appj", ((0.5 - pinp) * 26).toFixed(1) + "px");
-        }
-      } else if (lastPinp !== "0") {
-        pinEl.style.transform = "translate3d(0,0,0)";
-        pinEl.style.setProperty("--pinp", "0");
-        if (appBodyEl) pinEl.style.setProperty("--appj", "13px");
-        lastPinp = "0";
+    // atmosphere drift — slow, controlled, subordinate
+    if (!reduceMotion) {
+      atmoT = now * 0.00006;
+      var adx = Math.sin(atmoT) * 30;
+      var ady = Math.cos(atmoT * 0.8) * 22;
+      var adxR = adx.toFixed(1);
+      var adyR = ady.toFixed(1);
+      if (adxR !== lastAdx) {
+        doc.style.setProperty("--adx", adxR);
+        lastAdx = adxR;
       }
-    }
-
-    // magnets
-    for (var i = 0; i < magnets.length; i++) {
-      var m = magnets[i];
-      m.cx += (m.tx - m.cx) * 0.18;
-      m.cy += (m.ty - m.cy) * 0.18;
-      if (!m.live && Math.abs(m.cx) < 0.05 && Math.abs(m.cy) < 0.05) {
-        if (m.cx !== 0 || m.cy !== 0) {
-          m.cx = 0;
-          m.cy = 0;
-          m.el.style.setProperty("--mx", "0px");
-          m.el.style.setProperty("--my", "0px");
-        }
-        continue;
-      }
-      m.el.style.setProperty("--mx", m.cx.toFixed(2) + "px");
-      m.el.style.setProperty("--my", m.cy.toFixed(2) + "px");
-    }
-
-    // Lumis tilt + element-relative parallax
-    rx += (rxT - rx) * 0.1;
-    ry += (ryT - ry) * 0.1;
-    if (Math.abs(rxT - rx) < 0.01) rx = rxT;
-    if (Math.abs(ryT - ry) < 0.01) ry = ryT;
-    if (browserEl) {
-      var bpy = 0;
-      if (plateVisible) {
-        var pr = plate.getBoundingClientRect();
-        var off = (pr.top + pr.height / 2 - vh / 2) * -0.055;
-        bpy = Math.max(-34, Math.min(34, off));
-      }
-      browserEl.style.setProperty("--rx", rx.toFixed(2) + "deg");
-      browserEl.style.setProperty("--ry", ry.toFixed(2) + "deg");
-      browserEl.style.setProperty("--bpy", bpy.toFixed(2) + "px");
-    }
-
-    // cursor physics — dot leads, ring trails
-    if (finePointer) {
-      if (pointerSeen) {
-        dotX += (mx - dotX) * 0.55;
-        dotY += (my - dotY) * 0.55;
-        ringX += (mx - ringX) * 0.16;
-        ringY += (my - ringY) * 0.16;
-        ringScale += (ringScaleT - ringScale) * 0.14;
-        dotEl.style.opacity = "1";
-        ringEl.style.opacity = "1";
-        dotEl.style.transform =
-          "translate3d(" + (dotX - 3).toFixed(1) + "px," + (dotY - 3).toFixed(1) + "px,0)";
-        ringEl.style.transform =
-          "translate3d(" + (ringX - 17).toFixed(1) + "px," + (ringY - 17).toFixed(1) + "px,0) scale(" + ringScale.toFixed(3) + ")";
-      } else {
-        dotEl.style.opacity = "0";
-        ringEl.style.opacity = "0";
+      if (adyR !== lastAdy) {
+        doc.style.setProperty("--ady", adyR);
+        lastAdy = adyR;
       }
     }
 
     window.requestAnimationFrame(frame);
   }
 
-  window.requestAnimationFrame(frame);
+  /* ============================================================
+     INIT
+     ============================================================ */
+  function init() {
+    doc.classList.remove("no-js");
+    doc.classList.add("js");
+
+    if (reduceMotion || !panels.length) {
+      // reduced motion: show deck immediately, no mirror
+      if (mirror) mirror.style.display = "none";
+      applyPositions();
+      updateMeta();
+      return;
+    }
+
+    // hide deck until the mirror completes
+    if (deck) deck.style.visibility = "hidden";
+    if (head) head.style.opacity = "0";
+
+    runMirror(function () {
+      if (deck) deck.style.visibility = "visible";
+      if (head) head.style.opacity = "1";
+      applyPositions();
+      updateMeta();
+      if (panels[0]) panels[0].focus({ preventScroll: true });
+    });
+
+    window.requestAnimationFrame(frame);
+  }
+
+  init();
 })();

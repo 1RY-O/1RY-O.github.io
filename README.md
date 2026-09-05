@@ -1,15 +1,36 @@
 # Pilla Sri Sai Rahul — Personal Website
 
-Editorial "paper-and-ink" portfolio for https://1ry-o.github.io
+Art-directed digital experience for https://1ry-o.github.io
 
-Warm ivory paper, near-black ink, one vermilion accent. Set in Fraunces
-(display serif) and IBM Plex Mono. Lumis is presented as a full-bleed dark
-"plate" with a hand-crafted product mock. Built with plain HTML/CSS/JS —
-no frameworks, no build tools, no dependencies.
+A cinematic, editorial portfolio built around a **broken-mirror opening sequence** and a **staircase depth deck** — five panels visible in spatial depth at any moment, with the active panel dominant and surrounding panels receding.
 
-## Sections
+## Design System
 
-Hero (cover) · 01 Selected work (Lumis flagship + bench) · 02 Profile · 03 Toolbox · 04 Record · 05 Contact
+- **Type**: Fraunces (display serif) · Inter (UI) · IBM Plex Mono (metadata)
+- **Palette**: Warm charcoal · restrained brass · bone
+- **Motion**: GPU-friendly transforms/opacity/filter only · rAF lerp · controlled inertia
+- **Atmosphere**: Subtle light blooms + translucent bubbles, subordinate to composition
+
+## Experience
+
+1. **Broken Mirror** — the screen opens as a fractured mirror. Twelve shards hold partial glimpses of the identity. The shards scatter with depth, hold, then reassemble into the full name reveal.
+2. **Staircase Deck** — eight chapters arranged in a spatial depth system. Panels physically convey through positions as you navigate. The active panel is largest, sharpest, closest; neighbors recede with scale, blur, and opacity.
+3. **Chapters** — Identity · About · Lumis · Robotics/IoT · Hackathons · Experience · Skills · Contact
+
+## Input
+
+- Mouse wheel / trackpad
+- Keyboard arrows, PageUp/Down, Home/End, Space
+- Touch swipe (vertical)
+- Chapter rail (right side)
+- Prev/next arrows (bottom center)
+
+## Accessibility
+
+- `prefers-reduced-motion` — mirror skipped, deck static, no loops
+- Keyboard navigation with visible focus states
+- Semantic structure (`main`, `section`, `nav`, `dl`, `ol`)
+- No-JS fallback — static scrollable page
 
 ## Run locally
 
@@ -32,7 +53,7 @@ so GitHub auto-publishes the site.
 git remote add origin https://github.com/1RY-O/1RY-O.github.io.git
 git branch -M main
 git add .
-git commit -m "feat: editorial redesign"
+git commit -m "feat: art-directed redesign"
 git push -u origin main
 ```
 
@@ -42,7 +63,7 @@ Then the site is live at `https://1ry-o.github.io/`.
 
 | File | Purpose |
 |---|---|
-| `index.html` | All page sections (semantic, numbered-monograph structure) |
-| `styles.css` | Paper/ink editorial system, Lumis plate, motion, responsive layout |
-| `script.js` | Index overlay, scroll reveals, active nav state, footer year |
-| `resume.pdf` | Downloadable resume (linked from masthead, hero, contact) |
+| `index.html` | All 8 chapters, mirror, atmosphere, navigation |
+| `styles.css` | Editorial depth system, mirror, deck, responsive, reduced-motion |
+| `script.js` | Mirror shatter/reassembly, deck physics, input handling, parallax |
+| `resume.pdf` | Downloadable resume (linked from masthead) |
