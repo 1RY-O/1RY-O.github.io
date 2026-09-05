@@ -60,8 +60,9 @@
   }
 
   /* ---------- Active section in masthead ---------- */
-  var map = { work: null, profile: null, contact: null };
-  Object.keys(map).forEach(function (id) {
+  var ids = ["work", "profile", "toolbox", "record", "contact"];
+  var map = {};
+  ids.forEach(function (id) {
     var link = document.querySelector('.head-nav a[href="#' + id + '"]');
     if (link) map[id] = link;
   });
@@ -73,16 +74,16 @@
           var link = map[entry.target.id];
           if (!link) return;
           if (entry.isIntersecting) {
-            Object.keys(map).forEach(function (k) {
-              if (map[k]) map[k].style.color = "";
+            ids.forEach(function (k) {
+              if (map[k]) map[k].classList.remove("active");
             });
-            link.style.color = "var(--accent)";
+            link.classList.add("active");
           }
         });
       },
       { rootMargin: "-45% 0px -50% 0px" }
     );
-    Object.keys(map).forEach(function (id) {
+    ids.forEach(function (id) {
       var sec = document.getElementById(id);
       if (sec) activeIo.observe(sec);
     });
