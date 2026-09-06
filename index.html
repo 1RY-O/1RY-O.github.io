@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pilla Sri Sai Rahul — A Portfolio in Assembly</title>
-  <meta name="description" content="Pilla Sri Sai Rahul — Mechatronics engineering student at Mahindra University. Robotics, embedded systems, IoT, and Lumis, an AI-powered journaling prototype." />
+  <title>Pilla Sri Sai Rahul — Builder · Mechatronics · Robotics · AI</title>
+  <meta name="description" content="Pilla Sri Sai Rahul — Mechatronics engineering student at Mahindra University. Builder of Lumis, an AI-powered journaling prototype. Robotics, embedded systems, IoT." />
   <meta name="theme-color" content="#08080a" />
-  <meta property="og:title" content="Pilla Sri Sai Rahul — A Portfolio in Assembly" />
+  <meta property="og:title" content="Pilla Sri Sai Rahul — Builder" />
   <meta property="og:description" content="Mechatronics student · robotics · embedded · IoT · AI · creator of Lumis" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://1ry-o.github.io/" />
@@ -17,18 +17,15 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <a class="skip-link" href="#act1">Skip to content</a>
+  <a class="skip-link" href="#lumis">Skip to Lumis</a>
 
   <div class="grain" aria-hidden="true"></div>
-  <div class="bar bar--top" id="bar-top" aria-hidden="true"></div>
-  <div class="bar bar--bottom" id="bar-bottom" aria-hidden="true"></div>
-  <div class="iris" id="iris" aria-hidden="true"></div>
   <div class="progress" aria-hidden="true"><i id="progress-bar"></i></div>
   <div class="cursor" id="cursor" aria-hidden="true"><i></i></div>
 
   <!-- ============ MASTHEAD ============ -->
   <header class="mast">
-    <a class="brand mag" href="#coldopen" aria-label="Pilla Sri Sai Rahul — back to the cold open">
+    <a class="brand mag" href="#hero" aria-label="Pilla Sri Sai Rahul — back to top">
       <svg class="brand-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
         <rect x="4" y="4" width="24" height="24" stroke="var(--bone)" stroke-width="1.3"/>
         <circle cx="16" cy="16" r="5.4" stroke="var(--accent)" stroke-width="1.3"/>
@@ -36,98 +33,87 @@
       </svg>
       <span class="brand-name">P·SR</span>
     </a>
-    <p class="mast-scene mono" aria-live="polite">
-      <span class="rec" aria-hidden="true"></span>
-      <span>SC <span id="scene-cur">00</span>/07</span>
-      <span class="mast-sep" aria-hidden="true">·</span>
-      <span id="scene-title">Cold Open</span>
-      <span class="mast-sep" aria-hidden="true">·</span>
-      <span id="timecode">00:00:00:00</span>
+    <p class="mast-pos mono" aria-live="polite">
+      <span id="spec-cur">01</span><span class="mast-sep" aria-hidden="true">/</span><span>06</span>
+      <span class="mast-sep" aria-hidden="true">·</span><span id="spec-title">Hero</span>
     </p>
     <div class="mast-right">
       <a class="mast-resume mono mag" href="resume.pdf" download>Résumé&hairsp;<span aria-hidden="true">↓</span></a>
-      <button class="slate-toggle mono mag" id="slate-toggle" aria-expanded="false" aria-controls="slate">
-        <span class="slate-toggle-label">Slate</span><i aria-hidden="true"></i>
+      <button class="index-toggle mono mag" id="index-toggle" aria-expanded="false" aria-controls="index">
+        <span class="index-toggle-label">Index</span><i aria-hidden="true"></i>
       </button>
     </div>
   </header>
 
-  <!-- ============ SLATE ============ -->
-  <nav class="slate" id="slate" aria-label="Scenes" aria-hidden="true">
-    <div class="slate-head mono"><span>Reel 01 — Assembly</span><span>7 scenes</span></div>
-    <ol class="slate-list">
-      <li><a href="#coldopen" data-scene-link="0"><b>00</b><span>Cold Open</span><i>0:00</i></a></li>
-      <li><a href="#act1" data-scene-link="1"><b>01</b><span>Identity</span><i>Title sequence</i></a></li>
-      <li><a href="#act2" data-scene-link="2"><b>02</b><span>Lumis</span><i>Feature presentation</i></a></li>
-      <li><a href="#act3" data-scene-link="3"><b>03</b><span>Systems</span><i>Blueprint overlay</i></a></li>
-      <li><a href="#act4" data-scene-link="4"><b>04</b><span>Field Log</span><i>Shot list</i></a></li>
-      <li><a href="#act5" data-scene-link="5"><b>05</b><span>Index</span><i>Cast · Props</i></a></li>
-      <li><a href="#credits" data-scene-link="6"><b>06</b><span>Credits</span><i>End of reel</i></a></li>
+  <!-- ============ INDEX ============ -->
+  <nav class="index" id="index" aria-label="Sections" aria-hidden="true">
+    <div class="index-head mono"><span>Specimen index</span><span>6 specimens</span></div>
+    <ol class="index-list">
+      <li><a href="#hero" data-spec-link="0"><b>01</b><span>Hero</span><i>Builder, Mahindra Univ.</i></a></li>
+      <li><a href="#lumis" data-spec-link="1"><b>02</b><span>Lumis</span><i>Flagship — live prototype</i></a></li>
+      <li><a href="#systems" data-spec-link="2"><b>03</b><span>Systems</span><i>Signal chain</i></a></li>
+      <li><a href="#fieldlog" data-spec-link="3"><b>04</b><span>Field Log</span><i>Two builds, two weekends</i></a></li>
+      <li><a href="#dossier" data-spec-link="4"><b>05</b><span>Dossier</span><i>Stations · Toolbox</i></a></li>
+      <li><a href="#contact" data-spec-link="5"><b>06</b><span>Contact</span><i>Hyderabad, IN</i></a></li>
     </ol>
-    <p class="slate-foot mono">Mechatronics — Robotics — Embedded — IoT — AI</p>
+    <p class="index-foot mono">Mechatronics — Robotics — Embedded — IoT — AI</p>
   </nav>
 
-  <main id="reel">
+  <main id="room">
 
-    <!-- ============ 00 · COLD OPEN ============ -->
-    <section class="act coldopen" id="coldopen" data-scene="Cold Open" aria-label="Cold open">
-      <div class="coldopen-inner" id="coldopen-inner">
-        <p class="tc-flicker mono" data-open="flicker" aria-hidden="true">00:00:00:00&ensp;·&ensp;REEL 01&ensp;·&ensp;A PORTFOLIO IN ASSEMBLY</p>
-        <p class="open-kicker mono" data-open="kicker">A portfolio in assembly · Reel 01</p>
-        <h1 class="title-card" aria-label="Pilla Sri Sai Rahul">
-          <span class="mask" aria-hidden="true"><span class="line" data-open="line">Pilla</span></span>
-          <span class="mask" aria-hidden="true"><span class="line" data-open="line"><em>Sri&nbsp;Sai</em></span></span>
-          <span class="mask" aria-hidden="true"><span class="line" data-open="line">Rahul</span></span>
-        </h1>
-        <div class="open-foot">
-          <p class="mono" data-open="meta">Mechatronics · Robotics · Embedded · IoT · AI</p>
-          <p class="mono" data-open="meta">Mahindra Univ. — Hyderabad · 17.40°N 78.47°E</p>
-        </div>
-      </div>
-      <p class="scroll-cue mono" data-open="cue" aria-hidden="true"><span>Run it</span><i></i></p>
-    </section>
-
-    <!-- ============ 01 · IDENTITY ============ -->
-    <section class="act identity" id="act1" data-scene="Identity" aria-label="Identity">
-      <div class="wrap">
-        <p class="slug mono" data-rv><span>Scene 01</span>Identity<i>Title sequence</i></p>
-        <h2 class="act-title" aria-label="Builder of bodies for software.">
-          <span class="mask" aria-hidden="true"><span class="line" data-rv-line>Builder of bodies</span></span>
-          <span class="mask" aria-hidden="true"><span class="line" data-rv-line>for <em>software</em>.</span></span>
-        </h2>
-        <div class="identity-grid">
-          <p class="lede" data-rv>Pilla Sri Sai Rahul — first-year Mechatronics Engineering student at Mahindra University. I work where hardware meets software: microcontroller rigs wired on a desk, AI-enabled applications running in the cloud.</p>
-          <dl class="id-facts" data-rv-group>
-            <div class="id-fact" data-rv><dt class="mono">Studying</dt><dd>B.Tech Mechatronics — Mahindra University, 2026–2030</dd></div>
-            <div class="id-fact" data-rv><dt class="mono">Training</dt><dd>IoT &amp; Robotics — Unlox Academy</dd></div>
-            <div class="id-fact" data-rv><dt class="mono">Leading</dt><dd>Team Leader — Entrepreneurship Cell, MU</dd></div>
-            <div class="id-fact" data-rv><dt class="mono">Status</dt><dd>Open to internships &amp; collaborations</dd></div>
-          </dl>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ 02 · LUMIS — feature presentation ============ -->
-    <section class="act lumis" id="act2" data-scene="Lumis" aria-label="Lumis, feature presentation">
-      <div class="wrap lumis-pin" id="lumis-pin">
-        <p class="slug mono slug--feature" data-rv><span>Scene 02</span>Feature presentation<i>Lumis · an AI journal</i></p>
-        <div class="lumis-grid">
-          <div class="lumis-main">
-            <h2 class="lumis-title" data-lumis="title">Lumis</h2>
-            <p class="lumis-desc" data-lumis="desc">An AI-powered journaling and reflection platform. Raw entries in, structured insight out — quietly, privately, without the noise.</p>
-            <dl class="takes" data-lumis-group>
-              <div class="take" data-lumis="take"><dt class="mono">Take 01 — Problem</dt><dd>Journals accumulate; insight doesn't. Speaking to a page is easy — reading your own story back clearly is not.</dd></div>
-              <div class="take" data-lumis="take"><dt class="mono">Take 02 — Idea</dt><dd>An AI layer that reads between the lines of raw entries and surfaces quiet, human-scale reflections.</dd></div>
-              <div class="take" data-lumis="take"><dt class="mono">Take 03 — System</dt><dd>Journal client · server-side retrieval · grounded summarization — built around the user's own text.</dd></div>
-              <div class="take" data-lumis="take"><dt class="mono">Take 04 — Prototype</dt><dd>A working prototype, currently refined and tested — not a production service.</dd></div>
-            </dl>
-            <p class="stack mono" data-lumis="stack">React / Vite / Firebase / Firestore / Node.js / Express / Cloud Run / Gemini API</p>
-            <div class="btn-row" data-lumis="actions">
-              <a class="btn btn--solid mag" href="https://lumis---journal.web.app/" target="_blank" rel="noopener">Open Lumis&ensp;<span aria-hidden="true">↗</span></a>
-              <a class="btn btn--ghost mag" href="https://github.com/1RY-O/lumis-journal" target="_blank" rel="noopener">Source&ensp;<span aria-hidden="true">↗</span></a>
-            </div>
+    <!-- ============ 01 · HERO ============ -->
+    <section class="stage hero" id="hero" data-stage="Hero" aria-label="Hero">
+      <div class="hero-grid" id="hero-grid">
+        <div class="hero-main">
+          <p class="eyebrow" data-hero="eyebrow"><span>Portfolio</span><b aria-hidden="true"></b><span>Mahindra Univ. · Hyderabad</span></p>
+          <h1 class="hero-name" aria-label="Pilla Sri Sai Rahul">
+            <span class="mask" aria-hidden="true"><span class="line" data-hero="line">Pilla</span></span>
+            <span class="mask" aria-hidden="true"><span class="line" data-hero="line"><em>Sri&nbsp;Sai</em></span></span>
+            <span class="mask" aria-hidden="true"><span class="line" data-hero="line">Rahul</span></span>
+          </h1>
+          <p class="hero-claim" data-hero="claim">I build bodies for software — robots, rigs, and one AI journal that reads between the lines.</p>
+          <div class="hero-cta" data-hero="cta">
+            <a class="btn btn--solid mag" href="#lumis">See Lumis&ensp;<span aria-hidden="true">↓</span></a>
+            <a class="btn btn--ghost mag" href="https://github.com/1RY-O" target="_blank" rel="noopener">GitHub&ensp;<span aria-hidden="true">↗</span></a>
           </div>
-          <figure class="lumis-screen" data-lumis="screen" id="lumis-screen">
+        </div>
+        <aside class="rail-panel" data-hero="rail" aria-label="At a glance">
+          <p class="rail-head mono">At a glance</p>
+          <dl class="rail-rows">
+            <div class="rail-row"><dt class="mono">Role</dt><dd>Mechatronics student · Builder</dd></div>
+            <div class="rail-row"><dt class="mono">Base</dt><dd>Hyderabad, IN · 17.40°N 78.47°E</dd></div>
+            <div class="rail-row"><dt class="mono">Stack</dt><dd>ESP32 · React · Firebase · MQTT</dd></div>
+            <div class="rail-row"><dt class="mono">Now</dt><dd>IoT &amp; Robotics — Unlox Academy</dd></div>
+            <div class="rail-row"><dt class="mono">Status</dt><dd class="rail-live">Open to internships</dd></div>
+          </dl>
+          <div class="rail-links">
+            <a class="mag" href="https://github.com/1RY-O" target="_blank" rel="noopener">GitHub<span aria-hidden="true">↗</span></a>
+            <a class="mag" href="https://www.linkedin.com/in/sri-sai-rahul-pilla" target="_blank" rel="noopener">LinkedIn<span aria-hidden="true">↗</span></a>
+            <a class="mag" href="mailto:fabledadventurer.pssr@gmail.com">Email<span aria-hidden="true">↗</span></a>
+          </div>
+        </aside>
+      </div>
+      <p class="scroll-cue mono" data-hero="cue" aria-hidden="true"><span>Scroll</span><i></i></p>
+    </section>
+
+    <!-- ============ 02 · LUMIS — flagship launch ============ -->
+    <section class="stage lumis" id="lumis" data-stage="Lumis" aria-label="Lumis, flagship">
+      <div class="wrap">
+        <p class="slug" data-rv><span>02 · Flagship</span><b>Live prototype</b></p>
+        <div class="launch-tease">
+          <h2 class="lumis-word" aria-label="Lumis">
+            <span class="mask" aria-hidden="true"><span class="line" data-rv-line>Lumis</span></span>
+          </h2>
+          <p class="lumis-promise" data-rv>An AI journal that reads between the lines. Raw entries in — quiet, human-scale insight out.</p>
+          <div class="launch-cta" data-rv>
+            <a class="btn btn--solid btn--big mag" href="https://lumis---journal.web.app/" target="_blank" rel="noopener">Open the live site&ensp;<span aria-hidden="true">↗</span></a>
+            <a class="btn btn--ghost mag" href="https://github.com/1RY-O/lumis-journal" target="_blank" rel="noopener">Source&ensp;<span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="wrap lumis-pin" id="lumis-pin">
+        <div class="lumis-grid">
+          <figure class="lumis-screen" data-lumis="screen" id="lumis-screen" tabindex="0" role="button" aria-label="Replay the entry to insight animation">
             <div class="screen-clip" id="screen-clip">
               <div class="screen" id="screen">
                 <div class="scr-top"><span class="scr-logo">Lumis</span><span class="scr-nav mono">journal / reflections</span></div>
@@ -148,18 +134,27 @@
                 </div>
               </div>
             </div>
-            <figcaption class="mono">Fig. 01 — Entry → Insight</figcaption>
+            <figcaption class="mono"><span data-lumis="cap">Fig. 01 — Entry → Insight · click the screen to replay</span></figcaption>
             <span class="stamp mono" aria-hidden="true">Open prototype — not production</span>
           </figure>
+          <div class="lumis-side">
+            <dl class="params" data-lumis-group>
+              <div class="param" data-lumis="param"><dt class="mono"><span>01</span>Problem</dt><dd>Journals accumulate; insight doesn't.</dd></div>
+              <div class="param" data-lumis="param"><dt class="mono"><span>02</span>Idea</dt><dd>An AI layer that surfaces quiet reflections from raw entries.</dd></div>
+              <div class="param" data-lumis="param"><dt class="mono"><span>03</span>System</dt><dd>Journal client · retrieval · grounded summarization.</dd></div>
+              <div class="param" data-lumis="param"><dt class="mono"><span>04</span>Status</dt><dd>Working prototype — refined and tested, not production.</dd></div>
+            </dl>
+            <p class="stack mono" data-lumis="stack">React / Vite / Firebase / Firestore / Node.js / Express / Cloud Run / Gemini API</p>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- ============ 03 · SYSTEMS ============ -->
-    <section class="act systems" id="act3" data-scene="Systems" aria-label="Systems">
-      <div class="wrap systems-pin" id="systems-pin">
-        <p class="slug mono" data-rv><span>Scene 03</span>Systems<i>Blueprint overlay</i></p>
-        <h2 class="act-title act-title--sm" aria-label="The physical layer of intelligent systems.">
+    <section class="stage systems" id="systems" data-stage="Systems" aria-label="Systems">
+      <div class="wrap">
+        <p class="slug" data-rv><span>03 · Systems</span><b>Signal chain — hover the nodes</b></p>
+        <h2 class="stage-title" aria-label="The physical layer of intelligent systems.">
           <span class="mask" aria-hidden="true"><span class="line" data-rv-line>The physical layer</span></span>
           <span class="mask" aria-hidden="true"><span class="line" data-rv-line>of <em>intelligent</em> systems.</span></span>
         </h2>
@@ -170,23 +165,23 @@
                 <path d="M0 60H460M0 120H460M0 180H460M0 240H460M60 0V300M140 0V300M220 0V300M300 0V300M380 0V300" />
               </g>
               <g class="print-wires" fill="none">
-                <path class="draw" pathLength="1" d="M118 170 H196" />
-                <path class="draw" pathLength="1" d="M288 170 H366" />
-                <path class="draw" pathLength="1" d="M242 122 V58" />
-                <path class="draw draw--dash" pathLength="1" d="M242 58 C 242 30, 360 30, 398 46" />
+                <path class="draw" data-chain="sense" pathLength="1" d="M118 170 H196" />
+                <path class="draw" data-chain="act" pathLength="1" d="M288 170 H366" />
+                <path class="draw" data-chain="mcu" pathLength="1" d="M242 122 V58" />
+                <path class="draw draw--dash" data-chain="cloud" pathLength="1" d="M242 58 C 242 30, 360 30, 398 46" />
               </g>
-              <path class="print-flow" id="print-flow" pathLength="1" d="M118 170 H196" />
+              <path class="print-flow" id="print-flow" data-chain="sense" pathLength="1" d="M118 170 H196" />
               <g class="print-nodes" fill="var(--ink)" stroke="var(--accent)">
-                <circle cx="118" cy="170" r="4" />
-                <circle cx="242" cy="122" r="4" />
-                <circle cx="366" cy="170" r="4" />
-                <circle cx="398" cy="46" r="3.5" />
+                <circle class="node" data-chain="sense" cx="118" cy="170" r="4" tabindex="0" aria-label="Sense node" />
+                <circle class="node" data-chain="mcu" cx="242" cy="122" r="4" tabindex="0" aria-label="MCU node" />
+                <circle class="node" data-chain="act" cx="366" cy="170" r="4" tabindex="0" aria-label="Act node" />
+                <circle class="node" data-chain="cloud" cx="398" cy="46" r="3.5" tabindex="0" aria-label="Cloud node" />
               </g>
               <g class="print-boxes">
-                <rect x="196" y="140" width="92" height="60" rx="2" />
-                <rect x="48" y="148" width="70" height="44" rx="2" />
-                <rect x="366" y="148" width="66" height="44" rx="2" />
-                <rect x="350" y="28" width="96" height="36" rx="2" />
+                <rect class="node" data-chain="mcu" x="196" y="140" width="92" height="60" rx="2" tabindex="0" aria-label="ESP32 MCU" />
+                <rect class="node" data-chain="sense" x="48" y="148" width="70" height="44" rx="2" tabindex="0" aria-label="Sense" />
+                <rect class="node" data-chain="act" x="366" y="148" width="66" height="44" rx="2" tabindex="0" aria-label="Act" />
+                <rect class="node" data-chain="cloud" x="350" y="28" width="96" height="36" rx="2" tabindex="0" aria-label="Cloud" />
               </g>
               <g class="print-labels mono">
                 <text x="242" y="166" text-anchor="middle">ESP32</text>
@@ -202,9 +197,9 @@
                 <text x="448" y="288" text-anchor="end">FIG. 03</text>
               </g>
             </svg>
-            <figcaption class="mono">Sense → Compute → Act</figcaption>
+            <figcaption class="mono">Sense → Compute → Act · hover a node to trace its chain</figcaption>
           </figure>
-          <dl class="spec" data-systems-group>
+          <dl class="spec panel" data-systems-group>
             <div class="spec-row" data-systems="row"><dt class="mono">Platform</dt><dd>ESP32 · Arduino</dd></div>
             <div class="spec-row" data-systems="row"><dt class="mono">I/O</dt><dd>GPIO · PWM</dd></div>
             <div class="spec-row" data-systems="row"><dt class="mono">Bus</dt><dd>MQTT · Serial · I²C</dd></div>
@@ -218,9 +213,9 @@
     </section>
 
     <!-- ============ 04 · FIELD LOG ============ -->
-    <section class="act fieldlog" id="act4" data-scene="Field Log" aria-label="Field log">
+    <section class="stage fieldlog" id="fieldlog" data-stage="Field Log" aria-label="Field log">
       <div class="wrap">
-        <p class="slug mono" data-rv><span>Scene 04</span>Field Log<i>Shot list — two takes</i></p>
+        <p class="slug" data-rv><span>04 · Field Log</span><b>Two builds, two weekends</b></p>
         <ol class="shot-list">
           <li class="shot" data-rv>
             <a class="shot-hit mag" href="https://github.com/1RY-O" target="_blank" rel="noopener" aria-label="Hack2Skill Gen AI APAC Ideathon — Team Lead and Builder">
@@ -231,6 +226,7 @@
                 <span class="shot-meta mono">Team Lead · Builder</span>
                 <span class="shot-desc">Gen AI ideathon across the APAC region — concept to pitch in a weekend.</span>
               </span>
+              <span class="shot-outcome mono">Led a team · shipped a pitch</span>
               <span class="shot-arrow" aria-hidden="true">→</span>
             </a>
           </li>
@@ -243,48 +239,46 @@
                 <span class="shot-meta mono">Builder</span>
                 <span class="shot-desc">Built with speech-AI APIs under a tight sprint deadline.</span>
               </span>
+              <span class="shot-outcome mono">Shipped with speech AI</span>
               <span class="shot-arrow" aria-hidden="true">→</span>
             </a>
           </li>
         </ol>
-        <p class="shot-note mono" data-rv>Experimentation, collaboration, building under deadline.</p>
       </div>
     </section>
 
-    <!-- ============ 05 · INDEX ============ -->
-    <section class="act indexch" id="act5" data-scene="Index" aria-label="Index: cast and props">
+    <!-- ============ 05 · DOSSIER ============ -->
+    <section class="stage dossier" id="dossier" data-stage="Dossier" aria-label="Dossier: stations and toolbox">
       <div class="wrap">
-        <p class="slug mono" data-rv><span>Scene 05</span>Index<i>Cast &amp; crew · Props</i></p>
-        <div class="indexch-grid">
-          <div class="cast">
-            <p class="cast-head mono" data-rv>Cast &amp; crew — active</p>
-            <div class="cast-member" data-rv>
-              <span class="cast-index mono">01</span>
-              <h3 class="cast-title">IoT &amp; Robotics Trainee</h3>
-              <p class="cast-org mono">Unlox Academy · 2026 → Present</p>
-              <p class="cast-desc">Sensor rigs and microcontroller control logic — building, breaking, rewiring.</p>
+        <p class="slug" data-rv><span>05 · Dossier</span><b>Stations · Toolbox</b></p>
+        <div class="dossier-grid">
+          <div class="stations">
+            <div class="station" data-rv>
+              <span class="station-index mono">01 · Station</span>
+              <h3 class="station-title">IoT &amp; Robotics Trainee</h3>
+              <p class="station-org mono">Unlox Academy · 2026 → Present</p>
+              <p class="station-desc">Sensor rigs and microcontroller control logic — building, breaking, rewiring.</p>
             </div>
-            <div class="cast-member" data-rv>
-              <span class="cast-index mono">02</span>
-              <h3 class="cast-title">Team Leader</h3>
-              <p class="cast-org mono">Entrepreneurship Cell · Mahindra University · 2026 → Present</p>
-              <p class="cast-desc">Coordinating a small team — ideation sessions, carrying projects from concept to execution.</p>
+            <div class="station" data-rv>
+              <span class="station-index mono">02 · Station</span>
+              <h3 class="station-title">Team Leader</h3>
+              <p class="station-org mono">Entrepreneurship Cell · Mahindra University · 2026 → Present</p>
+              <p class="station-desc">Coordinating a small team — ideation sessions, carrying projects from concept to execution.</p>
             </div>
           </div>
-          <div class="props" data-rv-group>
-            <p class="cast-head mono" data-rv>Props — technical index</p>
-            <div class="prop-col" data-rv>
-              <p class="prop-cat mono">Build</p>
-              <ol class="prop-list">
+          <div class="toolbox panel" data-rv-group>
+            <div class="tool-col" data-rv>
+              <p class="tool-cat mono">Build</p>
+              <ol class="tool-list">
                 <li class="mono"><span>01</span>Python</li>
                 <li class="mono"><span>02</span>C</li>
                 <li class="mono"><span>03</span>C++</li>
                 <li class="mono"><span>04</span>HTML / CSS</li>
               </ol>
             </div>
-            <div class="prop-col" data-rv>
-              <p class="prop-cat mono">Systems</p>
-              <ol class="prop-list">
+            <div class="tool-col" data-rv>
+              <p class="tool-cat mono">Systems</p>
+              <ol class="tool-list">
                 <li class="mono"><span>01</span>Arduino</li>
                 <li class="mono"><span>02</span>ESP32</li>
                 <li class="mono"><span>03</span>GPIO / PWM</li>
@@ -293,9 +287,9 @@
                 <li class="mono"><span>06</span>Actuators</li>
               </ol>
             </div>
-            <div class="prop-col" data-rv>
-              <p class="prop-cat mono">Software</p>
-              <ol class="prop-list">
+            <div class="tool-col" data-rv>
+              <p class="tool-cat mono">Software</p>
+              <ol class="tool-list">
                 <li class="mono"><span>01</span>React</li>
                 <li class="mono"><span>02</span>Node.js</li>
                 <li class="mono"><span>03</span>Express</li>
@@ -306,9 +300,9 @@
                 <li class="mono"><span>08</span>Gemini API</li>
               </ol>
             </div>
-            <div class="prop-col" data-rv>
-              <p class="prop-cat mono">Tools</p>
-              <ol class="prop-list">
+            <div class="tool-col" data-rv>
+              <p class="tool-cat mono">Tools</p>
+              <ol class="tool-list">
                 <li class="mono"><span>01</span>Git</li>
                 <li class="mono"><span>02</span>GitHub</li>
                 <li class="mono"><span>03</span>VS Code</li>
@@ -321,26 +315,23 @@
       </div>
     </section>
 
-    <!-- ============ 06 · CREDITS ============ -->
-    <section class="act credits" id="credits" data-scene="Credits" aria-label="Credits">
-      <div class="wrap credits-inner">
-        <p class="slug mono slug--center" data-rv><span>Scene 06</span>End credits</p>
-        <h2 class="credits-name" aria-label="Pilla Sri Sai Rahul">
-          <span class="mask" aria-hidden="true"><span class="line" data-rv-line>Pilla <em>Sri&nbsp;Sai</em> Rahul</span></span>
+    <!-- ============ 06 · CONTACT ============ -->
+    <section class="stage contact" id="contact" data-stage="Contact" aria-label="Contact">
+      <div class="wrap contact-inner">
+        <p class="slug slug--center" data-rv><span>06 · Contact</span></p>
+        <h2 class="contact-name" aria-label="Let's build something.">
+          <span class="mask" aria-hidden="true"><span class="line" data-rv-line>Let's build</span></span>
+          <span class="mask" aria-hidden="true"><span class="line" data-rv-line><em>something</em>.</span></span>
         </h2>
-        <p class="credits-role mono" data-rv>Mechatronics — Robotics — Embedded — IoT — AI</p>
-        <nav class="credits-links" data-rv-group aria-label="Contact links">
-          <a class="credits-link mag" data-rv href="mailto:fabledadventurer.pssr@gmail.com">Email<span aria-hidden="true">↗</span></a>
-          <a class="credits-link mag" data-rv href="https://github.com/1RY-O" target="_blank" rel="noopener">GitHub<span aria-hidden="true">↗</span></a>
-          <a class="credits-link mag" data-rv href="https://www.linkedin.com/in/sri-sai-rahul-pilla" target="_blank" rel="noopener">LinkedIn<span aria-hidden="true">↗</span></a>
-          <a class="credits-link mag" data-rv href="https://1ry-o.github.io/" target="_blank" rel="noopener">Website<span aria-hidden="true">↗</span></a>
-          <a class="credits-link mag" data-rv href="resume.pdf" download>Résumé<span aria-hidden="true">↓</span></a>
+        <nav class="contact-links" data-rv-group aria-label="Contact links">
+          <a class="contact-link mag" data-rv href="mailto:fabledadventurer.pssr@gmail.com">Email<span aria-hidden="true">↗</span></a>
+          <a class="contact-link mag" data-rv href="https://github.com/1RY-O" target="_blank" rel="noopener">GitHub<span aria-hidden="true">↗</span></a>
+          <a class="contact-link mag" data-rv href="https://www.linkedin.com/in/sri-sai-rahul-pilla" target="_blank" rel="noopener">LinkedIn<span aria-hidden="true">↗</span></a>
+          <a class="contact-link mag" data-rv href="https://1ry-o.github.io/" target="_blank" rel="noopener">Website<span aria-hidden="true">↗</span></a>
+          <a class="contact-link mag" data-rv href="resume.pdf" download>Résumé<span aria-hidden="true">↓</span></a>
         </nav>
-        <p class="credits-mail mono" data-rv>fabledadventurer.pssr@gmail.com</p>
-        <footer class="end-reel" data-rv>
-          <p class="mono">End of reel</p>
-          <p class="mono end-reel-sub">© 2026 · Hyderabad, IN — designed &amp; built by hand</p>
-        </footer>
+        <p class="contact-mail mono" data-rv>fabledadventurer.pssr@gmail.com</p>
+        <footer class="colophon mono" data-rv>Pilla Sri Sai Rahul · © 2026 · Hyderabad, IN — designed &amp; built by hand</footer>
       </div>
     </section>
 

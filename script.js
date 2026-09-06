@@ -18,19 +18,19 @@
   function qsa(sel) { return Array.prototype.slice.call(doc.querySelectorAll(sel)); }
   function pad(n) { return String(n).padStart(2, '0'); }
 
-  /* ---------- scene indicator ---------- */
+  /* ---------- specimen indicator ---------- */
 
-  var acts = qsa('.act');
-  var sceneCur = qs('#scene-cur');
-  var sceneTitle = qs('#scene-title');
-  var sceneLinks = qsa('[data-scene-link]');
+  var stages = qsa('.stage');
+  var specCur = qs('#spec-cur');
+  var specTitle = qs('#spec-title');
+  var specLinks = qsa('[data-spec-link]');
 
-  function setScene(idx) {
-    var a = acts[idx];
-    if (!a) return;
-    sceneCur.textContent = pad(idx);
-    sceneTitle.textContent = a.dataset.scene;
-    sceneLinks.forEach(function (l, j) {
+  function setStage(idx) {
+    var s = stages[idx];
+    if (!s) return;
+    specCur.textContent = pad(idx + 1);
+    specTitle.textContent = s.dataset.stage;
+    specLinks.forEach(function (l, j) {
       l.classList.toggle('active', j === idx);
     });
   }
@@ -39,65 +39,35 @@
     var secIO = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
         if (en.isIntersecting) {
-          setScene(acts.indexOf(en.target));
+          setStage(stages.indexOf(en.target));
         }
       });
     }, { rootMargin: '-45% 0px -45% 0px' });
-    acts.forEach(function (a) { secIO.observe(a); });
+    stages.forEach(function (s) { secIO.observe(s); });
   }
 
-  /* ---------- timecode — the reel's runtime ---------- */
+  /* ---------- index overlay ---------- */
 
-  var timecodeEl = qs('#timecode');
-  var TOTAL_FRAMES = 12 * 60 * 24;
-  var tcQueued = false;
+  var indexToggle = qs('#index-toggle');
+  var indexNav = qs('#index');
 
-  function renderTimecode(progress) {
-    var f = Math.round(Math.max(0, Math.min(1, progress)) * TOTAL_FRAMES);
-    var ff = f % 24;
-    var s = Math.floor(f / 24) % 60;
-    var m = Math.floor(f / (24 * 60)) % 60;
-    var h = Math.floor(f / (24 * 3600));
-    timecodeEl.textContent = pad(h) + ':' + pad(m) + ':' + pad(s) + ':' + pad(ff);
-  }
-
-  function queueTimecode(progress) {
-    if (tcQueued) return;
-    tcQueued = true;
-    requestAnimationFrame(function () {
-      tcQueued = false;
-      renderTimecode(progress);
-    });
-  }
-
-  function pageProgress() {
-    var max = doc.documentElement.scrollHeight - window.innerHeight;
-    if (max <= 0) return 0;
-    return Math.max(0, Math.min(1, window.scrollY / max));
-  }
-
-  /* ---------- slate overlay ---------- */
-
-  var slateToggle = qs('#slate-toggle');
-  var slateNav = qs('#slate');
-
-  function setSlate(open) {
-    root.classList.toggle('slate-open', open);
-    slateToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    slateToggle.querySelector('.slate-toggle-label').textContent = open ? 'Close' : 'Slate';
-    slateNav.setAttribute('aria-hidden', open ? 'false' : 'true');
+  function setIndex(open) {
+    root.classList.toggle('index-open', open);
+    indexToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    indexToggle.querySelector('.index-toggle-label').textContent = open ? 'Close' : 'Index';
+    indexNav.setAttribute('aria-hidden', open ? 'false' : 'true');
     doc.body.style.overflow = open ? 'hidden' : '';
   }
 
-  slateToggle.addEventListener('click', function () {
-    setSlate(!root.classList.contains('slate-open'));
+  indexToggle.addEventListener('click', function () {
+    setIndex(!root.classList.contains('index-open'));
   });
-  sceneLinks.forEach(function (a) {
-    a.addEventListener('click', function () { setSlate(false); });
+  specLinks.forEach(function (a) {
+    a.addEventListener('click', function () { setIndex(false); });
   });
   doc.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && root.classList.contains('slate-open')) {
-      setSlate(false);
+    if (e.key === 'Escape' && root.classList.contains('index-open')) {
+      setIndex(false);
     }
   });
 
@@ -120,7 +90,7 @@
       cursor.classList.toggle('is-hot', !!hot);
     });
 
-    var magnets = qsa('.btn, .brand, .mast-resume, .slate-toggle, .credits-link');
+    var magnets = qsa('.btn, .brand, .mast-resume, .index-toggle, .contact-link, .rail-links a');
     doc.addEventListener('pointermove', function (e) {
       for (var i = 0; i < magnets.length; i++) {
         var m = magnets[i];
@@ -141,10 +111,39 @@
     });
   }
 
+  /* ---------- chain tracing (schematic nodes) ---------- */
+
+  var printSvg = qs('#print-svg');
+  if (printSvg) {
+    var nodes = qsa('#print-svg .node');
+    function trace(chain, on) {
+      if (on) {
+        printSvg.classList.add('tracing');
+        qsa('#print-svg [data-chain="' + chain + '"]').forEach(function (el) {
+          el.classList.add('hot');
+        });
+      } else {
+        printSvg.classList.remove('tracing');
+        qsa('#print-svg .hot').forEach(function (el) {
+          el.classList.remove('hot');
+        });
+      }
+    }
+    nodes.forEach(function (n) {
+      var chain = n.getAttribute('data-chain');
+      n.addEventListener('pointerenter', function () { trace(chain, true); });
+      n.addEventListener('pointerleave', function () { trace(chain, false); });
+      n.addEventListener('focus', function () { trace(chain, true); });
+      n.addEventListener('blur', function () { trace(chain, false); });
+    });
+  }
+
   /* ---------- fallback path (no GSAP / reduced motion / mobile) ---------- */
 
   function fallbackReveals() {
     qs('.progress').style.display = 'none';
+    var cap = qs('[data-lumis="cap"]');
+    if (cap) cap.textContent = 'Fig. 01 — Entry → Insight';
     var els = qsa('[data-rv], [data-rv-line]');
     els.forEach(function (el) { el.classList.add('rv-hide'); });
     if (!('IntersectionObserver' in window)) {
@@ -164,10 +163,6 @@
 
   if (!fullMotion) {
     fallbackReveals();
-    window.addEventListener('scroll', function () {
-      queueTimecode(pageProgress());
-    }, { passive: true });
-    queueTimecode(pageProgress());
     return;
   }
 
@@ -176,42 +171,20 @@
   gsap.registerPlugin(ScrollTrigger);
   ScrollTrigger.config({ ignoreMobileResize: true });
 
-  /* letterbox — the frame holds the cold open, then retracts */
-  gsap.set(['#bar-top', '#bar-bottom'], { height: '12vh' });
-  gsap.to(['#bar-top', '#bar-bottom'], {
-    height: 0, ease: 'none',
-    scrollTrigger: { trigger: '#coldopen', start: 'top top', end: 'bottom 35%', scrub: true }
-  });
-
-  /* cold open entrance — the title card */
+  /* hero entrance */
   var intro = gsap.timeline({ defaults: { ease: 'power4.out' } });
   intro
-    .from('[data-open="flicker"]', { opacity: 0, duration: 0.5 }, 0.1)
-    .from('[data-open="kicker"]', { y: 16, opacity: 0, duration: 0.9 }, 0.2)
-    .from('[data-open="line"]', { yPercent: 112, duration: 1.3, stagger: 0.12 }, 0.3)
-    .from('[data-open="meta"]', { y: 20, opacity: 0, duration: 0.9, stagger: 0.1 }, 1.0)
-    .from('[data-open="cue"]', { opacity: 0, duration: 0.8 }, 1.5);
+    .from('[data-hero="eyebrow"]', { y: 18, opacity: 0, duration: 0.9 }, 0.15)
+    .from('[data-hero="line"]', { yPercent: 112, duration: 1.25, stagger: 0.12 }, 0.25)
+    .from('[data-hero="claim"]', { y: 24, opacity: 0, duration: 1 }, 0.85)
+    .from('[data-hero="cta"]', { y: 22, opacity: 0, duration: 0.9 }, 1.0)
+    .from('[data-hero="rail"]', { x: 34, opacity: 0, duration: 1.1 }, 0.7)
+    .from('[data-hero="cue"]', { opacity: 0, duration: 0.8 }, 1.4);
 
-  /* title hold, then the iris cut */
-  var cutTl = gsap.timeline({
-    scrollTrigger: {
-      trigger: '#coldopen', start: 'top top',
-      end: '+=70%', scrub: 1, pin: true
-    }
-  });
-  cutTl
-    .to('#coldopen-inner', { scale: 0.97, duration: 1 }, 0)
-    .set('#iris', { visibility: 'visible' }, 0.35)
-    .fromTo('#iris',
-      { clipPath: 'circle(75% at 50% 50%)' },
-      { clipPath: 'circle(6% at 50% 50%)', duration: 1 }, 0.4)
-    .to('#iris', { clipPath: 'circle(75% at 50% 50%)', duration: 1 }, 1.4)
-    .set('#iris', { visibility: 'hidden' });
-
-  /* cold open scroll exit beneath the pin */
-  gsap.to('#coldopen-inner', {
-    y: -60, opacity: 0.2, ease: 'none',
-    scrollTrigger: { trigger: '#coldopen', start: 'top top', end: 'bottom top', scrub: true }
+  /* hero scroll exit */
+  gsap.to('#hero-grid', {
+    y: -70, opacity: 0.25, ease: 'none',
+    scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
   });
 
   /* masked line reveals */
@@ -230,41 +203,46 @@
     });
   });
 
-  /* LUMIS — pinned feature presentation */
+  /* LUMIS — pinned launch stage */
   var lumisTl = gsap.timeline({
     scrollTrigger: {
       trigger: '#lumis-pin', start: 'top top+=72',
-      end: '+=130%', scrub: 1, pin: '#act2 .wrap'
+      end: '+=120%', scrub: 1, pin: true
     }
   });
   lumisTl
-    .from('[data-lumis="title"]', { yPercent: 60, opacity: 0, duration: 1 }, 0)
-    .from('[data-lumis="desc"]', { y: 26, opacity: 0, duration: 1 }, 0.25)
-    .from('[data-lumis="take"]', { x: -34, opacity: 0, duration: 0.9, stagger: 0.5 }, 0.5)
-    .from('[data-lumis="stack"]', { opacity: 0, duration: 0.8 }, 2.2)
-    .from('[data-lumis="actions"]', { y: 22, opacity: 0, duration: 0.8 }, 2.5)
+    .from('[data-lumis="param"]', { x: -30, opacity: 0, duration: 0.9, stagger: 0.45 }, 0)
+    .from('[data-lumis="stack"]', { opacity: 0, duration: 0.8 }, 1.6)
     .fromTo('#screen-clip',
       { clipPath: 'inset(8% 8% 8% 8%)' },
-      { clipPath: 'inset(0% 0% 0% 0%)', duration: 2 }, 0.3)
-    .from('[data-lumis="screen"] figcaption, [data-lumis="screen"] .stamp', { opacity: 0, duration: 0.8 }, 2.6);
+      { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.8 }, 0.2)
+    .from('[data-lumis="screen"] figcaption, [data-lumis="screen"] .stamp', { opacity: 0, duration: 0.7 }, 1.8);
 
-  /* beam draws as the presentation runs */
+  /* beam — plays on arrival, replays on click */
   gsap.set('#beam-line', { strokeDasharray: 1, strokeDashoffset: 1 });
-  gsap.to('#beam-line', {
-    strokeDashoffset: 0, ease: 'none',
-    scrollTrigger: { trigger: '#lumis-pin', start: 'top top+=72', end: '+=130%', scrub: 1 }
+  gsap.set('#beam-dot', { opacity: 0 });
+  var beamTl = gsap.timeline({ paused: true });
+  beamTl
+    .to('#beam-line', { strokeDashoffset: 0, duration: 1.1, ease: 'power2.inOut' }, 0)
+    .fromTo('#beam-dot', { attr: { cx: 230, cy: 20 }, opacity: 0 },
+      { attr: { cx: 372, cy: 92 }, opacity: 1, duration: 1.1, ease: 'power2.inOut' }, 0);
+  ScrollTrigger.create({
+    trigger: '#lumis-screen', start: 'top 75%',
+    onEnter: function () { beamTl.restart(); }
   });
-  gsap.fromTo('#beam-dot', { attr: { cx: 230, cy: 20 }, opacity: 0 },
-    {
-      attr: { cx: 372, cy: 92 }, opacity: 1, ease: 'none',
-      scrollTrigger: { trigger: '#lumis-pin', start: 'top top+=72', end: '+=130%', scrub: 1 }
-    });
+  qs('#lumis-screen').addEventListener('click', function () { beamTl.restart(); });
+  qs('#lumis-screen').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      beamTl.restart();
+    }
+  });
 
   /* velocity tilt on the screen */
   var scrTilt = gsap.quickTo('.screen', 'rotationY', { duration: 0.6, ease: 'power3' });
   var scrShift = gsap.quickTo('.screen', 'x', { duration: 0.6, ease: 'power3' });
   ScrollTrigger.create({
-    trigger: '#act2', start: 'top bottom', end: 'bottom top',
+    trigger: '#lumis', start: 'top bottom', end: 'bottom top',
     onUpdate: function (self) {
       var v = Math.max(-2600, Math.min(2600, self.getVelocity()));
       scrTilt(v / 2600 * 7);
@@ -272,35 +250,33 @@
     }
   });
 
-  /* SYSTEMS — the blueprint draws itself */
+  /* SYSTEMS — the blueprint draws itself (scrubbed, unpinned) */
   var draws = qsa('#print-svg .draw');
   draws.forEach(function (p) {
     if (!p.classList.contains('draw--dash')) {
       gsap.set(p, { strokeDasharray: 1, strokeDashoffset: 1 });
     }
   });
-  var sysTl = gsap.timeline({
-    scrollTrigger: {
-      trigger: '#systems-pin', start: 'top top+=84',
-      end: '+=110%', scrub: 1, pin: '#act3 .wrap'
-    }
+  gsap.to(draws, {
+    strokeDashoffset: 0, ease: 'none', stagger: 0.2,
+    scrollTrigger: { trigger: '.blueprint', start: 'top 82%', end: 'top 30%', scrub: 1 }
   });
-  sysTl
-    .to(draws, { strokeDashoffset: 0, duration: 1.4, stagger: 0.3 }, 0)
-    .from('[data-systems="row"]', { x: 26, opacity: 0, duration: 0.7, stagger: 0.25 }, 0.4);
   gsap.set('#print-flow', { strokeDasharray: '0.14 0.05', strokeDashoffset: 0 });
   gsap.to('#print-flow', {
     strokeDashoffset: -1, ease: 'none',
-    scrollTrigger: { trigger: '#systems-pin', start: 'top top+=84', end: '+=110%', scrub: 1 }
+    scrollTrigger: { trigger: '.blueprint', start: 'top 82%', end: 'bottom 40%', scrub: 1 }
+  });
+  qsa('[data-systems="row"]').forEach(function (el, i) {
+    gsap.from(el, {
+      x: 26, opacity: 0, duration: 0.7, ease: 'power3.out', delay: (i % 7) * 0.04,
+      scrollTrigger: { trigger: el, start: 'top 92%', toggleActions: 'play none none reverse' }
+    });
   });
 
-  /* runtime rule + timecode follow the reel */
-  ScrollTrigger.create({
-    start: 0, end: 'max',
-    onUpdate: function (self) {
-      queueTimecode(self.progress);
-      gsap.set('#progress-bar', { scaleX: self.progress });
-    }
+  /* progress rule */
+  gsap.to('#progress-bar', {
+    scaleX: 1, ease: 'none',
+    scrollTrigger: { start: 0, end: 'max', scrub: 0.3 }
   });
 
   window.addEventListener('load', function () { ScrollTrigger.refresh(); });
