@@ -1,41 +1,35 @@
-# Pilla Sri Sai Rahul — a living type specimen
+# Pilla Sri Sai Rahul — The Cabinet
 
-**GENOME** — an interactive type installation for https://1ry-o.github.io
+A surreal cabinet of curiosities for https://1ry-o.github.io — built from a blank canvas around one belief: *he can make it happen.*
 
-Not a portfolio page: an identity that *grows*. The page opens on a dark sky filled by the subject's name set in live variable type — move the pointer and the letterforms warp (Fraunces `SOFT`/`WONK` axes respond to your position), an oxide current passes through the composition, and the instrument readout in the corner reports the live axis values. A fixed rotor under the name cycles `BUILDER/Maker/Engineer/Maverick`. Then: **"drop the context"** — scroll or press the cue — and the sky recedes mechanically while every real fact lands on a lit paper table below.
+## The idea
 
-## The two acts
+The site is a moonlit room that holds the artifacts of an explorer. A glowing amber core hangs in an espresso-night sky; around it float four artifacts — the Lumis journal, an automaton relic, a telemetry node, an AI spark — each a portal to real work. The visitor's cursor is a lantern: light follows it, layers drift in parallax, artifacts lean. Then the room opens into daylight: the Lumis flagship presented inside its own warm world, shelves of honest drawers, a stamped field log, and a dawn-gradient transmission.
 
-1. **Sky (100svh, sticky)** — the art. Massive Fraunces nameplate, axis warp under the pointer, oxide halo bloom, live axis inspector (`soft`, `wonk`, `opsz`), the rotor line, an INDEX key.
-2. **Table (paper surface)** — the content, printed on a bright sheet under a dark sky:
+Warm wonder on the surface, a straight spine underneath — every fact reachable within two clicks, because the audience is internships and fellowships, not just fellow travelers.
 
-   - **I · Prelim** — the thesis in one sentence, plus an identity sheet (mail / GitHub / LinkedIn / site / resume.pdf).
-   - **II · The Flagship — Lumis** — poster-type plate; a live "print" console types out problem → idea → system → status, and a ruled trace draws itself with an `ENTRY › INSIGHT` label. Live prototype and source links prominent. Honest stamp: *open prototype, not production*.
-   - **III · Inventory** — standing post (Unlox Academy trainee, E-Cell Team Leader) as ledger records, plus the toolbox in four columns.
-   - **IV · Field Log** — two hackathon entries (Hack2Skill Gen-AI APAC, AssemblyAI × LabLab) each with an outcome line.
-   - **V · Connect** — "Let's build something", a big mail line, handles, colophon.
+## The rooms
 
-## Identity system
+1. **The Room** — night scene: stars, breathing amber core, 4 floating artifact-links (parallax by pointer depth), constellation name, dual CTA (scroll / terminal).
+2. **The Flagship — Lumis** — cream gallery in Lumis's own visual world: poster title, its real words ("Think without the noise."), the two real screenshots as tilting plates, Enter-Lumis + source links, problem/idea/system/status, honest *open prototype* stamp.
+3. **The Shelves** — four drawers (machines / telemetry / GenAI / experiments) with crafted SVG icons, real stacks, honest status stamps. No invented projects, no fake screenshots.
+4. **Field Log** — stamped entries: two hackathons, two standing posts, plus the education line.
+5. **Transmission** — dawn gradient, big email button, GitHub/LinkedIn/resume/site, colophon with the backtick hint.
 
-- **Ground**: near-black sky, bone type, oxide as the only saturated signal — used for the rotor, the current, the seam, the trace, the tooling caps, and in the console.
-- **Type**: Fraunces variable (opsz/wght/SOFT/WONK) everywhere; IBM Plex Mono for instrument text and ledgers.
-- **Figure-ground**: the page literally flips light/dark between acts — ink field above, lit specimen sheet below.
+## The hacker layer
 
-## Motion & resilience
+- **Working terminal** (`` ` `` key, `>_` button, or the hero's *type help*): `help lumis shelves log contact open source github linkedin mail resume whoami sudo clear exit`, with history and `Esc`.
+- **Index overlay**: five numbered rooms, keyboard friendly.
+- **Devtools easter egg**: open the console.
+- **`whoami`**: "fabled adventurer — personal space." (his real in-app Lumis profile)
 
-One easing family, transform/opacity/variable-font only. GSAP drives the boot intro, the mechanical drop (scrubbed scale on the name as the sky leaves), plate reveals, the trace draw. Independent of GSAP: the axis warp, halo, rotor, typewriter, progress chip, and index wipe. If GSAP is missing, reduced motion is set, or the device is small/finger-only: everything still renders — the console prints instantly, the trace shows full, the page opens static and scrolls. No JS at all gets the same document linearized. `prefers-reduced-motion` disables all animation.
+## Craft notes
 
-## Navigation as instruments
-
-- **INDEX key** (top-right) — full-screen wipe to five numbered plates; keyboard-cue `Escape` closes it.
-- **Drop cue** (bottom) — enter or scroll to descend from the sky.
-- **Progress chip** (fixed, bottom-left) — a bone/ink chip with a hairline fill and the current plate code (`01·PRELIM … 05·CONNECT`).
-- Native anchors, never hijacked.
-
-## QA hooks
-
-- `#prelim`, `#lumis`, `#inventory`, `#log`, `#connect` — jump to a plate
-- `?motion=1` — force full motion even under `prefers-reduced-motion` (headless capture)
+- Vanilla HTML/CSS/JS — zero runtime dependencies, no build step.
+- Fraunces (display, same voice as Lumis) + IBM Plex Mono (the instrument).
+- Pointer physics (lantern + parallax + plate tilt) run only on fine pointers without reduced-motion; everything else is calm CSS.
+- Resilience: content is never hidden unless JS init fully succeeds (`js-armed` gate); no-JS gets a static nav and the full document linearized; `prefers-reduced-motion` stills the room.
+- Fixed chrome: masthead, amber progress hairline, skip link, OG tags.
 
 ## Run locally
 
@@ -43,7 +37,7 @@ One easing family, transform/opacity/variable-font only. GSAP drives the boot in
 python -m http.server 8000
 ```
 
-Open http://localhost:8000 — press the INDEX key, scroll past the sky, watch the console type.
+Open http://localhost:8000 — move the pointer, press `` ` ``, type `help`.
 
 ## Deploy to GitHub Pages
 
@@ -53,7 +47,7 @@ The upstream remote must point to a repo named **exactly** `1RY-O.github.io`.
 git remote add origin https://github.com/1RY-O/1RY-O.github.io.git
 git branch -M main
 git add .
-git commit -m "feat: GENOME — living type installation"
+git commit -m "feat: THE CABINET — curiosity-room portfolio"
 git push -u origin main
 ```
 
@@ -61,8 +55,9 @@ git push -u origin main
 
 | File | Purpose |
 |---|---|
-| `index.html` | Sky installation, index wipe, five table plates |
-| `styles.css` | Sky/table system, variable type, ledgers, console, mechanics, fallbacks |
-| `script.js` | Axis warp, halo, rotor, typewriter, trace, chip, index, fallback |
+| `index.html` | Room, terminal, index, flagship, shelves, log, transmission |
+| `styles.css` | Night/cream worlds, artifacts, overlays, fallbacks |
+| `script.js` | Lantern+parallax engine, terminal, reveals, tilt, eggs |
+| `assets/` | Lumis screenshots (copied from `Reference/`) |
 | `resume.pdf` | Downloadable resume |
-| `reference.png` | Visual quality reference (not shipped as a site asset) |
+| `Reference/` | Source material: Lumis media (truth) + design refs (quality bar, never copied) |

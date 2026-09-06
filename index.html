@@ -3,203 +3,254 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Pilla Sri Sai Rahul — mechatronics engineering student. I build machines that sense, decide and act.">
-  <meta name="theme-color" content="#0a0a0c">
-  <title>Pilla Sri Sai Rahul — a living type specimen</title>
+  <meta name="description" content="Pilla Sri Sai Rahul — explorer, builder, mechatronics undergrad. I make things happen. Flagship: Lumis, a journal of uneasy reading.">
+  <meta name="theme-color" content="#120c07">
+  <meta property="og:title" content="Pilla Sri Sai Rahul — The Cabinet">
+  <meta property="og:description" content="Explorer, builder, mechatronics undergrad. Flagship: Lumis, a journal of uneasy reading.">
+  <meta property="og:type" content="website">
+  <title>Pilla Sri Sai Rahul — The Cabinet</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,100..900,0..100,0..1&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css">
-
-  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
   <script defer src="script.js"></script>
 </head>
 <body>
   <a class="skip" href="#lumis">Skip to the flagship</a>
 
-  <div class="grain" aria-hidden="true"></div>
+  <div class="lantern" id="lantern" aria-hidden="true"></div>
+  <div class="progress" aria-hidden="true"><i id="progress-fill"></i></div>
 
-  <div class="boot" id="boot" aria-hidden="true">
-    <span class="boot-line">GENOME &mdash; a living type specimen &middot; PSR</span>
-  </div>
-
-  <div class="current" id="current" aria-hidden="true">
-    <span class="current-rail"><i id="progress"></i></span>
-    <span class="current-code" id="current-code">00&middot;IGNITION</span>
-  </div>
-
-  <header class="sky" id="sky">
-    <div class="sky-meta">
-      <a class="sky-sel" href="https://1ry-o.github.io/" rel="noopener">PILLA, SRI SAI RAHUL &mdash; MECHATRONICS</a>
-      <button class="index-key" id="index-key" aria-expanded="false" aria-controls="index">
-        INDEX <span class="index-key-i"></span>
-      </button>
-    </div>
-
-    <div class="namewrap">
-      <h1 class="nameplate" id="nameplate">
-        <span class="np-line"><i>PILLA</i></span>
-        <span class="np-line"><i>SRI&nbsp;SAI</i></span>
-        <span class="np-line"><i>RAHUL</i></span>
-      </h1>
-      <p class="rotorline" aria-hidden="true">a <strong id="rotor">BUILDER</strong> of machines that <em>sense, decide and act</em></p>
-    </div>
-
-    <div class="sky-mono">
-      <p class="axes" id="axes" aria-hidden="true">soft <b id="ax-soft">62</b>/100 &middot; wonk <b id="ax-wonk">1</b>/1 &middot; opsz <b id="ax-opsz">144</b></p>
-      <p class="dropcue" id="drop-cue">drop the context &mdash; <span class="dropfmt">scroll or press &#8629;</span></p>
+  <header class="mast">
+    <a class="mark" href="#room">PSR <span class="mark-star" aria-hidden="true">✦</span> Cabinet</a>
+    <nav class="mast-links" aria-label="Rooms">
+      <a href="#lumis">Flagship</a>
+      <a href="#shelves">Shelves</a>
+      <a href="#log">Log</a>
+      <a href="#contact">Signal</a>
+    </nav>
+    <div class="mast-tools">
+      <button class="toolbtn" id="term-open" aria-haspopup="dialog" aria-controls="term">`&gt;_`</button>
+      <button class="toolbtn" id="index-open" aria-haspopup="dialog" aria-controls="index">Index</button>
     </div>
   </header>
 
-  <nav class="index" id="index" aria-hidden="true">
-    <div class="index-inner">
-      <p class="index-kicker mono">Jump to a plate</p>
-      <ol class="index-list">
-        <li><a href="#prelim" data-code="01">I &nbsp;&middot;&nbsp; Prelim</a></li>
-        <li><a href="#lumis" data-code="02">II &nbsp;&middot;&nbsp; The Flagship &mdash; Lumis</a></li>
-        <li><a href="#inventory" data-code="03">III &nbsp;&middot;&nbsp; Inventory</a></li>
-        <li><a href="#log" data-code="04">IV &nbsp;&middot;&nbsp; Field Log</a></li>
-        <li><a href="#connect" data-code="05">V &nbsp;&middot;&nbsp; Connect</a></li>
-      </ol>
-      <p class="index-foot mono">Pilla Sri Sai Rahul &mdash; the botany of a builder</p>
-    </div>
+  <nav class="static-nav" aria-label="Rooms">
+    <a href="#lumis">Flagship</a>
+    <a href="#shelves">Shelves</a>
+    <a href="#log">Log</a>
+    <a href="#contact">Signal</a>
   </nav>
 
-  <main class="table" id="table">
-
-    <section class="plate" id="prelim" data-name="prelim" data-code="I">
-      <div class="plate-meta">
-        <span class="plate-no">I.</span>
-        <span class="plate-name">PRELIM</span>
-        <span class="plate-desc">identity sheet</span>
+  <main>
+    <section class="room" id="room" aria-label="The cabinet room">
+      <div class="stars" aria-hidden="true">
+        <i style="--x:6%;--y:12%;--d:0s"></i><i style="--x:14%;--y:64%;--d:.7s"></i>
+        <i style="--x:22%;--y:28%;--d:1.4s"></i><i style="--x:31%;--y:82%;--d:.3s"></i>
+        <i style="--x:44%;--y:16%;--d:1.1s"></i><i style="--x:56%;--y:70%;--d:1.8s"></i>
+        <i style="--x:63%;--y:34%;--d:.5s"></i><i style="--x:71%;--y:58%;--d:1.2s"></i>
+        <i style="--x:79%;--y:20%;--d:2s"></i><i style="--x:87%;--y:76%;--d:.9s"></i>
+        <i style="--x:93%;--y:44%;--d:1.6s"></i><i style="--x:38%;--y:48%;--d:2.3s"></i>
       </div>
-      <div class="prelim-grid">
-        <div class="prelim-left">
-          <p class="prelim-lead">Here is something I actually built &mdash;</p>
-          <h2 class="prelim-stmt">I solve problems in physical space: machines that <em>sense</em>, <em>decide</em> and <em>act</em>, with honest stacks and interfaces that stay out of the way.</h2>
-          <p class="prelim-line">B.Tech Mechatronics &middot; Mahindra University, Hyderabad &middot; 2026 &rarr; 2030. Fields in play: robotics &middot; embedded &middot; IoT &middot; AI.</p>
+
+      <div class="core" aria-hidden="true"><i></i></div>
+
+      <a class="artifact artifact--journal" href="#lumis" data-depth="34" aria-label="Lumis — open the flagship drawer">
+        <span class="float"><span class="drift">
+          <span class="mini-card"><i></i><i></i><i></i><i></i></span>
+          <span class="artifact-tag">LUMIS · the flagship</span>
+        </span></span>
+      </a>
+
+      <a class="artifact artifact--bot" href="#shelves" data-depth="58" aria-label="Machines — open the shelves">
+        <span class="float"><span class="drift">
+          <svg class="relic" viewBox="0 0 64 64" aria-hidden="true">
+            <rect x="14" y="20" width="36" height="28" rx="7"/>
+            <circle cx="25" cy="33" r="4"/><circle cx="39" cy="33" r="4"/>
+            <path d="M25 41h14" stroke-linecap="round"/>
+            <path d="M32 20v-7M24 13h16" stroke-linecap="round"/>
+            <circle cx="32" cy="10" r="2.5"/>
+          </svg>
+          <span class="artifact-tag">AUTOMATA · machines</span>
+        </span></span>
+      </a>
+
+      <a class="artifact artifact--node" href="#shelves" data-depth="22" aria-label="Telemetry — open the shelves">
+        <span class="float"><span class="drift">
+          <span class="node"><i></i><i></i><i></i></span>
+          <span class="artifact-tag">NODE · mqtt :: online</span>
+        </span></span>
+      </a>
+
+      <a class="artifact artifact--spark" href="#shelves" data-depth="72" aria-label="GenAI sparks — open the shelves">
+        <span class="float"><span class="drift">
+          <svg class="relic" viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M32 6c2 14 8 20 22 22-14 2-20 8-22 22-2-14-8-20-22-22 14-2 20-8 22-22z"/>
+            <path d="M48 44c1 6 3.5 8.5 9.5 9.5-6 1-8.5 3.5-9.5 9.5-1-6-3.5-8.5-9.5-9.5 6-1 8.5-3.5 9.5-9.5z"/>
+          </svg>
+          <span class="artifact-tag">SPARK · genai</span>
+        </span></span>
+      </a>
+
+      <div class="room-copy">
+        <p class="room-kicker rv">Cabinet Nº 001 — est. 2026</p>
+        <h1 class="room-name rv">Pilla<br>Sri Sai <em>Rahul</em></h1>
+        <p class="room-sub rv">explorer · builder · mechatronics undergrad — <strong>I make things happen.</strong></p>
+        <p class="room-cta rv">
+          <a class="btn-amber" href="#lumis">Open the cabinet</a>
+          <button class="btn-ghost" id="room-term" type="button">or type <kbd>help</kbd></button>
+        </p>
+      </div>
+
+      <p class="room-foot rv" aria-hidden="true">
+        <span>move — the room is awake</span>
+        <span>scroll — descend</span>
+      </p>
+    </section>
+
+    <section class="flagship" id="lumis" aria-label="Flagship — Lumis">
+      <div class="flag-inner">
+        <p class="kick rv">Flagship · drawer 001</p>
+        <h2 class="flag-title rv">Lumis</h2>
+        <p class="flag-lede rv">Think without the noise. A warm corner for your thoughts — untangle them, reflect, and grow. Your words stay yours.</p>
+
+        <div class="plates">
+          <figure class="plate rv" data-tilt>
+            <img src="assets/lumis-landing.png" alt="Lumis landing page — Think without the noise, with an Enter Lumis button" loading="lazy">
+            <figcaption><b>plate i</b> — the quiet door · landing</figcaption>
+          </figure>
+          <figure class="plate rv" data-tilt>
+            <img src="assets/lumis-app.png" alt="Lumis app — journal, ideas and thought untangler modes with mood calendar" loading="lazy">
+            <figcaption><b>plate ii</b> — the instrument · three modes, prompts, mood calendar</figcaption>
+          </figure>
         </div>
-        <dl class="prelim-sheet">
-          <div><dt>mail</dt><dd><a href="mailto:fabledadventurer.pssr@gmail.com">fabledadventurer.pssr@gmail.com</a></dd></div>
-          <div><dt>github</dt><dd><a href="https://github.com/1RY-O" target="_blank" rel="noopener">1RY-O</a></dd></div>
-          <div><dt>linkedin</dt><dd><a href="https://www.linkedin.com/in/sri-sai-rahul-pilla" target="_blank" rel="noopener">sri-sai-rahul-pilla</a></dd></div>
-          <div><dt>site</dt><dd><a href="https://1ry-o.github.io/" target="_blank" rel="noopener">1ry-o.github.io</a></dd></div>
-          <div><dt>resume</dt><dd><a href="resume.pdf" download>&darr; resume.pdf</a></dd></div>
+
+        <p class="flag-links rv">
+          <a class="btn-amber" href="https://lumis---journal.web.app/" target="_blank" rel="noopener">Enter Lumis ↗</a>
+          <a class="btn-line" href="https://github.com/1RY-O/lumis-journal" target="_blank" rel="noopener">source ↗</a>
+        </p>
+
+        <dl class="flag-story">
+          <div class="rv"><dt>Problem</dt><dd>Your reading life leaves no trace — books close, thoughts evaporate.</dd></div>
+          <div class="rv"><dt>Idea</dt><dd>A journal that records the <em>act</em> of reading: timestamps, mood, and the uneasy parts a bookshelf hides.</dd></div>
+          <div class="rv"><dt>System</dt><dd>React · Node · Firebase · Gemini API — journal, ideas and untangler modes, daily prompts, mood calendar, PDF export.</dd></div>
+          <div class="rv"><dt>Status</dt><dd><span class="stamp">Open prototype — not production.</span> Live, working, and growing.</dd></div>
         </dl>
       </div>
     </section>
 
-    <section class="plate plate--flagship" id="lumis" data-name="lumis" data-code="II">
-      <div class="plate-meta">
-        <span class="plate-no">II.</span>
-        <span class="plate-name">THE FLAGSHIP &middot; LUMIS</span>
-        <span class="plate-desc">a journal of uneasy reading &mdash; open prototype</span>
-      </div>
-      <div class="lumis-grid">
-        <div class="lumis-poster">
-          <h2 class="lumis-title" aria-label="LUMIS">LUMIS</h2>
-          <p class="lumis-caption">A reading journal that records the act of reading &mdash; timestamps, mood, and the uneasy parts your bookshelf hides.</p>
-          <p class="lumis-stamp">Open prototype &mdash; not production.</p>
-          <ul class="lumis-links">
-            <li><a class="btn-outline" href="https://lumis---journal.web.app/" target="_blank" rel="noopener">Open the live prototype</a></li>
-            <li><a class="btn-text" href="https://github.com/1RY-O/lumis-journal" target="_blank" rel="noopener">source &nearr;</a></li>
-          </ul>
-        </div>
-        <div class="lumis-console" id="lumis-console">
-          <div class="liveprint" id="liveprint">
-            <p class="lp-row" data-row="Problem">// problem &mdash; your reading life leaves no trace</p>
-            <p class="lp-row" data-row="Idea"> &rarr; idea &mdash; a journal that records the act of reading</p>
-            <p class="lp-row" data-row="System"> &rarr; system &mdash; react &middot; node &middot; firebase &middot; gemini</p>
-            <p class="lp-row lp-status" data-row="Status">status &mdash; <b>open prototype, live</b></p>
-          </div>
-          <svg class="typetrace" viewBox="0 0 520 120" preserveAspectRatio="none" aria-hidden="true">
-            <path id="trace-path" d="M6 90 C 130 90, 130 30, 300 30 S 430 90, 514 90" pathLength="1"/>
-          </svg>
-          <p class="trace-label" id="trace-label">ENTRY &rsaquo; INSIGHT</p>
-        </div>
-      </div>
-    </section>
+    <section class="shelves" id="shelves" aria-label="The shelves — other work">
+      <div class="shelf-inner">
+        <p class="kick kick--night rv">The shelves · drawers 002–005</p>
+        <h2 class="shelf-title rv">Everything else<br>on the bench.</h2>
+        <p class="shelf-lede rv">Four drawers, no filler. Each one is real practice — ask me what's inside and I'll show you the build.</p>
 
-    <section class="plate" id="inventory" data-name="inventory" data-code="III">
-      <div class="plate-meta">
-        <span class="plate-no">III.</span>
-        <span class="plate-name">INVENTORY</span>
-        <span class="plate-desc">standing post &amp; tooling</span>
-      </div>
-      <ol class="records">
-        <li class="record">
-          <span class="r-year">2026 &rarr; NOW</span>
-          <div class="r-body">
-            <h3>IoT &amp; Robotics Trainee</h3>
-            <p><span>Unlox Academy</span> &middot; embedded circuits on a bench &mdash; every course exercise becomes a build.</p>
-          </div>
-        </li>
-        <li class="record">
-          <span class="r-year">ROLE</span>
-          <div class="r-body">
-            <h3>Team Leader &mdash; E-Cell</h3>
-            <p><span>Mahindra University</span> &middot; run the room, ship the event, keep the teams in rhythm.</p>
-          </div>
-        </li>
-      </ol>
-      <div class="tool-row">
-        <div class="tool-head">TOOLBOX</div>
-        <ul class="tool-grid">
-          <li class="tool"><b>Logic</b><span>Python &middot; C &middot; C++ &middot; HTML/CSS</span></li>
-          <li class="tool"><b>Hardware</b><span>Arduino &middot; ESP32 &middot; GPIO &middot; PWM &middot; MQTT &middot; Sensors &middot; Actuators</span></li>
-          <li class="tool"><b>Web</b><span>React &middot; Node &middot; Express &middot; REST &middot; Firebase &middot; Firestore &middot; Cloud Run &middot; Gemini API</span></li>
-          <li class="tool"><b>Rig</b><span>Git &middot; GitHub &middot; VS Code &middot; Tinkercad &middot; Wokwi</span></li>
+        <ul class="drawers">
+          <li class="drawer rv">
+            <svg class="drawer-ic" viewBox="0 0 64 64" aria-hidden="true"><rect x="14" y="20" width="36" height="28" rx="7"/><circle cx="25" cy="33" r="4"/><circle cx="39" cy="33" r="4"/><path d="M25 41h14" stroke-linecap="round"/><path d="M32 20v-7M24 13h16" stroke-linecap="round"/><circle cx="32" cy="10" r="2.5"/></svg>
+            <div><h3>Machines that move</h3>
+            <p>Arduino &amp; ESP32 builds — GPIO, PWM, sensors, actuators. Currently on the bench as an IoT &amp; Robotics trainee.</p>
+            <p class="drawer-meta"><span>Arduino · ESP32 · GPIO · PWM</span><span class="stamp stamp--night">bench-active</span></p></div>
+          </li>
+          <li class="drawer rv">
+            <svg class="drawer-ic" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="5"/><circle cx="32" cy="32" r="13"/><circle cx="32" cy="32" r="22"/></svg>
+            <div><h3>Things that talk</h3>
+            <p>Telemetry and dashboards — devices reporting home over MQTT, readings becoming decisions.</p>
+            <p class="drawer-meta"><span>MQTT · Sensors · Dashboards</span><span class="stamp stamp--night">ongoing</span></p></div>
+          </li>
+          <li class="drawer rv">
+            <svg class="drawer-ic" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6c2 14 8 20 22 22-14 2-20 8-22 22-2-14-8-20-22-22 14-2 20-8 22-22z"/></svg>
+            <div><h3>Minds in the loop</h3>
+            <p>GenAI prototypes with the Gemini API — ideas carried from pitch to playable demo under hackathon clocks.</p>
+            <p class="drawer-meta"><span>Gemini API · React · Node</span><span class="stamp stamp--night">shipped ×2</span></p></div>
+          </li>
+          <li class="drawer rv">
+            <svg class="drawer-ic" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 44L44 20M32 12l20 20-20 20-20-20z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div><h3>Experiments</h3>
+            <p>Weekend contraptions and simulations — Tinkercad, Wokwi, whatever the question needs. This drawer never closes.</p>
+            <p class="drawer-meta"><span>Tinkercad · Wokwi · Python · C/C++</span><span class="stamp stamp--night">always open</span></p></div>
+          </li>
         </ul>
+
+        <p class="shelf-ask rv"><a href="mailto:fabledadventurer.pssr@gmail.com?subject=What%27s%20on%20the%20bench%3F">What's on the bench right now? Ask →</a></p>
       </div>
     </section>
 
-    <section class="plate" id="log" data-name="log" data-code="IV">
-      <div class="plate-meta">
-        <span class="plate-no">IV.</span>
-        <span class="plate-name">FIELD LOG</span>
-        <span class="plate-desc">events carried to a result</span>
+    <section class="logbook" id="log" aria-label="Field log">
+      <div class="log-inner">
+        <p class="kick kick--night rv">Field log · stamped entries</p>
+        <h2 class="log-title rv">Carried to<br>a result.</h2>
+
+        <ol class="entries">
+          <li class="entry rv">
+            <span class="entry-no">01</span>
+            <div><h3>Hack2Skill · Gen-AI APAC Ideathon</h3>
+            <p>Team Lead · Builder — an AI concept carried from pitch to playable demo.</p></div>
+            <span class="stamp stamp--night">shipped to stage</span>
+          </li>
+          <li class="entry rv">
+            <span class="entry-no">02</span>
+            <div><h3>AssemblyAI × LabLab · AI Hackathon</h3>
+            <p>Builder — shipped end to end within 48 hours against a hard clock.</p></div>
+            <span class="stamp stamp--night">48h build, shipped</span>
+          </li>
+          <li class="entry rv">
+            <span class="entry-no">03</span>
+            <div><h3>IoT &amp; Robotics Trainee — Unlox Academy</h3>
+            <p>2026 → present — embedded circuits on a bench; every exercise becomes a build.</p></div>
+            <span class="stamp stamp--night">standing post</span>
+          </li>
+          <li class="entry rv">
+            <span class="entry-no">04</span>
+            <div><h3>Team Leader — E-Cell, Mahindra University</h3>
+            <p>Run the room, ship the event, keep the teams in rhythm.</p></div>
+            <span class="stamp stamp--night">standing post</span>
+          </li>
+        </ol>
+
+        <p class="edu rv">B.Tech Mechatronics · Mahindra University, Hyderabad · 2026 → 2030</p>
       </div>
-      <ul class="log-list">
-        <li class="log-entry">
-          <span class="log-no">01</span>
-          <div class="log-body">
-            <h3>Hack2Skill &middot; Gen-AI APAC Ideathon</h3>
-            <p>Team Lead &middot; Builder &mdash; an AI concept carried from pitch to playable demo.</p>
-          </div>
-          <span class="log-out">shipped to stage</span>
-        </li>
-        <li class="log-entry">
-          <span class="log-no">02</span>
-          <div class="log-body">
-            <h3>AssemblyAI &times; LabLab &middot; AI Hackathon</h3>
-            <p>Builder &mdash; shipped within 48 hours against a hard clock, end to end.</p>
-          </div>
-          <span class="log-out">48h build, shipped</span>
-        </li>
-      </ul>
     </section>
 
-    <section class="plate plate--connect" id="connect" data-name="connect" data-code="V">
-      <div class="plate-meta">
-        <span class="plate-no">V.</span>
-        <span class="plate-name">CONNECT</span>
-        <span class="plate-desc">the room has a door</span>
-      </div>
-      <div class="connect-inner">
-        <h2 class="connect-lead"><span class="mask"><span class="maskline">Let&rsquo;s build</span></span><span class="mask"><span class="maskline">something.</span></span></h2>
-        <a class="connect-mail" href="mailto:fabledadventurer.pssr@gmail.com">fabledadventurer.pssr@gmail.com</a>
-        <ul class="connect-handles">
-          <li><a href="https://github.com/1RY-O" target="_blank" rel="noopener">GitHub &mdash; 1RY-O</a></li>
-          <li><a href="https://www.linkedin.com/in/sri-sai-rahul-pilla" target="_blank" rel="noopener">LinkedIn &mdash; sri-sai-rahul-pilla</a></li>
-          <li><a href="resume.pdf" download>R&eacute;sum&eacute; &mdash; resume.pdf</a></li>
+    <section class="dawn" id="contact" aria-label="Send a signal">
+      <div class="dawn-inner">
+        <p class="kick kick--night rv">Transmission · the room has a door</p>
+        <h2 class="dawn-title rv">Send a<br>signal.</h2>
+        <a class="dawn-mail rv" href="mailto:fabledadventurer.pssr@gmail.com">fabledadventurer.pssr@gmail.com</a>
+        <ul class="dawn-links rv">
+          <li><a href="https://github.com/1RY-O" target="_blank" rel="noopener">GitHub — 1RY-O</a></li>
+          <li><a href="https://www.linkedin.com/in/sri-sai-rahul-pilla" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="resume.pdf" download>Resume ↓</a></li>
+          <li><a href="https://1ry-o.github.io/" target="_blank" rel="noopener">1ry-o.github.io</a></li>
         </ul>
+        <p class="colophon rv">Built by hand — HTML · CSS · JS. Fraunces &amp; IBM Plex Mono. No templates. P.S. — press <kbd>`</kbd> anywhere.</p>
       </div>
-      <p class="colophon">Built as a static site &mdash; Fraunces and IBM Plex Mono, live variable type. No templates, no card decks.</p>
     </section>
-
   </main>
+
+  <div class="term" id="term" role="dialog" aria-modal="false" aria-label="Cabinet terminal" hidden>
+    <div class="term-bar"><span>cabinetOS — v1.0</span><button id="term-close" aria-label="Close terminal">×</button></div>
+    <div class="term-out" id="term-out" aria-live="polite"></div>
+    <form class="term-in" id="term-form">
+      <span aria-hidden="true">❯</span>
+      <input id="term-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Terminal command" placeholder="type 'help'">
+    </form>
+  </div>
+
+  <nav class="index" id="index" aria-hidden="true" aria-label="Cabinet index">
+    <div class="index-inner">
+      <p class="kick kick--night">Index · five rooms</p>
+      <ol>
+        <li><a href="#room" data-i="00">The Room <span>where it starts</span></a></li>
+        <li><a href="#lumis" data-i="01">The Flagship <span>lumis, live</span></a></li>
+        <li><a href="#shelves" data-i="02">The Shelves <span>four drawers</span></a></li>
+        <li><a href="#log" data-i="03">Field Log <span>stamped entries</span></a></li>
+        <li><a href="#contact" data-i="04">Transmission <span>send a signal</span></a></li>
+      </ol>
+      <p class="index-foot">or press <kbd>`</kbd> and type <kbd>help</kbd></p>
+    </div>
+  </nav>
 </body>
 </html>

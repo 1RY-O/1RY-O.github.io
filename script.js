@@ -2,285 +2,247 @@
   'use strict';
 
   var root = document.documentElement;
-  var reduceMotion = !new URLSearchParams(location.search).has('motion') &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var mobile = window.matchMedia('(max-width: 900px)').matches;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var finePointer = window.matchMedia('(pointer: fine)').matches;
-  var canFull = !reduceMotion && !mobile && finePointer;
-  var hasGsap = typeof window.gsap !== 'undefined' &&
-    typeof window.ScrollTrigger !== 'undefined';
-  var fullMotion = hasGsap && canFull;
+  var canPlay = !reduceMotion && finePointer;
 
   root.classList.remove('no-js');
-  root.classList.add('js');
-  if (fullMotion) root.classList.add('full-motion');
 
-  function qs(sel) { return document.querySelector(sel); }
-  function qsa(sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); }
+  function qs(sel, base) { return (base || document).querySelector(sel); }
+  function qsa(sel, base) { return Array.prototype.slice.call((base || document).querySelectorAll(sel)); }
   function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
-  /* ---------- halo + type warp ---------- */
+  /* ---------- lantern + artifact parallax ---------- */
 
-  var halo = document.createElement('div');
-  halo.className = 'halo';
-  document.body.appendChild(halo);
-
-  var nameplate = qs('#nameplate');
-  var axSoft = qs('#ax-soft');
-  var axWonk = qs('#ax-wonk');
-  var axOpsz = qs('#ax-opsz');
-  var sky = qs('#sky');
-  var skyVisible = true;
-
-  var aim = { x: innerWidth / 2, y: innerHeight * 0.4 };
-  var cur = { x: aim.x, y: aim.y };
-  var axes = { soft: 62, wonk: 1 };
-  var axisTarget = { soft: 62, wonk: 1 };
-  var lastVis = null;
-
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(function (en) {
-      skyVisible = en[0].isIntersecting;
-      halo.classList.toggle('on', skyVisible);
-    }).observe(sky);
-  }
-
-  document.addEventListener('pointermove', function (e) {
-    if (!canFull) return;
-    aim.x = e.clientX;
-    aim.y = e.clientY;
-    var px = e.clientX / innerWidth;
-    var py = e.clientY / innerHeight;
-    halo.classList.add('on');
-    axisTarget.soft = clamp(20 + (1 - py) * 70, 20, 92);
-    axisTarget.wonk = px < 0.5 ? 1 : 0;
+  var lantern = qs('#lantern');
+  var drifts = qsa('.artifact').map(function (a) {
+    return { el: qs('.drift', a), depth: parseFloat(a.getAttribute('data-depth')) || 30 };
   });
+  var aim = { x: innerWidth / 2, y: innerHeight / 3 };
+  var cur = { x: aim.x, y: aim.y };
 
-  function frame() {
-    cur.x += (aim.x - cur.x) * 0.1;
-    cur.y += (aim.y - cur.y) * 0.1;
-    axes.soft += (axisTarget.soft - axes.soft) * 0.08;
-    axes.wonk += (axisTarget.wonk - axes.wonk) * 0.08;
-    halo.style.transform = 'translate3d(' + (cur.x - 235) + 'px,' + (cur.y - 235) + 'px,0)';
-    if (nameplate) {
-      nameplate.style.fontVariationSettings =
-        '"opsz" 144, "wght" 900, "SOFT" ' + axes.soft.toFixed(1) + ', "WONK" ' +
-        (axes.wonk > 0.5 ? 1 : 0);
+  if (canPlay) {
+    document.addEventListener('pointermove', function (e) {
+      aim.x = e.clientX;
+      aim.y = e.clientY;
+      lantern.classList.add('on');
+    }, { passive: true });
+    (function frame() {
+      cur.x += (aim.x - cur.x) * 0.08;
+      cur.y += (aim.y - cur.y) * 0.08;
+      lantern.style.transform = 'translate3d(' + (cur.x - 260) + 'px,' + (cur.y - 260) + 'px,0)';
+      var nx = (cur.x / innerWidth - 0.5) * 2;
+      var ny = (cur.y / innerHeight - 0.5) * 2;
+      for (var i = 0; i < drifts.length; i++) {
+        var d = drifts[i];
+        d.el.style.transform = 'translate3d(' + (-nx * d.depth).toFixed(1) + 'px,' + (-ny * d.depth).toFixed(1) + 'px,0)';
+      }
+      requestAnimationFrame(frame);
+    })();
+  }
+
+  /* ---------- reveals (armed only after init succeeds) ---------- */
+
+  function armReveals() {
+    var els = qsa('.rv');
+    if (!('IntersectionObserver' in window)) {
+      root.classList.add('js-armed');
+      els.forEach(function (el) { el.classList.add('in'); });
+      return;
     }
-    var vis = Math.round(axes.soft) + ',' + (axes.wonk > 0.5 ? 1 : 0);
-    if (vis !== lastVis) {
-      lastVis = vis;
-      if (axSoft) axSoft.textContent = Math.round(axes.soft);
-      if (axWonk) axWonk.textContent = axes.wonk > 0.5 ? 1 : 0;
-      if (axOpsz) axOpsz.textContent = 144;
-    }
-    requestAnimationFrame(frame);
-  }
-  if (canFull) requestAnimationFrame(frame);
-
-  /* ---------- rotor ---------- */
-
-  var words = ['BUILDER', 'MAKER', 'ENGINEER', 'MAVERICK'];
-  var rotor = qs('#rotor');
-  if (rotor) {
-    var wi = 0;
-    setInterval(function () {
-      wi = (wi + 1) % words.length;
-      rotor.style.opacity = 0;
-      rotor.style.transform = 'translateY(4px)';
-      setTimeout(function () {
-        rotor.textContent = words[wi];
-        rotor.style.opacity = 1;
-        rotor.style.transform = 'translateY(0)';
-      }, 180);
-    }, 2800);
+    root.classList.add('js-armed');
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          en.target.classList.add('in');
+          io.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -4% 0px' });
+    els.forEach(function (el) { io.observe(el); });
   }
 
-  /* ---------- index overlay ---------- */
+  /* ---------- plate tilt ---------- */
 
-  var indexKey = qs('#index-key');
-  var indexNav = qs('#index');
-
-  function setIndex(open) {
-    document.body.classList.toggle('index-open', open);
-    indexKey.setAttribute('aria-expanded', open ? 'true' : 'false');
-    indexNav.setAttribute('aria-hidden', open ? 'false' : 'true');
-    document.body.style.overflow = open ? 'hidden' : '';
-  }
-
-  if (indexKey) {
-    indexKey.addEventListener('click', function () {
-      setIndex(!document.body.classList.contains('index-open'));
+  if (canPlay) {
+    qsa('[data-tilt]').forEach(function (fig) {
+      var img = qs('img', fig);
+      fig.addEventListener('pointermove', function (e) {
+        var r = fig.getBoundingClientRect();
+        var px = (e.clientX - r.left) / r.width - 0.5;
+        var py = (e.clientY - r.top) / r.height - 0.5;
+        img.style.transform = 'rotateY(' + (px * 7).toFixed(2) + 'deg) rotateX(' + (-py * 7).toFixed(2) + 'deg)';
+      });
+      fig.addEventListener('pointerleave', function () {
+        img.style.transform = 'rotateY(0deg) rotateX(0deg)';
+      });
     });
   }
 
+  /* ---------- progress hairline ---------- */
+
+  var fill = qs('#progress-fill');
+  function onScroll() {
+    var st = root.scrollTop;
+    var span = root.scrollHeight - innerHeight;
+    if (span > 0) fill.style.width = clamp(st / span * 100, 0, 100) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ---------- index overlay ---------- */
+
+  var indexBtn = qs('#index-open');
+  var indexNav = qs('#index');
+  function setIndex(open) {
+    document.body.classList.toggle('index-open', open);
+    indexBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    indexNav.setAttribute('aria-hidden', open ? 'false' : 'true');
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  indexBtn.setAttribute('aria-expanded', 'false');
+  indexBtn.addEventListener('click', function () {
+    setIndex(!document.body.classList.contains('index-open'));
+  });
   qsa('#index a').forEach(function (a) {
     a.addEventListener('click', function (e) {
       e.preventDefault();
       var t = qs(a.getAttribute('href'));
       setIndex(false);
       if (t) requestAnimationFrame(function () {
-        t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        t.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
       });
     });
   });
+
+  /* ---------- terminal ---------- */
+
+  var term = qs('#term');
+  var termOut = qs('#term-out');
+  var termForm = qs('#term-form');
+  var termInput = qs('#term-input');
+  var history = [];
+  var hi = -1;
+
+  var LINKS = {
+    live: 'https://lumis---journal.web.app/',
+    source: 'https://github.com/1RY-O/lumis-journal',
+    github: 'https://github.com/1RY-O',
+    linkedin: 'https://www.linkedin.com/in/sri-sai-rahul-pilla',
+    mail: 'mailto:fabledadventurer.pssr@gmail.com',
+    resume: 'resume.pdf'
+  };
+
+  function say(html, cls) {
+    var p = document.createElement('p');
+    if (cls) p.className = cls;
+    p.innerHTML = html;
+    termOut.appendChild(p);
+    termOut.scrollTop = termOut.scrollHeight;
+  }
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function boot() {
+    termOut.innerHTML = '';
+    say('cabinetOS v1.0 — the room is listening.', 't-ok');
+    say("type <b>help</b> to see what this place understands.", '');
+  }
+  function openTerm() {
+    term.hidden = false;
+    if (!termOut.children.length) boot();
+    setTimeout(function () { termInput.focus(); }, 30);
+  }
+  function closeTerm() {
+    term.hidden = true;
+    qs('#term-open').focus();
+  }
+
+  var COMMANDS = {
+    help: function () {
+      say('rooms → <b>lumis</b> · <b>shelves</b> · <b>log</b> · <b>contact</b>', 't-ok');
+      say('links → <b>open</b> · <b>source</b> · <b>github</b> · <b>mail</b> · <b>resume</b>', 't-ok');
+      say('fun → <b>whoami</b> · <b>sudo</b> · <b>clear</b> · <b>exit</b>', 't-ok');
+    },
+    lumis: function () { go('#lumis', 'opening drawer 001 — lumis, live.'); },
+    work: function () { go('#shelves', 'four drawers, no filler.'); },
+    shelves: function () { go('#shelves', 'four drawers, no filler.'); },
+    log: function () { go('#log', 'stamped entries, all carried somewhere.'); },
+    contact: function () { go('#contact', 'the room has a door.'); },
+    open: function () { jump(LINKS.live, 'entering lumis ↗'); },
+    source: function () { jump(LINKS.source, 'source ↗'); },
+    github: function () { jump(LINKS.github, 'github ↗'); },
+    linkedin: function () { jump(LINKS.linkedin, 'linkedin ↗'); },
+    mail: function () { jump(LINKS.mail, 'new message addressed.'); },
+    resume: function () { jump(LINKS.resume, 'resume.pdf ↓'); },
+    whoami: function () { say('fabled adventurer — personal space. explorer, builder, mechatronics undergrad.', 't-ok'); },
+    sudo: function () { say('nice try. this cabinet trusts you already.', 't-err'); },
+    clear: function () { termOut.innerHTML = ''; },
+    exit: function () { say('closing the hatch.', ''); closeTerm(); },
+    quit: function () { say('closing the hatch.', ''); closeTerm(); }
+  };
+
+  function go(sel, msg) {
+    say(msg, 't-ok');
+    var t = qs(sel);
+    setTimeout(function () {
+      closeTerm();
+      if (t) t.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    }, 450);
+  }
+  function jump(url, msg) {
+    say(msg + ' <a href="' + url + '" target="_blank" rel="noopener">follow →</a>', 't-ok');
+    setTimeout(function () { window.open(url, '_blank', 'noopener'); }, 450);
+  }
+
+  termForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var raw = termInput.value.trim();
+    if (!raw) return;
+    say('<b>❯</b> ' + esc(raw), 't-in');
+    history.push(raw);
+    hi = history.length;
+    termInput.value = '';
+    var cmd = raw.toLowerCase().split(/\s+/)[0];
+    if (COMMANDS[cmd]) {
+      COMMANDS[cmd]();
+    } else {
+      say("unknown spell: '" + esc(cmd) + "'. try <b>help</b>.", 't-err');
+    }
+  });
+  termInput.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (hi > 0) { hi--; termInput.value = history[hi] || ''; }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (hi < history.length) { hi++; termInput.value = history[hi] || ''; }
+    }
+  });
+
+  qs('#term-open').addEventListener('click', function () {
+    if (term.hidden) openTerm(); else closeTerm();
+  });
+  qs('#room-term').addEventListener('click', openTerm);
+  qs('#term-close').addEventListener('click', closeTerm);
 
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && document.body.classList.contains('index-open')) {
-      setIndex(false);
-    }
-  });
-
-  /* ---------- drop cue key ---------- */
-
-  qs('#drop-cue').setAttribute('tabindex', '0');
-  qs('#drop-cue').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter' || e.key === ' ') {
+    var typing = /^(INPUT|TEXTAREA)$/.test(document.activeElement && document.activeElement.tagName || '');
+    if (e.key === 'Escape') {
+      if (!term.hidden) closeTerm();
+      if (document.body.classList.contains('index-open')) setIndex(false);
+    } else if (e.key === '`' && !typing && term.hidden) {
       e.preventDefault();
-      qs('#prelim').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      openTerm();
     }
   });
 
-  /* ---------- current chip ---------- */
+  /* ---------- devtools easter egg ---------- */
 
-  var current = qs('#current');
-  var progressFill = qs('#progress');
-  var currentCode = qs('#current-code');
-  var codes = ['01\u00B7PRELIM', '02\u00B7LUMIS', '03\u00B7INVENTORY', '04\u00B7LOG', '05\u00B7CONNECT'];
-  var plates = qsa('.plate');
+  try {
+    console.log('%ccabinetOS // you found the back of the cabinet.', 'color:#e8a33d;font-family:monospace;font-size:13px;');
+    console.log('%cpress ` anywhere and type "help". — PSR', 'color:#f2e9d8;font-family:monospace;font-size:12px;');
+  } catch (err) { /* consoles are shy on some browsers */ }
 
-  if ('IntersectionObserver' in window) {
-    var plateIO = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting) {
-          var i = plates.indexOf(en.target);
-          if (i >= 0) currentCode.textContent = codes[i];
-        }
-      });
-    }, { rootMargin: '-45% 0px -45% 0px' });
-    plates.forEach(function (p) { plateIO.observe(p); });
-  }
-
-  function onScroll2() {
-    var st = document.documentElement.scrollTop;
-    var tableTop = (qs('#table') ? qs('#table').offsetTop : 0) - innerHeight * 0.8;
-    if (st > tableTop) {
-      current.classList.add('on');
-      var span = document.documentElement.scrollHeight - innerHeight;
-      if (span > 0) progressFill.style.width = clamp(st / span * 100, 0, 100) + '%';
-    } else {
-      current.classList.remove('on');
-    }
-  }
-  window.addEventListener('scroll', onScroll2, { passive: true });
-
-  /* ---------- typewriter + trace ---------- */
-
-  var tracePath = qs('#trace-path');
-  var liveprint = qs('#liveprint');
-  var lpTicked = false;
-
-  function typeRow(row, done) {
-    var raw = row.__plain;
-    var i = 0;
-    (function tick() {
-      i += 1;
-      row.textContent = raw.slice(0, i);
-      row.classList.add('typed');
-      if (i < raw.length) {
-        row.classList.add('cursor');
-        setTimeout(tick, 11);
-      } else {
-        row.classList.remove('cursor');
-        done();
-      }
-    })();
-  }
-
-  function playConsole() {
-    if (lpTicked) return;
-    lpTicked = true;
-    var rows = qsa('#liveprint .lp-row');
-    rows.forEach(function (r) { r.__plain = r.textContent.replace(/\s+/g, ' ').trim(); r.textContent = ''; });
-    var d = 300;
-    rows.forEach(function (r) {
-      setTimeout(function () { typeRow(r, function () {}); }, d);
-      d += 140 + r.__plain.length * 11 + 260;
-    });
-  }
-
-  if (fullMotion) {
-    if (tracePath) {
-      gsap.to(tracePath, {
-        strokeDashoffset: 0, ease: 'none', duration: 1.3,
-        scrollTrigger: { trigger: '#lumis-console', start: 'top 70%' }
-      });
-      gsap.to('#trace-label', {
-        opacity: 0, y: 6, yoyo: true, repeat: -1, duration: 1.6, ease: 'sine.inOut'
-      });
-    }
-    if ('IntersectionObserver' in window) {
-      var lprIO = new IntersectionObserver(function (en) {
-        if (en[0].isIntersecting) {
-          playConsole();
-          lprIO.disconnect();
-        }
-      }, { threshold: 0.35 });
-      lprIO.observe(qs('#lumis-console'));
-    }
-  } else {
-    if (tracePath) {
-      tracePath.style.strokeDasharray = 'none';
-      tracePath.style.strokeDashoffset = '0';
-    }
-    qsa('#liveprint .lp-row').forEach(function (r) { r.classList.add('typed'); });
-  }
-
-  /* ---------- motion scenes ---------- */
-
-  function bootIntro() {
-    var tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-    tl.from('.np-line i', { yPercent: 112, stagger: 0.09, duration: 1.15 }, 0.25)
-      .from('.rotorline', { y: 14, opacity: 0, duration: 0.7 }, 0.9)
-      .from('.sky-meta, .sky-mono', { y: -8, opacity: 0, duration: 0.6, stagger: 0.1 }, 1.05);
-  }
-
-  function dropScrub() {
-    gsap.fromTo('.namewrap', { scaleY: 1, yPercent: 0 },
-      { scaleY: 0.58, yPercent: -8, ease: 'none',
-        scrollTrigger: { trigger: '#sky', start: 'top top', end: '+=100%', scrub: true } });
-    gsap.fromTo('#sky .sky-meta, #sky .sky-mono', { opacity: 1 },
-      { opacity: 0.35, ease: 'none',
-        scrollTrigger: { trigger: '#sky', start: 'top top', end: '+=100%', scrub: true } });
-  }
-
-  function plateReveals() {
-    qsa('.plate').forEach(function (plate) {
-      var kids = Array.prototype.slice.call(plate.querySelectorAll(':scope > *'));
-      gsap.from(kids, {
-        y: 26, opacity: 0, duration: 0.95, ease: 'power3.out', stagger: 0.06,
-        scrollTrigger: { trigger: plate, start: 'top 86%', toggleActions: 'play none none reverse' }
-      });
-    });
-    gsap.from('#lumis .lumis-title', {
-      y: 40, opacity: 0, duration: 1, ease: 'power4.out',
-      scrollTrigger: { trigger: '#lumis', start: 'top 78%' }
-    });
-    gsap.from('.connect-lead .maskline', {
-      yPercent: 112, duration: 1.1, ease: 'power4.out', stagger: 0.12,
-      scrollTrigger: { trigger: '#connect', start: 'top 80%' }
-    });
-  }
-
-  if (fullMotion) {
-    gsap.registerPlugin(ScrollTrigger);
-    ScrollTrigger.config({ ignoreMobileResize: true });
-    bootIntro();
-    dropScrub();
-    plateReveals();
-    window.addEventListener('load', function () { ScrollTrigger.refresh(); });
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(function () { ScrollTrigger.refresh(); });
-    }
-  }
+  armReveals();
 })();
