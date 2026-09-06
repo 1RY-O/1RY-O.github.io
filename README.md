@@ -1,52 +1,32 @@
 # Pilla Sri Sai Rahul — Personal Website
 
-An art-directed **spatial digital experience** for https://1ry-o.github.io
+A scroll-driven **editorial instrument** for https://1ry-o.github.io
 
-Not a scrolling portfolio. Not a carousel. The site is built as **ARC** — a camera travels a curved corridor in the dark. Eight objects stand along the arc at fixed depth slots; you move *between* them, never the other way. The room has a hand: the arc bends, so what lies ahead rises and drifts right, what falls behind drops and drifts left — no mirror symmetry.
+Not a scrolling portfolio in the template sense. The site is set like precision printed matter — monumental masked typography, hairline rules, mono marginalia — and choreographed on scroll: pinned passages, layered parallax, clip reveals, a schematic that draws itself. Stillness is a feature; motion arrives in passages.
 
 ## Experience
 
-1. **FRACTURE → REASSEMBLY → IDENTITY → EXPLORATION**
-   An aperture emblem surfaces out of the dark, is cut into 12 3D shards, holds as a fractured field, then converges — the fragments reassembling into the typographic identity itself. No hard cut and no loading screen: the reassembled object continues as chapter 01 of the deck.
+**TOLERANCE** — seven passages on one continuous page:
 
-2. **The Corridor** — eight chapter-objects standing in a depth system:
-   - `Identity` — the name as the strongest typographic moment, behind an aperture mark
-   - `Profile` — an editorial spread with an indexed fact register
-   - `Lumis` — the flagship object: a miniature case study (problem → idea → system → prototype) beside a working device mock, honestly stamped "open prototype — not production"
-   - `Systems` — engineering documentation: signal-chain schematic + spec ledger
-   - `Field Log` — hackathons as a chronological log (Hack2Skill APAC Ideathon · AssemblyAI × LabLab)
-   - `Stations` — current posts as two plaques on a spine (no timeline)
-   - `Toolbox` — a technical index A–Z (no skill bars, no badges)
-   - `Contact` — a quiet closing plate
+1. **Hero** — the name at monumental scale with masked line reveals, a self-drawing aperture mark, pointer parallax, and a scroll-linked exit that pulls the composition apart gently.
+2. **Manifesto** — "Hardware gives software a body", plus a condensed fact register.
+3. **Lumis (flagship)** — the only full-bleed spread. A pinned sequence: stanzas arrive one by one while the device mock reveals through a clip, the entry→insight beam draws with scroll, and the device tilts with scroll velocity. Honestly stamped "open prototype — not production".
+4. **Systems** — a pinned drawing: the ESP32 signal-chain schematic draws itself on scroll beside a spec ledger.
+5. **Field Log** — two hackathon entries as large editorial rows with hover displacement.
+6. **Index** — Stations and Toolbox merged into one tabular spread.
+7. **Contact** — a quiet close: name, links, résumé, colophon.
 
-   Each moment composes ~5 objects at different depths: the active plate is closest, sharpest, largest; neighbours recede with blur, opacity, rotation and offset. States physically travel through the slots — nothing fades out and back in.
+## Motion system
 
-3. **Motion character** — one master easing curve for the whole scene: a gathering anticipation (the camera leans in), depth travel, weighted settling. The grid recedes, the rail curls, content staggers in on arrival and holds still once assembled.
+One easing family across the whole page. GSAP + ScrollTrigger (CDN) drive pins, scrubs, masked reveals and the progress rule; a vanilla rAF layer handles the cursor ring and magnetic elements. If the CDN is unreachable, an IntersectionObserver fallback reveals everything statically — the page is never blank. `prefers-reduced-motion` disables all of it; no-JS gets the same document linearized.
 
-## Input
+## Navigation
 
-- Mouse wheel / trackpad — one gesture, one transition (horizontal swipes count too)
-- Keyboard: arrows · PageUp/PageDown · Space · Home/End · digits 1–8
-- Touch swipe (vertical) — mobile keeps the spatial model
-- Chapter rail (right) · prev/next arrows (bottom) · magnetic links and entries
-
-## Design System
-
-- **Type**: Bodoni Moda (display serif, variable optical size) · Instrument Sans (body) · IBM Plex Mono (metadata)
-- **Palette**: ink `#0a0a0c` · bone `#e9e5dd` · oxide `#c8723f` · steel `#7d8794`
-- **Motifs**: aperture marks, ruler ticks, ghost chapter numerals, an engineering grid floor, mono spec registers — instrument precision as art direction
-- **Atmosphere**: fog at the far side of the arc, a cursor lamp, vignette, film grain
-
-## Accessibility
-
-- `prefers-reduced-motion` — static exhibition, no prologue, no loops, content fully readable
-- Keyboard navigation with visible focus states
-- `aria-live` chapter indicator; labelled rail buttons
-- No-JS fallback — static scrollable document
+A fixed masthead (mark, live passage indicator, résumé, Index toggle) plus a full-screen index overlay. Native anchor scrolling throughout — never hijacked.
 
 ## QA hooks
 
-- `?s=1..8` — jump straight to a chapter (also keeps the URL in sync as you navigate)
+- `#lumis`, `#systems`, … — jump straight to a passage
 - `?motion=1` — force full motion even under `prefers-reduced-motion` (for headless captures)
 
 ## Run locally
@@ -64,7 +44,7 @@ The upstream remote must point to a repo named **exactly** `1RY-O.github.io`.
 git remote add origin https://github.com/1RY-O/1RY-O.github.io.git
 git branch -M main
 git add .
-git commit -m "feat: ARC spatial redesign"
+git commit -m "feat: TOLERANCE scroll-editorial rework"
 git push -u origin main
 ```
 
@@ -72,7 +52,7 @@ git push -u origin main
 
 | File | Purpose |
 |---|---|
-| `index.html` | The eight chapter-objects, emblem prologue, HUD, atmosphere layers |
-| `styles.css` | Visual system, board chrome, chapter compositions, slot geometry, responsiveness |
-| `script.js` | Prologue shard engine, spatial deck engine, input layer, cursor light |
+| `index.html` | Masthead, index overlay, seven passages, footer, CDN scripts |
+| `styles.css` | TOLERANCE visual system, compositions, overlay, responsive, fallbacks |
+| `script.js` | GSAP scenes, IO fallback, cursor/magnetic layer, index overlay, passage indicator |
 | `resume.pdf` | Downloadable resume |
