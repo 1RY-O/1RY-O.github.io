@@ -45,7 +45,7 @@ Not a scrolling portfolio. Not a carousel. The site is conceived as a single **o
 - No-JS fallback — static scrollable document
 
 ## Run locally
-
+ 
 ```bash
 python -m http.server 8000
 # open http://localhost:8000
