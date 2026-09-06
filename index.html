@@ -1,344 +1,205 @@
 <!DOCTYPE html>
 <html lang="en" class="no-js">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pilla Sri Sai Rahul — Builder · Mechatronics · Robotics · AI</title>
-  <meta name="description" content="Pilla Sri Sai Rahul — Mechatronics engineering student at Mahindra University. Builder of Lumis, an AI-powered journaling prototype. Robotics, embedded systems, IoT." />
-  <meta name="theme-color" content="#08080a" />
-  <meta property="og:title" content="Pilla Sri Sai Rahul — Builder" />
-  <meta property="og:description" content="Mechatronics student · robotics · embedded · IoT · AI · creator of Lumis" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://1ry-o.github.io/" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,SOFT,WONK,wght@0,9..144,0..100,0..1,100..900;1,9..144,0..100,0..1,100..900&family=IBM+Plex+Sans+Condensed:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect x='8' y='8' width='32' height='32' fill='none' stroke='%23e9e5dd' stroke-width='1.6'/%3E%3Ccircle cx='24' cy='24' r='6' fill='none' stroke='%23C8723F' stroke-width='1.6'/%3E%3Ccircle cx='24' cy='24' r='1.6' fill='%23e9e5dd'/%3E%3C/svg%3E" />
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Pilla Sri Sai Rahul — mechatronics engineering student. I build machines that sense, decide and act.">
+  <meta name="theme-color" content="#0a0a0c">
+  <title>Pilla Sri Sai Rahul — a living type specimen</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,100..900,0..100,0..1&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script defer src="script.js"></script>
 </head>
 <body>
-  <a class="skip-link" href="#lumis">Skip to Lumis</a>
+  <a class="skip" href="#lumis">Skip to the flagship</a>
 
   <div class="grain" aria-hidden="true"></div>
-  <div class="progress" aria-hidden="true"><i id="progress-bar"></i></div>
-  <div class="cursor" id="cursor" aria-hidden="true"><i></i></div>
 
-  <!-- ============ MASTHEAD ============ -->
-  <header class="mast">
-    <a class="brand mag" href="#hero" aria-label="Pilla Sri Sai Rahul — back to top">
-      <svg class="brand-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-        <rect x="4" y="4" width="24" height="24" stroke="var(--bone)" stroke-width="1.3"/>
-        <circle cx="16" cy="16" r="5.4" stroke="var(--accent)" stroke-width="1.3"/>
-        <circle cx="16" cy="16" r="1.3" fill="var(--bone)"/>
-      </svg>
-      <span class="brand-name">P·SR</span>
-    </a>
-    <p class="mast-pos mono" aria-live="polite">
-      <span id="spec-cur">01</span><span class="mast-sep" aria-hidden="true">/</span><span>06</span>
-      <span class="mast-sep" aria-hidden="true">·</span><span id="spec-title">Hero</span>
-    </p>
-    <div class="mast-right">
-      <a class="mast-resume mono mag" href="resume.pdf" download>Résumé&hairsp;<span aria-hidden="true">↓</span></a>
-      <button class="index-toggle mono mag" id="index-toggle" aria-expanded="false" aria-controls="index">
-        <span class="index-toggle-label">Index</span><i aria-hidden="true"></i>
+  <div class="boot" id="boot" aria-hidden="true">
+    <span class="boot-line">GENOME &mdash; a living type specimen &middot; PSR</span>
+  </div>
+
+  <div class="current" id="current" aria-hidden="true">
+    <span class="current-rail"><i id="progress"></i></span>
+    <span class="current-code" id="current-code">00&middot;IGNITION</span>
+  </div>
+
+  <header class="sky" id="sky">
+    <div class="sky-meta">
+      <a class="sky-sel" href="https://1ry-o.github.io/" rel="noopener">PILLA, SRI SAI RAHUL &mdash; MECHATRONICS</a>
+      <button class="index-key" id="index-key" aria-expanded="false" aria-controls="index">
+        INDEX <span class="index-key-i"></span>
       </button>
+    </div>
+
+    <div class="namewrap">
+      <h1 class="nameplate" id="nameplate">
+        <span class="np-line"><i>PILLA</i></span>
+        <span class="np-line"><i>SRI&nbsp;SAI</i></span>
+        <span class="np-line"><i>RAHUL</i></span>
+      </h1>
+      <p class="rotorline" aria-hidden="true">a <strong id="rotor">BUILDER</strong> of machines that <em>sense, decide and act</em></p>
+    </div>
+
+    <div class="sky-mono">
+      <p class="axes" id="axes" aria-hidden="true">soft <b id="ax-soft">62</b>/100 &middot; wonk <b id="ax-wonk">1</b>/1 &middot; opsz <b id="ax-opsz">144</b></p>
+      <p class="dropcue" id="drop-cue">drop the context &mdash; <span class="dropfmt">scroll or press &#8629;</span></p>
     </div>
   </header>
 
-  <!-- ============ INDEX ============ -->
-  <nav class="index" id="index" aria-label="Sections" aria-hidden="true">
-    <div class="index-head mono"><span>Specimen index</span><span>6 specimens</span></div>
-    <ol class="index-list">
-      <li><a href="#hero" data-spec-link="0"><b>01</b><span>Hero</span><i>Builder, Mahindra Univ.</i></a></li>
-      <li><a href="#lumis" data-spec-link="1"><b>02</b><span>Lumis</span><i>Flagship — live prototype</i></a></li>
-      <li><a href="#systems" data-spec-link="2"><b>03</b><span>Systems</span><i>Signal chain</i></a></li>
-      <li><a href="#fieldlog" data-spec-link="3"><b>04</b><span>Field Log</span><i>Two builds, two weekends</i></a></li>
-      <li><a href="#dossier" data-spec-link="4"><b>05</b><span>Dossier</span><i>Stations · Toolbox</i></a></li>
-      <li><a href="#contact" data-spec-link="5"><b>06</b><span>Contact</span><i>Hyderabad, IN</i></a></li>
-    </ol>
-    <p class="index-foot mono">Mechatronics — Robotics — Embedded — IoT — AI</p>
+  <nav class="index" id="index" aria-hidden="true">
+    <div class="index-inner">
+      <p class="index-kicker mono">Jump to a plate</p>
+      <ol class="index-list">
+        <li><a href="#prelim" data-code="01">I &nbsp;&middot;&nbsp; Prelim</a></li>
+        <li><a href="#lumis" data-code="02">II &nbsp;&middot;&nbsp; The Flagship &mdash; Lumis</a></li>
+        <li><a href="#inventory" data-code="03">III &nbsp;&middot;&nbsp; Inventory</a></li>
+        <li><a href="#log" data-code="04">IV &nbsp;&middot;&nbsp; Field Log</a></li>
+        <li><a href="#connect" data-code="05">V &nbsp;&middot;&nbsp; Connect</a></li>
+      </ol>
+      <p class="index-foot mono">Pilla Sri Sai Rahul &mdash; the botany of a builder</p>
+    </div>
   </nav>
 
-  <main id="room">
+  <main class="table" id="table">
 
-    <!-- ============ 01 · HERO ============ -->
-    <section class="stage hero" id="hero" data-stage="Hero" aria-label="Hero">
-      <div class="hero-grid" id="hero-grid">
-        <div class="hero-main">
-          <p class="eyebrow" data-hero="eyebrow"><span>Portfolio</span><b aria-hidden="true"></b><span>Mahindra Univ. · Hyderabad</span></p>
-          <h1 class="hero-name" aria-label="Pilla Sri Sai Rahul">
-            <span class="mask" aria-hidden="true"><span class="line" data-hero="line">Pilla</span></span>
-            <span class="mask" aria-hidden="true"><span class="line" data-hero="line"><em>Sri&nbsp;Sai</em></span></span>
-            <span class="mask" aria-hidden="true"><span class="line" data-hero="line">Rahul</span></span>
-          </h1>
-          <p class="hero-claim" data-hero="claim">I build bodies for software — robots, rigs, and one AI journal that reads between the lines.</p>
-          <div class="hero-cta" data-hero="cta">
-            <a class="btn btn--solid mag" href="#lumis">See Lumis&ensp;<span aria-hidden="true">↓</span></a>
-            <a class="btn btn--ghost mag" href="https://github.com/1RY-O" target="_blank" rel="noopener">GitHub&ensp;<span aria-hidden="true">↗</span></a>
-          </div>
-        </div>
-        <aside class="rail-panel" data-hero="rail" aria-label="At a glance">
-          <p class="rail-head mono">At a glance</p>
-          <dl class="rail-rows">
-            <div class="rail-row"><dt class="mono">Role</dt><dd>Mechatronics student · Builder</dd></div>
-            <div class="rail-row"><dt class="mono">Base</dt><dd>Hyderabad, IN · 17.40°N 78.47°E</dd></div>
-            <div class="rail-row"><dt class="mono">Stack</dt><dd>ESP32 · React · Firebase · MQTT</dd></div>
-            <div class="rail-row"><dt class="mono">Now</dt><dd>IoT &amp; Robotics — Unlox Academy</dd></div>
-            <div class="rail-row"><dt class="mono">Status</dt><dd class="rail-live">Open to internships</dd></div>
-          </dl>
-          <div class="rail-links">
-            <a class="mag" href="https://github.com/1RY-O" target="_blank" rel="noopener">GitHub<span aria-hidden="true">↗</span></a>
-            <a class="mag" href="https://www.linkedin.com/in/sri-sai-rahul-pilla" target="_blank" rel="noopener">LinkedIn<span aria-hidden="true">↗</span></a>
-            <a class="mag" href="mailto:fabledadventurer.pssr@gmail.com">Email<span aria-hidden="true">↗</span></a>
-          </div>
-        </aside>
+    <section class="plate" id="prelim" data-name="prelim" data-code="I">
+      <div class="plate-meta">
+        <span class="plate-no">I.</span>
+        <span class="plate-name">PRELIM</span>
+        <span class="plate-desc">identity sheet</span>
       </div>
-      <p class="scroll-cue mono" data-hero="cue" aria-hidden="true"><span>Scroll</span><i></i></p>
+      <div class="prelim-grid">
+        <div class="prelim-left">
+          <p class="prelim-lead">Here is something I actually built &mdash;</p>
+          <h2 class="prelim-stmt">I solve problems in physical space: machines that <em>sense</em>, <em>decide</em> and <em>act</em>, with honest stacks and interfaces that stay out of the way.</h2>
+          <p class="prelim-line">B.Tech Mechatronics &middot; Mahindra University, Hyderabad &middot; 2026 &rarr; 2030. Fields in play: robotics &middot; embedded &middot; IoT &middot; AI.</p>
+        </div>
+        <dl class="prelim-sheet">
+          <div><dt>mail</dt><dd><a href="mailto:fabledadventurer.pssr@gmail.com">fabledadventurer.pssr@gmail.com</a></dd></div>
+          <div><dt>github</dt><dd><a href="https://github.com/1RY-O" target="_blank" rel="noopener">1RY-O</a></dd></div>
+          <div><dt>linkedin</dt><dd><a href="https://www.linkedin.com/in/sri-sai-rahul-pilla" target="_blank" rel="noopener">sri-sai-rahul-pilla</a></dd></div>
+          <div><dt>site</dt><dd><a href="https://1ry-o.github.io/" target="_blank" rel="noopener">1ry-o.github.io</a></dd></div>
+          <div><dt>resume</dt><dd><a href="resume.pdf" download>&darr; resume.pdf</a></dd></div>
+        </dl>
+      </div>
     </section>
 
-    <!-- ============ 02 · LUMIS — flagship launch ============ -->
-    <section class="stage lumis" id="lumis" data-stage="Lumis" aria-label="Lumis, flagship">
-      <div class="wrap">
-        <p class="slug" data-rv><span>02 · Flagship</span><b>Live prototype</b></p>
-        <div class="launch-tease">
-          <h2 class="lumis-word" aria-label="Lumis">
-            <span class="mask" aria-hidden="true"><span class="line" data-rv-line>Lumis</span></span>
-          </h2>
-          <p class="lumis-promise" data-rv>An AI journal that reads between the lines. Raw entries in — quiet, human-scale insight out.</p>
-          <div class="launch-cta" data-rv>
-            <a class="btn btn--solid btn--big mag" href="https://lumis---journal.web.app/" target="_blank" rel="noopener">Open the live site&ensp;<span aria-hidden="true">↗</span></a>
-            <a class="btn btn--ghost mag" href="https://github.com/1RY-O/lumis-journal" target="_blank" rel="noopener">Source&ensp;<span aria-hidden="true">↗</span></a>
-          </div>
-        </div>
+    <section class="plate plate--flagship" id="lumis" data-name="lumis" data-code="II">
+      <div class="plate-meta">
+        <span class="plate-no">II.</span>
+        <span class="plate-name">THE FLAGSHIP &middot; LUMIS</span>
+        <span class="plate-desc">a journal of uneasy reading &mdash; open prototype</span>
       </div>
-      <div class="wrap lumis-pin" id="lumis-pin">
-        <div class="lumis-grid">
-          <figure class="lumis-screen" data-lumis="screen" id="lumis-screen" tabindex="0" role="button" aria-label="Replay the entry to insight animation">
-            <div class="screen-clip" id="screen-clip">
-              <div class="screen" id="screen">
-                <div class="scr-top"><span class="scr-logo">Lumis</span><span class="scr-nav mono">journal / reflections</span></div>
-                <div class="scr-entry">
-                  <p class="scr-date mono">Fri · Sep 04</p>
-                  <p class="scr-head">Morning pages</p>
-                  <p class="scr-text">05:40 — the line-follower finally held the corner at speed. Gains still guesswork, but they're my guesswork.</p>
-                </div>
-                <svg class="scr-beam" viewBox="0 0 460 120" fill="none" aria-hidden="true">
-                  <path class="beam-line" id="beam-line" pathLength="1" d="M230 20 C 250 50, 330 70, 372 92" />
-                  <circle class="beam-dot" id="beam-dot" cx="230" cy="20" r="3" />
-                </svg>
-                <div class="scr-insight"><span class="mono">insight</span><p>You debug best at dawn. Protect the morning block.</p></div>
-                <div class="scr-entry scr-entry--dim">
-                  <p class="scr-date mono">Thu · Sep 03</p>
-                  <p class="scr-head">Wiring day</p>
-                  <p class="scr-text">Mapped the MQTT topics for the rig. Publish, subscribe, sleep — same loop as writing.</p>
-                </div>
-              </div>
-            </div>
-            <figcaption class="mono"><span data-lumis="cap">Fig. 01 — Entry → Insight · click the screen to replay</span></figcaption>
-            <span class="stamp mono" aria-hidden="true">Open prototype — not production</span>
-          </figure>
-          <div class="lumis-side">
-            <dl class="params" data-lumis-group>
-              <div class="param" data-lumis="param"><dt class="mono"><span>01</span>Problem</dt><dd>Journals accumulate; insight doesn't.</dd></div>
-              <div class="param" data-lumis="param"><dt class="mono"><span>02</span>Idea</dt><dd>An AI layer that surfaces quiet reflections from raw entries.</dd></div>
-              <div class="param" data-lumis="param"><dt class="mono"><span>03</span>System</dt><dd>Journal client · retrieval · grounded summarization.</dd></div>
-              <div class="param" data-lumis="param"><dt class="mono"><span>04</span>Status</dt><dd>Working prototype — refined and tested, not production.</dd></div>
-            </dl>
-            <p class="stack mono" data-lumis="stack">React / Vite / Firebase / Firestore / Node.js / Express / Cloud Run / Gemini API</p>
+      <div class="lumis-grid">
+        <div class="lumis-poster">
+          <h2 class="lumis-title" aria-label="LUMIS">LUMIS</h2>
+          <p class="lumis-caption">A reading journal that records the act of reading &mdash; timestamps, mood, and the uneasy parts your bookshelf hides.</p>
+          <p class="lumis-stamp">Open prototype &mdash; not production.</p>
+          <ul class="lumis-links">
+            <li><a class="btn-outline" href="https://lumis---journal.web.app/" target="_blank" rel="noopener">Open the live prototype</a></li>
+            <li><a class="btn-text" href="https://github.com/1RY-O/lumis-journal" target="_blank" rel="noopener">source &nearr;</a></li>
+          </ul>
+        </div>
+        <div class="lumis-console" id="lumis-console">
+          <div class="liveprint" id="liveprint">
+            <p class="lp-row" data-row="Problem">// problem &mdash; your reading life leaves no trace</p>
+            <p class="lp-row" data-row="Idea"> &rarr; idea &mdash; a journal that records the act of reading</p>
+            <p class="lp-row" data-row="System"> &rarr; system &mdash; react &middot; node &middot; firebase &middot; gemini</p>
+            <p class="lp-row lp-status" data-row="Status">status &mdash; <b>open prototype, live</b></p>
           </div>
+          <svg class="typetrace" viewBox="0 0 520 120" preserveAspectRatio="none" aria-hidden="true">
+            <path id="trace-path" d="M6 90 C 130 90, 130 30, 300 30 S 430 90, 514 90" pathLength="1"/>
+          </svg>
+          <p class="trace-label" id="trace-label">ENTRY &rsaquo; INSIGHT</p>
         </div>
       </div>
     </section>
 
-    <!-- ============ 03 · SYSTEMS ============ -->
-    <section class="stage systems" id="systems" data-stage="Systems" aria-label="Systems">
-      <div class="wrap">
-        <p class="slug" data-rv><span>03 · Systems</span><b>Signal chain — hover the nodes</b></p>
-        <h2 class="stage-title" aria-label="The physical layer of intelligent systems.">
-          <span class="mask" aria-hidden="true"><span class="line" data-rv-line>The physical layer</span></span>
-          <span class="mask" aria-hidden="true"><span class="line" data-rv-line>of <em>intelligent</em> systems.</span></span>
-        </h2>
-        <div class="systems-grid">
-          <figure class="blueprint" data-systems="print">
-            <svg viewBox="0 0 460 300" role="img" aria-label="Signal chain diagram: sensors to microcontroller to actuators and cloud" id="print-svg">
-              <g class="print-grid" stroke-width="1">
-                <path d="M0 60H460M0 120H460M0 180H460M0 240H460M60 0V300M140 0V300M220 0V300M300 0V300M380 0V300" />
-              </g>
-              <g class="print-wires" fill="none">
-                <path class="draw" data-chain="sense" pathLength="1" d="M118 170 H196" />
-                <path class="draw" data-chain="act" pathLength="1" d="M288 170 H366" />
-                <path class="draw" data-chain="mcu" pathLength="1" d="M242 122 V58" />
-                <path class="draw draw--dash" data-chain="cloud" pathLength="1" d="M242 58 C 242 30, 360 30, 398 46" />
-              </g>
-              <path class="print-flow" id="print-flow" data-chain="sense" pathLength="1" d="M118 170 H196" />
-              <g class="print-nodes" fill="var(--ink)" stroke="var(--accent)">
-                <circle class="node" data-chain="sense" cx="118" cy="170" r="4" tabindex="0" aria-label="Sense node" />
-                <circle class="node" data-chain="mcu" cx="242" cy="122" r="4" tabindex="0" aria-label="MCU node" />
-                <circle class="node" data-chain="act" cx="366" cy="170" r="4" tabindex="0" aria-label="Act node" />
-                <circle class="node" data-chain="cloud" cx="398" cy="46" r="3.5" tabindex="0" aria-label="Cloud node" />
-              </g>
-              <g class="print-boxes">
-                <rect class="node" data-chain="mcu" x="196" y="140" width="92" height="60" rx="2" tabindex="0" aria-label="ESP32 MCU" />
-                <rect class="node" data-chain="sense" x="48" y="148" width="70" height="44" rx="2" tabindex="0" aria-label="Sense" />
-                <rect class="node" data-chain="act" x="366" y="148" width="66" height="44" rx="2" tabindex="0" aria-label="Act" />
-                <rect class="node" data-chain="cloud" x="350" y="28" width="96" height="36" rx="2" tabindex="0" aria-label="Cloud" />
-              </g>
-              <g class="print-labels mono">
-                <text x="242" y="166" text-anchor="middle">ESP32</text>
-                <text x="242" y="180" text-anchor="middle">MCU</text>
-                <text x="83" y="170" text-anchor="middle">SENSE</text>
-                <text x="83" y="182" text-anchor="middle">GPIO·PWM</text>
-                <text x="399" y="170" text-anchor="middle">ACT</text>
-                <text x="399" y="182" text-anchor="middle">DC·SERVO</text>
-                <text x="398" y="48" text-anchor="middle">MQTT → CLOUD</text>
-              </g>
-              <g class="print-dims mono">
-                <text x="12" y="288">03 — SIGNAL CHAIN</text>
-                <text x="448" y="288" text-anchor="end">FIG. 03</text>
-              </g>
-            </svg>
-            <figcaption class="mono">Sense → Compute → Act · hover a node to trace its chain</figcaption>
-          </figure>
-          <dl class="spec panel" data-systems-group>
-            <div class="spec-row" data-systems="row"><dt class="mono">Platform</dt><dd>ESP32 · Arduino</dd></div>
-            <div class="spec-row" data-systems="row"><dt class="mono">I/O</dt><dd>GPIO · PWM</dd></div>
-            <div class="spec-row" data-systems="row"><dt class="mono">Bus</dt><dd>MQTT · Serial · I²C</dd></div>
-            <div class="spec-row" data-systems="row"><dt class="mono">Sense</dt><dd>LDR · IR · Ultrasonic · Temp</dd></div>
-            <div class="spec-row" data-systems="row"><dt class="mono">Act</dt><dd>DC · Servo · Relay</dd></div>
-            <div class="spec-row" data-systems="row"><dt class="mono">Compute</dt><dd>On-device · Cloud</dd></div>
-            <div class="spec-row spec-row--foot" data-systems="row"><dt class="mono">Status</dt><dd>In training</dd></div>
-          </dl>
-        </div>
+    <section class="plate" id="inventory" data-name="inventory" data-code="III">
+      <div class="plate-meta">
+        <span class="plate-no">III.</span>
+        <span class="plate-name">INVENTORY</span>
+        <span class="plate-desc">standing post &amp; tooling</span>
       </div>
-    </section>
-
-    <!-- ============ 04 · FIELD LOG ============ -->
-    <section class="stage fieldlog" id="fieldlog" data-stage="Field Log" aria-label="Field log">
-      <div class="wrap">
-        <p class="slug" data-rv><span>04 · Field Log</span><b>Two builds, two weekends</b></p>
-        <ol class="shot-list">
-          <li class="shot" data-rv>
-            <a class="shot-hit mag" href="https://github.com/1RY-O" target="_blank" rel="noopener" aria-label="Hack2Skill Gen AI APAC Ideathon — Team Lead and Builder">
-              <span class="shot-take mono" aria-hidden="true">Take 01</span>
-              <span class="shot-main">
-                <span class="shot-region mono">APAC / 2026</span>
-                <span class="shot-name">Hack2Skill — Gen AI APAC Ideathon</span>
-                <span class="shot-meta mono">Team Lead · Builder</span>
-                <span class="shot-desc">Gen AI ideathon across the APAC region — concept to pitch in a weekend.</span>
-              </span>
-              <span class="shot-outcome mono">Led a team · shipped a pitch</span>
-              <span class="shot-arrow" aria-hidden="true">→</span>
-            </a>
-          </li>
-          <li class="shot" data-rv>
-            <a class="shot-hit mag" href="https://github.com/1RY-O" target="_blank" rel="noopener" aria-label="AssemblyAI LabLab AI Hackathon — Builder">
-              <span class="shot-take mono" aria-hidden="true">Take 02</span>
-              <span class="shot-main">
-                <span class="shot-region mono">LabLab / 2026</span>
-                <span class="shot-name">AssemblyAI × LabLab AI Hackathon</span>
-                <span class="shot-meta mono">Builder</span>
-                <span class="shot-desc">Built with speech-AI APIs under a tight sprint deadline.</span>
-              </span>
-              <span class="shot-outcome mono">Shipped with speech AI</span>
-              <span class="shot-arrow" aria-hidden="true">→</span>
-            </a>
-          </li>
-        </ol>
-      </div>
-    </section>
-
-    <!-- ============ 05 · DOSSIER ============ -->
-    <section class="stage dossier" id="dossier" data-stage="Dossier" aria-label="Dossier: stations and toolbox">
-      <div class="wrap">
-        <p class="slug" data-rv><span>05 · Dossier</span><b>Stations · Toolbox</b></p>
-        <div class="dossier-grid">
-          <div class="stations">
-            <div class="station" data-rv>
-              <span class="station-index mono">01 · Station</span>
-              <h3 class="station-title">IoT &amp; Robotics Trainee</h3>
-              <p class="station-org mono">Unlox Academy · 2026 → Present</p>
-              <p class="station-desc">Sensor rigs and microcontroller control logic — building, breaking, rewiring.</p>
-            </div>
-            <div class="station" data-rv>
-              <span class="station-index mono">02 · Station</span>
-              <h3 class="station-title">Team Leader</h3>
-              <p class="station-org mono">Entrepreneurship Cell · Mahindra University · 2026 → Present</p>
-              <p class="station-desc">Coordinating a small team — ideation sessions, carrying projects from concept to execution.</p>
-            </div>
+      <ol class="records">
+        <li class="record">
+          <span class="r-year">2026 &rarr; NOW</span>
+          <div class="r-body">
+            <h3>IoT &amp; Robotics Trainee</h3>
+            <p><span>Unlox Academy</span> &middot; embedded circuits on a bench &mdash; every course exercise becomes a build.</p>
           </div>
-          <div class="toolbox panel" data-rv-group>
-            <div class="tool-col" data-rv>
-              <p class="tool-cat mono">Build</p>
-              <ol class="tool-list">
-                <li class="mono"><span>01</span>Python</li>
-                <li class="mono"><span>02</span>C</li>
-                <li class="mono"><span>03</span>C++</li>
-                <li class="mono"><span>04</span>HTML / CSS</li>
-              </ol>
-            </div>
-            <div class="tool-col" data-rv>
-              <p class="tool-cat mono">Systems</p>
-              <ol class="tool-list">
-                <li class="mono"><span>01</span>Arduino</li>
-                <li class="mono"><span>02</span>ESP32</li>
-                <li class="mono"><span>03</span>GPIO / PWM</li>
-                <li class="mono"><span>04</span>MQTT</li>
-                <li class="mono"><span>05</span>Sensors</li>
-                <li class="mono"><span>06</span>Actuators</li>
-              </ol>
-            </div>
-            <div class="tool-col" data-rv>
-              <p class="tool-cat mono">Software</p>
-              <ol class="tool-list">
-                <li class="mono"><span>01</span>React</li>
-                <li class="mono"><span>02</span>Node.js</li>
-                <li class="mono"><span>03</span>Express</li>
-                <li class="mono"><span>04</span>REST</li>
-                <li class="mono"><span>05</span>Firebase</li>
-                <li class="mono"><span>06</span>Firestore</li>
-                <li class="mono"><span>07</span>Cloud Run</li>
-                <li class="mono"><span>08</span>Gemini API</li>
-              </ol>
-            </div>
-            <div class="tool-col" data-rv>
-              <p class="tool-cat mono">Tools</p>
-              <ol class="tool-list">
-                <li class="mono"><span>01</span>Git</li>
-                <li class="mono"><span>02</span>GitHub</li>
-                <li class="mono"><span>03</span>VS Code</li>
-                <li class="mono"><span>04</span>Tinkercad</li>
-                <li class="mono"><span>05</span>Wokwi</li>
-              </ol>
-            </div>
+        </li>
+        <li class="record">
+          <span class="r-year">ROLE</span>
+          <div class="r-body">
+            <h3>Team Leader &mdash; E-Cell</h3>
+            <p><span>Mahindra University</span> &middot; run the room, ship the event, keep the teams in rhythm.</p>
           </div>
-        </div>
+        </li>
+      </ol>
+      <div class="tool-row">
+        <div class="tool-head">TOOLBOX</div>
+        <ul class="tool-grid">
+          <li class="tool"><b>Logic</b><span>Python &middot; C &middot; C++ &middot; HTML/CSS</span></li>
+          <li class="tool"><b>Hardware</b><span>Arduino &middot; ESP32 &middot; GPIO &middot; PWM &middot; MQTT &middot; Sensors &middot; Actuators</span></li>
+          <li class="tool"><b>Web</b><span>React &middot; Node &middot; Express &middot; REST &middot; Firebase &middot; Firestore &middot; Cloud Run &middot; Gemini API</span></li>
+          <li class="tool"><b>Rig</b><span>Git &middot; GitHub &middot; VS Code &middot; Tinkercad &middot; Wokwi</span></li>
+        </ul>
       </div>
     </section>
 
-    <!-- ============ 06 · CONTACT ============ -->
-    <section class="stage contact" id="contact" data-stage="Contact" aria-label="Contact">
-      <div class="wrap contact-inner">
-        <p class="slug slug--center" data-rv><span>06 · Contact</span></p>
-        <h2 class="contact-name" aria-label="Let's build something.">
-          <span class="mask" aria-hidden="true"><span class="line" data-rv-line>Let's build</span></span>
-          <span class="mask" aria-hidden="true"><span class="line" data-rv-line><em>something</em>.</span></span>
-        </h2>
-        <nav class="contact-links" data-rv-group aria-label="Contact links">
-          <a class="contact-link mag" data-rv href="mailto:fabledadventurer.pssr@gmail.com">Email<span aria-hidden="true">↗</span></a>
-          <a class="contact-link mag" data-rv href="https://github.com/1RY-O" target="_blank" rel="noopener">GitHub<span aria-hidden="true">↗</span></a>
-          <a class="contact-link mag" data-rv href="https://www.linkedin.com/in/sri-sai-rahul-pilla" target="_blank" rel="noopener">LinkedIn<span aria-hidden="true">↗</span></a>
-          <a class="contact-link mag" data-rv href="https://1ry-o.github.io/" target="_blank" rel="noopener">Website<span aria-hidden="true">↗</span></a>
-          <a class="contact-link mag" data-rv href="resume.pdf" download>Résumé<span aria-hidden="true">↓</span></a>
-        </nav>
-        <p class="contact-mail mono" data-rv>fabledadventurer.pssr@gmail.com</p>
-        <footer class="colophon mono" data-rv>Pilla Sri Sai Rahul · © 2026 · Hyderabad, IN — designed &amp; built by hand</footer>
+    <section class="plate" id="log" data-name="log" data-code="IV">
+      <div class="plate-meta">
+        <span class="plate-no">IV.</span>
+        <span class="plate-name">FIELD LOG</span>
+        <span class="plate-desc">events carried to a result</span>
       </div>
+      <ul class="log-list">
+        <li class="log-entry">
+          <span class="log-no">01</span>
+          <div class="log-body">
+            <h3>Hack2Skill &middot; Gen-AI APAC Ideathon</h3>
+            <p>Team Lead &middot; Builder &mdash; an AI concept carried from pitch to playable demo.</p>
+          </div>
+          <span class="log-out">shipped to stage</span>
+        </li>
+        <li class="log-entry">
+          <span class="log-no">02</span>
+          <div class="log-body">
+            <h3>AssemblyAI &times; LabLab &middot; AI Hackathon</h3>
+            <p>Builder &mdash; shipped within 48 hours against a hard clock, end to end.</p>
+          </div>
+          <span class="log-out">48h build, shipped</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="plate plate--connect" id="connect" data-name="connect" data-code="V">
+      <div class="plate-meta">
+        <span class="plate-no">V.</span>
+        <span class="plate-name">CONNECT</span>
+        <span class="plate-desc">the room has a door</span>
+      </div>
+      <div class="connect-inner">
+        <h2 class="connect-lead"><span class="mask"><span class="maskline">Let&rsquo;s build</span></span><span class="mask"><span class="maskline">something.</span></span></h2>
+        <a class="connect-mail" href="mailto:fabledadventurer.pssr@gmail.com">fabledadventurer.pssr@gmail.com</a>
+        <ul class="connect-handles">
+          <li><a href="https://github.com/1RY-O" target="_blank" rel="noopener">GitHub &mdash; 1RY-O</a></li>
+          <li><a href="https://www.linkedin.com/in/sri-sai-rahul-pilla" target="_blank" rel="noopener">LinkedIn &mdash; sri-sai-rahul-pilla</a></li>
+          <li><a href="resume.pdf" download>R&eacute;sum&eacute; &mdash; resume.pdf</a></li>
+        </ul>
+      </div>
+      <p class="colophon">Built as a static site &mdash; Fraunces and IBM Plex Mono, live variable type. No templates, no card decks.</p>
     </section>
 
   </main>
-
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
-  <script src="script.js" defer></script>
 </body>
 </html>
