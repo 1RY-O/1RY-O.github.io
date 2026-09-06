@@ -1,32 +1,37 @@
 # Pilla Sri Sai Rahul — Personal Website
 
-A scroll-driven **editorial instrument** for https://1ry-o.github.io
+**ASSEMBLY** — a portfolio in assembly, for https://1ry-o.github.io
 
-Not a scrolling portfolio in the template sense. The site is set like precision printed matter — monumental masked typography, hairline rules, mono marginalia — and choreographed on scroll: pinned passages, layered parallax, clip reveals, a schematic that draws itself. Stillness is a feature; motion arrives in passages.
+You assemble hardware. You built on AssemblyAI. A portfolio is a cut that is never finished. So the site is built as black-box cinema: a cold open, a title card, scenes joined by hard cuts and an iris, and end credits. Cinema's grammar, original identity.
 
 ## Experience
 
-**TOLERANCE** — seven passages on one continuous page:
+Seven scenes on one continuous page:
 
-1. **Hero** — the name at monumental scale with masked line reveals, a self-drawing aperture mark, pointer parallax, and a scroll-linked exit that pulls the composition apart gently.
-2. **Manifesto** — "Hardware gives software a body", plus a condensed fact register.
-3. **Lumis (flagship)** — the only full-bleed spread. A pinned sequence: stanzas arrive one by one while the device mock reveals through a clip, the entry→insight beam draws with scroll, and the device tilts with scroll velocity. Honestly stamped "open prototype — not production".
-4. **Systems** — a pinned drawing: the ESP32 signal-chain schematic draws itself on scroll beside a spec ledger.
-5. **Field Log** — two hackathon entries as large editorial rows with hover displacement.
-6. **Index** — Stations and Toolbox merged into one tabular spread.
-7. **Contact** — a quiet close: name, links, résumé, colophon.
+1. **Cold Open** — black frame, letterbox bars, a timecode flicker that settles, then the name as a title card with a slow push-in. Scroll holds the title, then an iris cut ends the card.
+2. **Scene 01 — Identity** — title-sequence typography plus a condensed fact register.
+3. **Scene 02 — Lumis (feature presentation)** — the only scene with its own world. A pinned sequence: takes arrive one by one while the journal screen reveals through a clip, the entry→insight beam draws with scroll, and the screen tilts with scroll velocity. Honestly stamped "open prototype — not production".
+4. **Scene 03 — Systems** — blueprint overlay: the ESP32 signal-chain schematic draws itself beside a spec ledger.
+5. **Scene 04 — Field Log** — two hackathon takes as a shot list with hover displacement.
+6. **Scene 05 — Index** — cast & crew (stations) plus props (technical index) in one tabular spread.
+7. **Scene 06 — Credits** — staggered rising credits: name, links, résumé, end of reel.
+
+## Identity system
+
+- Ground: near-black black-box, pure-black letterbox, bone type; oxide rationed to slugs, take numbers and the Lumis signal.
+- Type: **Fraunces** variable (display, SOFT/WONK axes) · **IBM Plex Sans Condensed** (slugs, labels) · **IBM Plex Mono** (timecode, registers).
 
 ## Motion system
 
-One easing family across the whole page. GSAP + ScrollTrigger (CDN) drive pins, scrubs, masked reveals and the progress rule; a vanilla rAF layer handles the cursor ring and magnetic elements. If the CDN is unreachable, an IntersectionObserver fallback reveals everything statically — the page is never blank. `prefers-reduced-motion` disables all of it; no-JS gets the same document linearized.
+One easing family. GSAP + ScrollTrigger (CDN) drive the letterbox, the iris cut, pins, scrubs, masked reveals and the runtime rule; a live timecode follows reel progress and a vanilla rAF layer handles the cursor ring and magnetic elements. If the CDN is unreachable, an IntersectionObserver fallback reveals everything statically — the page is never blank. `prefers-reduced-motion` disables all of it; no-JS gets the same document linearized.
 
 ## Navigation
 
-A fixed masthead (mark, live passage indicator, résumé, Index toggle) plus a full-screen index overlay. Native anchor scrolling throughout — never hijacked.
+A fixed masthead (mark, live scene indicator, running timecode, résumé, Slate toggle) plus a full-screen slate overlay. Native anchor scrolling throughout — never hijacked.
 
 ## QA hooks
 
-- `#lumis`, `#systems`, … — jump straight to a passage
+- `#coldopen`, `#act1` … `#credits` — jump straight to a scene
 - `?motion=1` — force full motion even under `prefers-reduced-motion` (for headless captures)
 
 ## Run locally
@@ -44,7 +49,7 @@ The upstream remote must point to a repo named **exactly** `1RY-O.github.io`.
 git remote add origin https://github.com/1RY-O/1RY-O.github.io.git
 git branch -M main
 git add .
-git commit -m "feat: TOLERANCE scroll-editorial rework"
+git commit -m "feat: ASSEMBLY cinematic rework"
 git push -u origin main
 ```
 
@@ -52,7 +57,7 @@ git push -u origin main
 
 | File | Purpose |
 |---|---|
-| `index.html` | Masthead, index overlay, seven passages, footer, CDN scripts |
-| `styles.css` | TOLERANCE visual system, compositions, overlay, responsive, fallbacks |
-| `script.js` | GSAP scenes, IO fallback, cursor/magnetic layer, index overlay, passage indicator |
+| `index.html` | Masthead, slate, cold open, five acts, credits, CDN scripts |
+| `styles.css` | ASSEMBLY black-box system, compositions, slate, responsive, fallbacks |
+| `script.js` | Iris cut, GSAP scenes, timecode, IO fallback, cursor/magnetic layer |
 | `resume.pdf` | Downloadable resume |
