@@ -3,7 +3,8 @@
 
   var doc = document;
   var root = doc.documentElement;
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var reduceMotion = !new URLSearchParams(location.search).has('motion') &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var mobileQ = window.matchMedia('(max-width: 820px)');
   var finePointer = window.matchMedia('(pointer: fine)').matches && !mobileQ.matches;
 
@@ -54,7 +55,7 @@
     arcGrid = qs('#arc-grid');
     arcLight = qs('#arc-light');
     prologue = qs('#prologue');
-    shardsHost = qs('#prologue-plane');
+    shardsHost = qs('#prologue-stage');
 
     prepareDeck();
     bindHud();
@@ -176,7 +177,6 @@
   /* ---------- prologue ---------- */
 
   function buildPrologue() {
-    shardsHost.innerHTML = '';
     shards = [];
     qs('#emblem-layer').classList.remove('fade');
 
@@ -233,9 +233,14 @@
       shards.forEach(function (s) { s.classList.add('seen'); });
     }, 1050));
 
+    var freeze = new URLSearchParams(location.search).get('freeze');
+    if (freeze === 'seen' || freeze === 'home') return;
+
     pgTimers.push(setTimeout(function () {
       shards.forEach(function (s) { s.classList.remove('seen'); s.classList.add('home'); });
     }, 2650));
+
+    if (freeze === 'home') return;
 
     pgTimers.push(setTimeout(function () { completePrologue(); }, 4300));
 

@@ -2,50 +2,55 @@
 
 An art-directed **spatial digital experience** for https://1ry-o.github.io
 
-Not a scrolling portfolio. Not a carousel. The site is conceived as a single **optical bench** — a room of plates positioned along a shared axis of depth. You move *through* the environment; the states physically occupy different depths and travel between them.
+Not a scrolling portfolio. Not a carousel. The site is built as **ARC** — a camera travels a curved corridor in the dark. Eight objects stand along the arc at fixed depth slots; you move *between* them, never the other way. The room has a hand: the arc bends, so what lies ahead rises and drifts right, what falls behind drops and drifts left — no mirror symmetry.
 
 ## Experience
 
 1. **FRACTURE → REASSEMBLY → IDENTITY → EXPLORATION**
-   An optical alignment emblem surfaces out of the dark, is cut into 11 hand-placed 3D shards, holds in a fractured field, then converges — the emblem's fragments reassembling into the typographic identity itself. No cut: the reassembled object becomes the first state of the deck.
+   An aperture emblem surfaces out of the dark, is cut into 12 3D shards, holds as a fractured field, then converges — the fragments reassembling into the typographic identity itself. No hard cut and no loading screen: the reassembled object continues as chapter 01 of the deck.
 
-2. **The Optical Bench** — eight states arranged in a spatial depth system:
-   - `Identity` — the name as the strongest typographic moment
+2. **The Corridor** — eight chapter-objects standing in a depth system:
+   - `Identity` — the name as the strongest typographic moment, behind an aperture mark
    - `Profile` — an editorial spread with an indexed fact register
-   - `Lumis` — a miniature case study (problem → idea → system → prototype)
+   - `Lumis` — the flagship object: a miniature case study (problem → idea → system → prototype) beside a working device mock, honestly stamped "open prototype — not production"
    - `Systems` — engineering documentation: signal-chain schematic + spec ledger
-   - `Field Log` — hackathons as an event log
-   - `Stations` — experience as two plaques on a spine (not a timeline)
-   - `Toolbox` — a technical index (no skill bars, no badges)
+   - `Field Log` — hackathons as a chronological log (Hack2Skill APAC Ideathon · AssemblyAI × LabLab)
+   - `Stations` — current posts as two plaques on a spine (no timeline)
+   - `Toolbox` — a technical index A–Z (no skill bars, no badges)
    - `Contact` — a quiet closing plate
 
-   ~5 states participate in the composition at any moment: the active plate is largest, sharpest, closest; neighbours recede with blur, opacity, rotation and offset. States physically travel through the slots as you navigate — nothing fades out and back in.
+   Each moment composes ~5 objects at different depths: the active plate is closest, sharpest, largest; neighbours recede with blur, opacity, rotation and offset. States physically travel through the slots — nothing fades out and back in.
 
-3. **Motion character** — one master curve for the whole scene: a gathering anticipation, acceleration, depth travel, weighted settling. The background grid and camera respond to the same progress. Long moments of stillness.
+3. **Motion character** — one master easing curve for the whole scene: a gathering anticipation (the camera leans in), depth travel, weighted settling. The grid recedes, the rail curls, content staggers in on arrival and holds still once assembled.
 
 ## Input
 
-- Mouse wheel / trackpad (one gesture = one transition)
-- Keyboard: arrows, PageUp/Down, Space, Home/End
+- Mouse wheel / trackpad — one gesture, one transition (horizontal swipes count too)
+- Keyboard: arrows · PageUp/PageDown · Space · Home/End · digits 1–8
 - Touch swipe (vertical) — mobile keeps the spatial model
-- Chapter rail (right) · prev/next arrows (bottom)
+- Chapter rail (right) · prev/next arrows (bottom) · magnetic links and entries
 
 ## Design System
 
-- **Type**: Fraunces (display serif) · Instrument Sans (body) · IBM Plex Mono (metadata)
+- **Type**: Bodoni Moda (display serif, variable optical size) · Instrument Sans (body) · IBM Plex Mono (metadata)
 - **Palette**: ink `#0a0a0c` · bone `#e9e5dd` · oxide `#c8723f` · steel `#7d8794`
-- **Motifs**: registration marks, ruler ticks, ghost chapter numerals, coordinate grid, mono spec registers — engineering precision as art direction, not decoration
-- **Atmosphere**: faint optical-bench grid, ️subtle blooms, ~4 drifting specks, film grain. Aimed restraint.
+- **Motifs**: aperture marks, ruler ticks, ghost chapter numerals, an engineering grid floor, mono spec registers — instrument precision as art direction
+- **Atmosphere**: fog at the far side of the arc, a cursor lamp, vignette, film grain
 
 ## Accessibility
 
 - `prefers-reduced-motion` — static exhibition, no prologue, no loops, content fully readable
 - Keyboard navigation with visible focus states
-- `inert` on non-active states; `aria-live` chapter announcer
+- `aria-live` chapter indicator; labelled rail buttons
 - No-JS fallback — static scrollable document
 
+## QA hooks
+
+- `?s=1..8` — jump straight to a chapter (also keeps the URL in sync as you navigate)
+- `?motion=1` — force full motion even under `prefers-reduced-motion` (for headless captures)
+
 ## Run locally
- 
+
 ```bash
 python -m http.server 8000
 # open http://localhost:8000
@@ -59,7 +64,7 @@ The upstream remote must point to a repo named **exactly** `1RY-O.github.io`.
 git remote add origin https://github.com/1RY-O/1RY-O.github.io.git
 git branch -M main
 git add .
-git commit -m "feat: optical bench spatial redesign"
+git commit -m "feat: ARC spatial redesign"
 git push -u origin main
 ```
 
@@ -67,7 +72,7 @@ git push -u origin main
 
 | File | Purpose |
 |---|---|
-| `index.html` | The eight states, emblem prologue, HUD, atmosphere layers |
-| `styles.css` | Visual system, plate chrome, state compositions, slot geometry, responsiveness |
-| `script.js` | Prologue engine, spatial deck engine, input layer, parallax |
+| `index.html` | The eight chapter-objects, emblem prologue, HUD, atmosphere layers |
+| `styles.css` | Visual system, board chrome, chapter compositions, slot geometry, responsiveness |
+| `script.js` | Prologue shard engine, spatial deck engine, input layer, cursor light |
 | `resume.pdf` | Downloadable resume |
