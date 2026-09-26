@@ -1,35 +1,50 @@
-# Pilla Sri Sai Rahul — The Cabinet
+# 1RY — High-Voltage Engineering Portfolio
 
-A surreal cabinet of curiosities for https://1ry-o.github.io — built from a blank canvas around one belief: *he can make it happen.*
+Live: https://1ry-o.github.io — vanilla HTML/CSS/JS, no build step, GitHub Pages ready.
 
-## The idea
+## What this is
 
-The site is a moonlit room that holds the artifacts of an explorer. A glowing amber core hangs in an espresso-night sky; around it float four artifacts — the Lumis journal, an automaton relic, a telemetry node, an AI spark — each a portal to real work. The visitor's cursor is a lantern: light follows it, layers drift in parallax, artifacts lean. Then the room opens into daylight: the Lumis flagship presented inside its own warm world, shelves of honest drawers, a stamped field log, and a dawn-gradient transmission.
+A futuristic racing-garage / engineering-lab portfolio for a first-year
+Mechatronics Engineering student. Near-black graphite, frost white, one
+radioactive-green accent used sparingly (active states, transitions,
+benchmark highlight). No purple-blue gradients, no fake terminals, no
+fake telemetry.
 
-Warm wonder on the surface, a straight spine underneath — every fact reachable within two clicks, because the audience is internships and fellowships, not just fellow travelers.
+## Sections (in order)
 
-## The rooms
+1. **Hero** — "BUILDING MACHINES. TEACHING SYSTEMS TO THINK." with
+   crystal/reactor motif, energy pulse, Explore Projects + Resume actions,
+   and the Normal/Professional mode selector. Usable instantly, no loader.
+2. **01 · VI-071 (flagship)** — audio-to-notation workflow:
+   conversion motif (waveform → note events → score), pipeline panel,
+   engineering-work panel, and a labeled local CPU benchmark table
+   (Legacy FP32 / Streaming FP32 / BF16 / FP16 with the ~27% BF16 finding
+   and environment caveats). Real repo link (https://github.com/1RY-O/Vi-071); no demo URL claimed — the reported deployment address is unverified. A separately-reported ~690 MB run is labeled as a separate unverified-setup run, not merged into the benchmark table.
+3. **02 · Supporting grid** — CircuitMate (no links published until
+   deployment verifies), Bobby (source + live demo, both verified),
+   Lumis Journal — labeled INCOMPLETE PROTOTYPE (app + source linked as work-in-progress, real screenshots; broken/unimplemented features not claimed).
+4. **03 · Capabilities** — evidence-grouped skills, every group tied to a
+   project. No percentage bars.
+5. **04 · About** — short, credible, first-year framing.
+6. **05 · Resume** — Download + View buttons against the approved
+   `Pilla_Sri_Sai_Rahul_Resume.pdf` (source of truth). Old `resume.pdf` kept
+   untouched as a checkpoint. VI-071 listed first.
+7. **06 · Contact** — email, GitHub, LinkedIn, resume, site.
 
-1. **The Room** — night scene: stars, breathing amber core, 4 floating artifact-links (parallax by pointer depth), constellation name, dual CTA (scroll / terminal).
-2. **The Flagship — Lumis** — cream gallery in Lumis's own visual world: poster title, its real words ("Think without the noise."), the two real screenshots as tilting plates, Enter-Lumis + source links, problem/idea/system/status, honest *open prototype* stamp.
-3. **The Shelves** — four drawers (machines / telemetry / GenAI / experiments) with crafted SVG icons, real stacks, honest status stamps. No invented projects, no fake screenshots.
-4. **Field Log** — stamped entries: two hackathons, two standing posts, plus the education line.
-5. **Transmission** — dawn gradient, big email button, GitHub/LinkedIn/resume/site, colophon with the backtick hint.
+## Normal / Professional switch
 
-## The hacker layer
+Two `radiogroup` controls (header + hero). Session-only via
+`sessionStorage` — no cookies. Swaps 24 text nodes from structured copy in
+`script.js` without reload or duplicated markup. Keyboard arrows move within
+a group; `aria-checked` + visible selected state; screen-reader live region
+announces changes. Honors `prefers-reduced-motion` (instant swap, no fade).
 
-- **Working terminal** (`` ` `` key, `>_` button, or the hero's *type help*): `help lumis shelves log contact open source github linkedin mail resume whoami sudo clear exit`, with history and `Esc`.
-- **Index overlay**: five numbered rooms, keyboard friendly.
-- **Devtools easter egg**: open the console.
-- **`whoami`**: "fabled adventurer — personal space." (his real in-app Lumis profile)
+## Motion
 
-## Craft notes
-
-- Vanilla HTML/CSS/JS — zero runtime dependencies, no build step.
-- Fraunces (display, same voice as Lumis) + IBM Plex Mono (the instrument).
-- Pointer physics (lantern + parallax + plate tilt) run only on fine pointers without reduced-motion; everything else is calm CSS.
-- Resilience: content is never hidden unless JS init fully succeeds (`js-armed` gate); no-JS gets a static nav and the full document linearized; `prefers-reduced-motion` stills the room.
-- Fixed chrome: masthead, amber progress hairline, skip link, OG tags.
+IntersectionObserver reveals (transform + opacity only), light-streak scene
+dividers, one low-frequency hero glow. Reduced-motion and mobile fall back
+to short fades / static. Content is never hidden unless JS init succeeds
+(`js-armed` gate); no-JS still reads the full document.
 
 ## Run locally
 
@@ -37,27 +52,21 @@ Warm wonder on the surface, a straight spine underneath — every fact reachable
 python -m http.server 8000
 ```
 
-Open http://localhost:8000 — move the pointer, press `` ` ``, type `help`.
+Open http://localhost:8000.
 
-## Deploy to GitHub Pages
+## Deploy
 
-The upstream remote must point to a repo named **exactly** `1RY-O.github.io`.
-
-```bash
-git remote add origin https://github.com/1RY-O/1RY-O.github.io.git
-git branch -M main
-git add .
-git commit -m "feat: THE CABINET — curiosity-room portfolio"
-git push -u origin main
-```
+Static files only — push `main` serves via GitHub Pages. Do not push or
+change repo settings without explicit approval.
 
 ## Files
 
 | File | Purpose |
 |---|---|
-| `index.html` | Room, terminal, index, flagship, shelves, log, transmission |
-| `styles.css` | Night/cream worlds, artifacts, overlays, fallbacks |
-| `script.js` | Lantern+parallax engine, terminal, reveals, tilt, eggs |
-| `assets/` | Lumis screenshots (copied from `Reference/`) |
-| `resume.pdf` | Downloadable resume |
-| `Reference/` | Source material: Lumis media (truth) + design refs (quality bar, never copied) |
+| `index.html` | All sections, mode-bound copy via `data-mode-text` |
+| `styles.css` | Graphite/acid system, hero, flagship, grid, responsive |
+| `script.js` | Mode copy maps, radiogroup wiring, reveals, progress |
+| `assets/` | Real Lumis screenshots only |
+| `Pilla_Sri_Sai_Rahul_Resume.pdf` | Approved resume, linked by all View/Download actions |
+| `resume.pdf` | Old resume, kept untouched as checkpoint (not linked) |
+| `Reference/` | Source material, not shipped as content |
