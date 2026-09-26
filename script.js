@@ -8,7 +8,7 @@ function qsa(s,b){return Array.prototype.slice.call((b||document).querySelectorA
 
 var COPY_N={
 'hero-field':'ENGINEERING / SOFTWARE / SYSTEMS',
-'hero-sub':'Mechatronics engineering, embedded systems, AI-assisted tools, and software built through experimentation.',
+'hero-sub':'Mechatronics Engineering student building embedded systems, robotics prototypes, and applied-AI software with measured, documented trade-offs.',
 'vi071-title':'VI-071',
 'vi071-tag':'Turn sound into something you can read.'
 };
@@ -342,6 +342,64 @@ function updateP4(dt){
     ctx.fillStyle=p.color==='#0A0A0C'?'#FFE600':'#0A0A0C';ctx.beginPath();ctx.arc(p.x,p.y,2.5,0,Math.PI*2);ctx.fill();
   });
 }
+
+/* ══════════════════════════════════════════════════════════════
+   HERO GSAP TIMELINE — Swiss-brutalist page-load choreography
+   1) arcs draw/scale in over ~1.5s
+   2) hero lines stagger up out of hard clip boxes (y-axis reveal)
+   3) sub-copy + CTAs + reading box settle in
+   4) magnetic hover on the black EXPLORE PROJECTS CTA
+   ══════════════════════════════════════════════════════════════ */
+function heroIntro(){
+  var lines=qsa('.hero-line-inner');
+  var arcs=qsa('.hero .arc');
+  if(reduceMotion){
+    arcs.forEach(function(a){a.style.opacity=a.getAttribute('opacity')||'1';});
+    return;
+  }
+  if(!window.gsap){
+    /* Graceful fallback when the GSAP CDN is unreachable. */
+    document.documentElement.classList.add('no-gsap');
+    return;
+  }
+  arcs.forEach(function(path){
+    try{
+      var len=path.getTotalLength();
+      path.style.strokeDasharray=len;
+      path.style.strokeDashoffset=len;
+    }catch(e){}
+  });
+  gsap.set(lines,{yPercent:110});
+  gsap.set(['.hero-sub','.hero-actions','.reading-box','.hero-tag','.hero-specs'],{y:26,autoAlpha:0});
+  gsap.set('.site-head',{y:-70,autoAlpha:0});
+  var tl=gsap.timeline({defaults:{ease:'power4.out'}});
+  tl.to('.site-head',{y:0,autoAlpha:1,duration:0.7},0);
+  tl.to('.hero .arc',{strokeDashoffset:0,duration:1.5,ease:'power2.inOut',stagger:0.08,
+    onStart:function(){qsa('.hero .arc').forEach(function(a){a.style.opacity=a.getAttribute('opacity')||'1';});}
+  },0.1);
+  tl.to(lines,{yPercent:0,duration:0.95,stagger:0.12},0.15);
+  tl.to('.hero-sub',{y:0,autoAlpha:1,duration:0.7},0.65);
+  tl.to('.hero-actions',{y:0,autoAlpha:1,duration:0.7},0.78);
+  tl.to('.reading-box',{y:0,autoAlpha:1,duration:0.7},0.9);
+  tl.to(['.hero-tag','.hero-specs'],{y:0,autoAlpha:1,duration:0.6,stagger:0.1},1.0);
+}
+heroIntro();
+
+/* Slight magnetic hover for the Explore CTA. */
+(function magneticCTA(){
+  var btn=qs('#explore-btn');
+  if(!btn||reduceMotion||!window.gsap||!window.matchMedia('(pointer:fine)').matches){return;}
+  var strength=14;
+  btn.addEventListener('mousemove',function(e){
+    var r=btn.getBoundingClientRect();
+    var x=e.clientX-(r.left+r.width/2);
+    var y=e.clientY-(r.top+r.height/2);
+    gsap.to(btn,{x:x/r.width*strength*2,y:y/r.height*strength*2,duration:0.3,ease:'power3.out'});
+  });
+  btn.addEventListener('mouseleave',function(){
+    gsap.to(btn,{x:0,y:0,duration:0.55,ease:'elastic.out(1,0.45)'});
+  });
+})();
 
 /* ── MAIN SYNCHRONIZED KINETIC LOOP ── */
 var lastTime=0;
