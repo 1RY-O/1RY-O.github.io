@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<!-- ══════════════════════════════════════════════════════════════════════════
+     KINETIC VOID · dark-mode developer-portfolio UI mockup
+     cyber-brutalist · pulsating vortex core · four modular panels
+     electrical-storm lighting · glitch + data-stream turbulence
+     decorative artifact only: no readable text, no logos, no photography
+     ══════════════════════════════════════════════════════════════════════════ -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>*</title>
+<style>
+/* ═════════ 1 · TOKENS + PALETTE ═════════ */
+:root{
+  --ink:#03040A;
+  --blue:#1B4DFF;   --blue2:#63B4FF;   --cyan:#8FF6FF;
+  --purple:#6A18FF; --purple2:#B981FF;
+  --green:#8CFF1A;  --green2:#D8FF63;
+  --f:0;            /* flash energy 0→1  (JS)  */
+  --f2:0;           /* secondary strobe    */
+  --gx:0px;         /* glitch offset x     */
+  --gy:0px;         /* glitch offset y     */
+  --hud:rgba(120,190,255,.42);
+  --mono:ui-monospace,"SF Mono","JetBrains Mono","IBM Plex Mono",Menlo,Consolas,"DejaVu Sans Mono",monospace;
+  --arc:conic-gradient(#000 0 7deg,transparent 7deg 46deg,#000 46deg 52deg,transparent 52deg 108deg,
+         #000 108deg 114deg,transparent 114deg 190deg,#000 190deg 196deg,transparent 196deg 268deg,
+         #000 268deg 274deg,transparent 274deg 360deg);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--ink);font-family:var(--mono);overflow:hidden;
+  -webkit-font-smoothing:antialiased;cursor:crosshair}
+::selection{background:var(--green);color:#000}
+
+/* ═════════ 2 · ATMOSPHERE ═════════ */
+.sky{position:fixed;inset:0;overflow:hidden;background:
+  radial-gradient(122% 92% at 50% 48%,#11142f 0%,#080a1c 38%,#04050e 68%,#010206 100%)}
+.sky::before{content:"";position:absolute;inset:-25%;filter:blur(30px);
+  animation:wash 26s linear infinite;
+  background:
+    radial-gradient(38% 44% at 22% 26%,rgba(106,24,255,.30),transparent 70%),
+    radial-gradient(42% 38% at 78% 30%,rgba(27,77,255,.28),transparent 72%),
+    radial-gradient(50% 46% at 50% 86%,rgba(140,255,26,.10),transparent 74%),
+    conic-gradient(from 210deg at 50% 50%,rgba(27,77,255,.10),rgba(106,24,255,.16),
+      rgba(140,255,26,.06),rgba(27,77,255,.10))}
+@keyframes wash{to{transform:rotate(360deg) scale(1.06)}}
+
+#cv-streams{position:absolute;inset:0;width:100%;height:100%;
+  mix-blend-mode:screen;filter:blur(.3px)}
+
+.grid{position:absolute;left:-10%;right:-10%;top:-10%;bottom:-10%;pointer-events:none;opacity:.34;
+  background-image:
+    linear-gradient(rgba(99,180,255,.10) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(99,180,255,.10) 1px,transparent 1px),
+    linear-gradient(rgba(185,129,255,.055) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(185,129,255,.055) 1px,transparent 1px);
+  background-size:6.5vmin 6.5vmin,6.5vmin 6.5vmin,1.62vmin 1.62vmin,1.62vmin 1.62vmin;
+  transform:perspective(58vmin) rotateX(62deg) scale(2.1);transform-origin:50% 0;
+  animation:gridRun 5.4s linear infinite}
+@keyframes gridRun{to{background-position:0 6.5vmin,6.5vmin 0,0 1.62vmin,1.62vmin 0}}
+
+.noise{position:absolute;inset:0;pointer-events:none;opacity:.085;mix-blend-mode:overlay;
+  animation:noiseShift .5s steps(3) infinite;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>")}
+@keyframes noiseShift{
+  0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}
+  60%{transform:translate(-2%,-2%)}80%{transform:translate(3%,1%)}100%{transform:translate(0,0)}}
+
+.scan{position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background:repeating-linear-gradient(180deg,rgba(0,0,0,.55) 0 1px,transparent 1px 3px)}
+.scanbar{position:absolute;left:0;right:0;height:22vmin;pointer-events:none;mix-blend-mode:screen;
+  background:linear-gradient(180deg,transparent,rgba(99,180,255,.09) 40%,rgba(140,255,26,.12) 62%,transparent);
+  animation:barSweep 4.6s cubic-bezier(.6,0,.4,1) infinite}
+@keyframes barSweep{0%{top:-24vmin}100%{top:104vmin}}
+
+.vig{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(78% 68% at 50% 50%,transparent 40%,rgba(0,0,0,.72) 88%,#000 100%)}
+#bolt-layer{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:68;
+  mix-blend-mode:screen;overflow:visible}
+@keyframes boltDraw{to{stroke-dashoffset:0}}
+
+.flashlayer{position:fixed;inset:0;pointer-events:none;z-index:70;mix-blend-mode:screen;
+  background:
+    radial-gradient(60% 50% at 50% 50%,rgba(190,225,255,.85),transparent 70%),
+    linear-gradient(105deg,rgba(99,180,255,.35),rgba(185,129,255,.25) 50%,rgba(140,255,26,.22));
+  opacity:calc(var(--f) * .62)}
+.blackout{position:fixed;inset:0;pointer-events:none;z-index:69;background:#000;
+  opacity:calc(var(--f2) * .82)}
+
+/* ═════════ 3 · RIG ═════════ */
+.stage{position:fixed;inset:0;display:grid;place-items:center;z-index:5;
+  filter:brightness(calc(1 + var(--f) * .85)) saturate(calc(1 + var(--f) * .55))
+         contrast(calc(1 + var(--f) * .18))}
+.rig{position:relative;z-index:2;width:min(99.2vw,166vh);height:min(97vh,104vw);
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.94fr) minmax(0,1fr);
+  gap:clamp(6px,1.1vmin,16px)}
+.rail{position:relative;display:grid;grid-template-rows:1fr 1fr;
+  gap:clamp(6px,1.1vmin,16px);min-width:0;min-height:0}
+.rail>.panel{width:min(100%,47vmin);justify-self:center}
+.vxcol{position:relative;display:grid;place-items:center;min-width:0}
+
+.bus{position:absolute;top:-4%;bottom:-4%;width:2px;pointer-events:none;opacity:.4;
+  background:repeating-linear-gradient(180deg,var(--blue2) 0 10px,transparent 10px 22px);
+  filter:drop-shadow(0 0 5px rgba(99,180,255,.7))}
+.bus.l{left:-.6vmin}.bus.r{right:-.6vmin}
+
+.hud{position:absolute;inset:-2.2vmin -3.2vmin;pointer-events:none}
+.hud .rail-h{position:absolute;left:0;right:0;height:6px;opacity:.55;
+  background:repeating-linear-gradient(90deg,var(--hud) 0 1px,transparent 1px 9px)}
+.hud .rail-h.t{top:0}.hud .rail-h.b{bottom:0}
+.hud .rail-v{position:absolute;top:0;bottom:0;width:6px;opacity:.55;
+  background:repeating-linear-gradient(180deg,var(--hud) 0 1px,transparent 1px 9px)}
+.hud .rail-v.l{left:0}.hud .rail-v.r{right:0}
+.tick{position:absolute;width:14px;height:14px;border:2px solid var(--green);opacity:.8;
+  box-shadow:0 0 8px var(--green)}
+.tick.a{top:-2px;left:-2px;border-right:0;border-bottom:0}
+.tick.b{top:-2px;right:-2px;border-left:0;border-bottom:0}
+.tick.c{bottom:-2px;left:-2px;border-right:0;border-top:0}
+.tick.d{bottom:-2px;right:-2px;border-left:0;border-top:0}
+.tick::after{content:"";position:absolute;inset:3px;background:var(--green);opacity:.55;
+  animation:tickBlink 1.7s steps(2) infinite}
+@keyframes tickBlink{50%{opacity:0}}
+/* ═════════ 4 · VORTEX CORE ═════════ */
+.vortex{position:relative;width:min(100%,54vmin);aspect-ratio:1;display:grid;place-items:center;
+  isolation:isolate}
+.vortex::after{content:"";position:absolute;inset:-4%;border-radius:50%;
+  border:1px dashed rgba(99,180,255,.22);animation:spin 34s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.halo{position:absolute;inset:-38%;border-radius:50%;pointer-events:none;filter:blur(14px);
+  background:radial-gradient(circle,rgba(27,77,255,.34),rgba(106,24,255,.16) 42%,transparent 66%);
+  animation:haloBreathe 3.1s ease-in-out infinite}
+@keyframes haloBreathe{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.14);opacity:1}}
+
+.ring{position:absolute;border-radius:50%;pointer-events:none;mix-blend-mode:screen}
+.ring.r1{inset:0;border:1px solid rgba(99,180,255,.5);
+  -webkit-mask-image:var(--arc);mask-image:var(--arc);
+  filter:drop-shadow(0 0 7px rgba(99,180,255,.85));animation:spin 11s linear infinite}
+.ring.r2{inset:7%;border:2px dotted rgba(185,129,255,.65);
+  filter:drop-shadow(0 0 9px rgba(185,129,255,.7));animation:spin 7s linear reverse infinite}
+.ring.r3{inset:14%;border:1px solid rgba(140,255,26,.55);border-left-color:transparent;
+  border-right-color:transparent;filter:drop-shadow(0 0 10px rgba(140,255,26,.6));
+  animation:spin 4.3s linear infinite}
+.ring.r4{inset:21%;border:3px double rgba(99,180,255,.35);animation:spin 2.4s linear reverse infinite}
+.ring.r5{inset:27%;border:1px dashed rgba(216,255,99,.5);opacity:.8;animation:spin 1.7s linear infinite}
+.ring.r6{inset:-6%;border:1px solid rgba(99,180,255,.22);animation:spin 46s linear infinite}
+
+.orbit{position:absolute;inset:0;pointer-events:none;animation:spin 9s linear infinite}
+.orbit.o2{inset:9%;animation-duration:5.6s;animation-direction:reverse}
+.orbit.o3{inset:17%;animation-duration:3.2s}
+.onode{position:absolute;top:50%;left:50%;width:8px;height:8px;margin:-4px 0 0 -4px;
+  border-radius:50%;background:var(--cyan);color:var(--cyan);
+  transform:rotate(var(--or,0deg)) translateY(calc(-1 * var(--od,20vmin)));
+  box-shadow:0 0 12px var(--cyan),0 0 26px rgba(99,180,255,.8)}
+.onode.g{background:var(--green);color:var(--green);
+  box-shadow:0 0 12px var(--green),0 0 26px rgba(140,255,26,.7)}
+.onode.p{background:var(--purple2);color:var(--purple2);
+  box-shadow:0 0 12px var(--purple2),0 0 26px rgba(185,129,255,.7)}
+.onode.big{width:14px;height:14px;margin:-7px 0 0 -7px}
+.onode::after{content:"";position:absolute;inset:-9px;border:1px solid currentColor;opacity:.4;
+  animation:ping 1.5s ease-out infinite}
+@keyframes ping{0%{transform:scale(.4);opacity:.7}100%{transform:scale(1.7);opacity:0}}
+
+#cv-vortex{position:absolute;inset:0;width:100%;height:100%;mix-blend-mode:screen}
+.core{position:absolute;width:26%;aspect-ratio:1;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at 50% 50%,#fff 0%,var(--cyan) 12%,var(--blue2) 32%,
+    var(--blue) 52%,var(--purple) 74%,transparent 88%);
+  filter:blur(1.5px) saturate(1.3);
+  box-shadow:0 0 40px rgba(99,180,255,.7),0 0 90px rgba(106,24,255,.5),0 0 160px rgba(140,255,26,.22);
+  animation:corePulse 1.6s cubic-bezier(.4,0,.2,1) infinite,coreJit 7s steps(1) infinite}
+@keyframes corePulse{0%,100%{transform:scale(1)}22%{transform:scale(1.14)}
+  48%{transform:scale(.94)}70%{transform:scale(1.08)}}
+@keyframes coreJit{0%{border-radius:50%}33%{border-radius:48% 52% 50% 50%/52% 48% 52% 48%}
+  66%{border-radius:52% 48% 49% 51%/49% 51% 49% 51%}}
+.corewrap{position:absolute;width:44%;aspect-ratio:1;display:grid;place-items:center;
+  mix-blend-mode:screen;animation:spin 3.9s linear infinite}
+.spoke{position:absolute;inset:0;opacity:.75;filter:blur(2px);
+  -webkit-mask-image:radial-gradient(circle,transparent 22%,#000 30%,#000 100%);
+  mask-image:radial-gradient(circle,transparent 22%,#000 30%,#000 100%);
+  background:conic-gradient(from 0deg,rgba(255,255,255,.9),rgba(99,180,255,.35) 8deg,transparent 26deg,
+    rgba(140,255,26,.5) 40deg,transparent 58deg,rgba(185,129,255,.45) 74deg,transparent 92deg)}
+
+/* connector traces: vortex → panels */
+#traces{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0}
+#traces path{fill:none;stroke-width:1.4;stroke-linecap:round;stroke-dasharray:5 11;
+  filter:drop-shadow(0 0 5px currentColor);animation:traceRun 1.15s linear infinite}
+@keyframes traceRun{to{stroke-dashoffset:-32}}
+#traces .tr-a{stroke:rgba(99,180,255,.6);color:rgba(99,180,255,.7)}
+#traces .tr-b{stroke:rgba(185,129,255,.55);color:rgba(185,129,255,.65);animation-duration:.82s}
+#traces .tr-c{stroke:rgba(140,255,26,.5);color:rgba(140,255,26,.6);animation-duration:1.6s}
+#traces .tr-d{stroke:rgba(143,246,255,.45);color:rgba(143,246,255,.6);animation-duration:.62s}
+
+/* ═════════ 5 · PANELS ═════════ */
+.panel{position:relative;display:flex;flex-direction:column;overflow:hidden;min-height:0;
+  padding:clamp(6px,.9vmin,13px);
+  background:linear-gradient(180deg,rgba(10,14,30,.90),rgba(4,6,16,.94)),
+    repeating-linear-gradient(45deg,rgba(99,180,255,.045) 0 2px,transparent 2px 7px);
+  box-shadow:calc(9px + var(--f) * 16px) calc(9px + var(--f) * 16px) 0 rgba(0,0,0,.92),
+    calc(9px + var(--f) * 16px) calc(9px + var(--f) * 16px) 0 1px rgba(99,180,255,.30),
+    inset 0 0 42px rgba(27,77,255,.16);
+  transition:box-shadow .05s linear}
+.panel::before{content:"";position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;
+  opacity:calc(var(--f) * .5);
+  background:linear-gradient(120deg,rgba(99,180,255,.5),transparent 42%,rgba(140,255,26,.35))}
+.panel>*{position:relative;z-index:2}
+.panel-frame{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;
+  overflow:visible}
+.panel-frame .wire{fill:none;stroke:rgba(99,180,255,.75);stroke-width:1;
+  vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 3px rgba(99,180,255,.8))}
+.panel-frame .wire2{fill:none;stroke:rgba(185,129,255,.5);stroke-width:.6;
+  vector-effect:non-scaling-stroke}
+.panel-frame .wire-dash{fill:none;stroke:var(--green);stroke-width:1.6;
+  vector-effect:non-scaling-stroke;stroke-dasharray:18 10 3 10;opacity:.85;
+  filter:drop-shadow(0 0 6px rgba(140,255,26,.9));animation:dash 2.6s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-82}}
+.panel-frame .wire-ghost{fill:none;stroke:var(--green2);stroke-width:1;
+  vector-effect:non-scaling-stroke;opacity:calc(var(--f) * .95);
+  transform:translate(calc(var(--gx) * -1.6),calc(var(--gy) * -1.6))}
+.panel-frame .bkt{fill:none;stroke:var(--cyan);stroke-width:2.4;vector-effect:non-scaling-stroke;
+  filter:drop-shadow(0 0 6px rgba(143,246,255,.9))}
+.panel-frame .b2{stroke:var(--green);filter:drop-shadow(0 0 6px rgba(140,255,26,.9))}
+.panel-frame .b3{stroke:var(--purple2);filter:drop-shadow(0 0 6px rgba(185,129,255,.9))}
+.panel-frame .b4{stroke:var(--blue2);filter:drop-shadow(0 0 6px rgba(99,180,255,.9))}
+.tear{position:absolute;left:0;right:0;height:2.4%;opacity:0;mix-blend-mode:screen;
+  filter:blur(1px);pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--cyan),var(--green),transparent)}
+
+.phead{display:flex;align-items:center;gap:.7vmin;padding-bottom:.6vmin;
+  border-bottom:1px solid rgba(99,180,255,.22)}
+.chip{width:2.1vmin;height:2.1vmin;min-width:9px;min-height:9px;border:1px solid var(--green);
+  background:rgba(140,255,26,.16);box-shadow:0 0 9px rgba(140,255,26,.6);
+  animation:chipSpin 2.9s steps(8) infinite}
+.chip.b{border-color:var(--purple2);background:rgba(185,129,255,.16);
+  box-shadow:0 0 9px rgba(185,129,255,.6)}
+.chip.c{border-color:var(--cyan);background:rgba(143,246,255,.16);
+  box-shadow:0 0 9px rgba(143,246,255,.6)}
+.chip.d{border-color:var(--blue2);background:rgba(99,180,255,.16);
+  box-shadow:0 0 9px rgba(99,180,255,.9)}
+@keyframes chipSpin{50%{transform:rotate(180deg) scale(1.3)}}
+.glyphbar{flex:1;display:flex;gap:2px;overflow:hidden;height:1.15vmin;min-height:4px}
+.glyphbar i{flex:1;background:linear-gradient(90deg,var(--blue2),var(--purple2));opacity:.5;
+  animation:gbar 1.4s ease-in-out infinite}
+.glyphbar i:nth-child(2n){background:linear-gradient(90deg,var(--green),var(--cyan));
+  animation-duration:.9s}
+.glyphbar i:nth-child(3n){animation-duration:2.1s}
+.glyphbar i:nth-child(5n){animation-duration:.55s}
+@keyframes gbar{0%,100%{transform:scaleY(.22);opacity:.28}50%{transform:scaleY(1);opacity:1}}
+.pdial{position:relative;flex:0 0 auto;width:2.6vmin;height:2.6vmin;min-width:11px;min-height:11px;
+  border-radius:50%;border:1px solid rgba(99,180,255,.55)}
+.pdial::before{content:"";position:absolute;left:50%;top:50%;width:42%;height:1px;
+  background:var(--green);transform-origin:0 50%;box-shadow:0 0 6px var(--green);
+  animation:dialSpin 1.1s cubic-bezier(.5,0,.5,1) infinite}
+.pdial::after{content:"";position:absolute;inset:2px;border-radius:50%;
+  border:1px dotted rgba(185,129,255,.6);animation:spin 2.6s linear infinite}
+@keyframes dialSpin{0%{transform:rotate(0)}50%{transform:rotate(320deg)}100%{transform:rotate(-40deg)}}
+
+.pbody{flex:1;min-height:0;display:grid;gap:.7vmin;padding-top:.7vmin}
+.p-zap{position:absolute;inset:0;z-index:4;pointer-events:none;mix-blend-mode:screen;
+  opacity:calc(var(--f) * .45);
+  background:linear-gradient(90deg,transparent 46%,rgba(255,255,255,.9) 50%,transparent 54%)}
+canvas.viz{width:100%;height:100%;display:block;flex:1;min-height:0}
+.zstack{position:relative;flex:1;min-height:0;display:flex}
+.zstack canvas{position:absolute;inset:0;flex:none}
+
+/* code-rain */
+.rain{position:relative;flex:1;min-height:0;display:grid;grid-template-columns:repeat(5,1fr);
+  align-items:start;gap:2px;overflow:hidden;
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent);
+  mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent)}
+.rain-col{display:flex;flex-direction:column;gap:1px;will-change:transform;
+  animation:rainUp var(--d,3s) linear infinite;animation-delay:var(--dl,0s)}
+.rain-col span{font-size:clamp(7px,1.02vmin,13px);line-height:1.12;color:var(--blue2);
+  text-shadow:0 0 5px currentColor;opacity:.55}
+.rain-col span:nth-child(7n){color:var(--green);opacity:.9}
+.rain-col span:nth-child(5n){color:var(--purple2)}
+.rain-col span:nth-child(3n){color:var(--cyan)}
+.rain-col span:nth-child(11n){color:#fff}
+.rain-col span:nth-child(4n){animation:flick .34s steps(2) infinite}
+.rain-col span:nth-child(9n){animation:flick .5s steps(3) infinite .1s}
+@keyframes rainUp{from{transform:translateY(-50%)}to{transform:translateY(0)}}
+@keyframes flick{0%{opacity:1}50%{opacity:.15}51%{opacity:1}}
+.readout{display:grid;gap:2px}
+.readout .row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:.6vmin}
+.readout .tick{position:static;width:6px;height:6px;border-width:1px}
+.readout .bar{height:clamp(3px,.5vmin,7px);background:rgba(99,180,255,.12);position:relative;
+  overflow:hidden;border-left:1px solid rgba(99,180,255,.5)}
+.readout .bar i{position:absolute;inset:0;transform-origin:0 50%;
+  transform:scaleX(var(--v,.4));background:linear-gradient(90deg,var(--blue),var(--cyan));
+  box-shadow:0 0 10px rgba(99,180,255,.7);
+  transition:transform .18s cubic-bezier(.2,.9,.2,1)}
+.readout .row:nth-child(2n) .bar i{background:linear-gradient(90deg,var(--purple),var(--purple2));
+  box-shadow:0 0 10px rgba(185,129,255,.7)}
+.readout .row:nth-child(3n) .bar i{background:linear-gradient(90deg,var(--green),var(--green2));
+  box-shadow:0 0 10px rgba(140,255,26,.7)}
+.readout .pip{width:1.5vmin;height:1.5vmin;min-width:6px;min-height:6px;
+  background:rgba(99,180,255,.3);transform:rotate(45deg);animation:gbar 1.1s ease-in-out infinite}
+
+/* spectrum */
+.spectrum{flex:1;min-height:0;display:flex;align-items:flex-end;
+  gap:clamp(1px,.32vmin,4px);border-bottom:1px solid rgba(99,180,255,.3);padding-bottom:2px}
+.spectrum i{flex:1;transform-origin:50% 100%;transform:scaleY(var(--v,.2));min-height:2px;
+  background:linear-gradient(180deg,var(--green2),var(--green) 26%,var(--blue) 74%,var(--purple));
+  box-shadow:0 0 8px rgba(99,180,255,.55);transition:transform .07s linear}
+.spectrum i:nth-child(4n){background:linear-gradient(180deg,var(--cyan),var(--blue2) 60%,var(--purple))}
+
+/* wireframe geometry */
+.cubewrap{position:relative;flex:1;min-height:0;display:grid;place-items:center;
+  perspective:52vmin}
+.cube{--s:clamp(46px,12.5vmin,128px);width:var(--s);height:var(--s);position:relative;
+  transform-style:preserve-3d;animation:cubeA 9s linear infinite}
+.cube .f{position:absolute;inset:0;border:1px solid rgba(99,180,255,.75);
+  box-shadow:inset 0 0 22px rgba(99,180,255,.22),0 0 10px rgba(99,180,255,.35);
+  background:linear-gradient(135deg,rgba(99,180,255,.07),transparent 60%)}
+.cube .f::after{content:"";position:absolute;inset:14%;border:1px dashed rgba(140,255,26,.35);
+  animation:spin 4s linear infinite}
+.cube .f1{transform:translateZ(calc(var(--s)/2))}
+.cube .f2{transform:rotateY(180deg) translateZ(calc(var(--s)/2))}
+.cube .f3{transform:rotateY(90deg) translateZ(calc(var(--s)/2));border-color:rgba(185,129,255,.7)}
+.cube .f4{transform:rotateY(-90deg) translateZ(calc(var(--s)/2))}
+.cube .f5{transform:rotateX(90deg) translateZ(calc(var(--s)/2));border-color:rgba(140,255,26,.6)}
+.cube .f6{transform:rotateX(-90deg) translateZ(calc(var(--s)/2));border-color:rgba(143,246,255,.65)}
+@keyframes cubeA{from{transform:rotateX(-18deg) rotateY(0)}to{transform:rotateX(-18deg) rotateY(360deg)}}
+.cube2{--s:clamp(20px,5.6vmin,58px);position:absolute;animation:cubeB 5.2s linear infinite}
+.cube2 .f{border-color:rgba(140,255,26,.8);
+  box-shadow:inset 0 0 16px rgba(140,255,26,.25),0 0 12px rgba(140,255,26,.4)}
+.cube2 .f::after{border-color:rgba(185,129,255,.4);animation-duration:2.4s}
+@keyframes cubeB{from{transform:rotateX(72deg) rotateY(0)}to{transform:rotateX(72deg) rotateY(-360deg)}}
+.polybox{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.polybox polygon{fill:none;stroke-width:1.1;vector-effect:non-scaling-stroke;
+  transform-origin:50% 50%}
+.polybox .p1{stroke:rgba(185,129,255,.75);animation:spin 7s linear infinite;
+  filter:drop-shadow(0 0 5px rgba(185,129,255,.7))}
+.polybox .p2{stroke:rgba(140,255,26,.6);animation:spin 4.4s linear reverse infinite}
+.polybox .p3{stroke:rgba(99,180,255,.6);stroke-dasharray:6 5;animation:spin 11s linear infinite}
+.polybox circle{fill:none;stroke:rgba(143,246,255,.4);stroke-width:.8;
+  vector-effect:non-scaling-stroke}
+
+/* conveyor */
+.conveyor{display:flex;gap:2px;height:clamp(6px,1.3vmin,16px);overflow:hidden;flex:none}
+.conveyor i{flex:1;min-width:2px;background:rgba(99,180,255,.25);transform:scaleY(.2);
+  transform-origin:50% 50%;animation:conv 1.05s steps(6) infinite;
+  animation-delay:calc(var(--i) * -1s)}
+.conveyor i:nth-child(3n){background:rgba(140,255,26,.55)}
+.conveyor i:nth-child(4n){background:rgba(185,129,255,.55)}
+@keyframes conv{0%{transform:translateY(110%) scaleY(.2)}
+  50%{transform:translateY(-110%) scaleY(1)}100%{transform:translateY(110%) scaleY(.2)}}
+
+/* ═════════ 6 · GLITCH STATE ═════════ */
+.glitching .panel{transform:translate3d(var(--gx),var(--gy),0)}
+.glitching .panel-frame{transform:translate3d(calc(var(--gx) * -2),calc(var(--gy) * -2),0);
+  filter:drop-shadow(0 0 6px var(--green))}
+.glitching .tear{opacity:.9}
+.glitching .rain{filter:drop-shadow(2px 0 0 rgba(255,40,80,.7))
+  drop-shadow(-2px 0 0 rgba(40,255,120,.7))}
+.glitching .rig{clip-path:polygon(0 12%,100% 11.4%,100% 41%,0 42.3%,0 71.5%,100% 72.4%,100% 100%,0 100%)}
+.glitching .halo{filter:blur(4px) saturate(2.4)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+@media (max-width:880px){
+  body{overflow:auto}
+  .stage{position:static;padding:2vmin 0;display:block;filter:none}
+  .rig{width:96vw;height:auto;display:flex;flex-direction:column;gap:2vmin}
+  .vxcol{order:-1;height:86vmin}
+  .rail{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto;gap:2vmin}
+  .rail>.panel{width:100%;min-height:62vmin}
+  .hud,#traces{display:none}
+}
+</style>
+</head>
+<body>
+<div class="sky" aria-hidden="true">
+  <div class="grid"></div>
+  <canvas id="cv-streams"></canvas>
+  <div class="scanbar"></div>
+  <div class="scan"></div>
+  <div class="noise"></div>
+  <div class="vig"></div>
+</div>
+
+<div class="stage" id="stage" aria-hidden="true">
+  <svg id="traces" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <path class="tr-a" d="M50 50 L4 16"/><path class="tr-b" d="M50 50 L96 16"/>
+    <path class="tr-c" d="M50 50 L4 84"/><path class="tr-d" d="M50 50 L96 84"/>
+    <path class="tr-a" d="M50 32 L50 2"/><path class="tr-c" d="M50 68 L50 98"/>
+  </svg>
+
+  <div class="rig" id="rig">
+    <div class="hud">
+      <i class="rail-h t"></i><i class="rail-h b"></i><i class="rail-v l"></i><i class="rail-v r"></i>
+      <i class="tick a"></i><i class="tick b"></i><i class="tick c"></i><i class="tick d"></i>
+    </div>
+    <i class="bus l"></i><i class="bus r"></i>
+
+    <!-- ─── LEFT RAIL ─── -->
+    <div class="rail">
+      <section class="panel" data-p="1">
+        <svg class="panel-frame" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <defs>
+            <filter id="rough1" x="-15%" y="-15%" width="130%" height="130%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.026 0.055" numOctaves="4" seed="11" result="n"/>
+              <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+          </defs>
+          <g filter="url(#rough1)">
+            <rect class="wire" x="1" y="1" width="98" height="98" rx="1.5"/>
+            <rect class="wire2" x="4" y="4" width="92" height="92" rx="1"/>
+          </g>
+          <rect class="wire-dash" x="2.5" y="2.5" width="95" height="95" rx="1"/>
+          <rect class="wire-ghost" x="1" y="1" width="98" height="98" rx="1.5"/>
+          <path class="bkt" d="M0 12V0H12"/><path class="bkt b2" d="M88 0H100V12"/>
+          <path class="bkt b3" d="M100 88V100H88"/><path class="bkt b4" d="M12 100H0V88"/>
+        </svg>
+        <header class="phead">
+          <i class="chip"></i><div class="glyphbar" data-glyphs="14"></div><i class="pdial"></i>
+        </header>
+        <div class="pbody" style="grid-template-rows:1fr auto">
+          <div class="rain" data-rain="5"></div>
+          <div style="display:grid;gap:.5vmin">
+            <div class="zstack" style="flex:none;height:18vmin"><canvas class="viz" data-viz="scope"></canvas></div>
+            <div class="readout" data-readout="6"></div>
+          </div>
+        </div>
+        <i class="p-zap"></i>
+      </section>
+      <section class="panel" data-p="3">
+        <svg class="panel-frame" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <defs>
+            <filter id="rough3" x="-15%" y="-15%" width="130%" height="130%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.04 0.02" numOctaves="3" seed="29" result="n"/>
+              <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+          </defs>
+          <g filter="url(#rough3)">
+            <path class="wire" d="M0 6L4 1H96L100 6V94L96 99H4L0 94Z"/>
+            <path class="wire2" d="M2.5 9L9 2.5H91L97.5 9V91L91 97.5H9L2.5 91Z"/>
+          </g>
+          <rect class="wire-dash" x="6" y="3" width="88" height="94" rx="2"/>
+          <rect class="wire-ghost" x="0" y="6" width="100" height="88"/>
+          <path class="bkt" d="M0 16V0H16"/><path class="bkt b2" d="M84 0H100V16"/>
+          <path class="bkt b3" d="M100 84V100H84"/><path class="bkt b4" d="M16 100H0V84"/>
+        </svg>
+        <header class="phead">
+          <i class="chip c"></i><div class="glyphbar" data-glyphs="11"></div><i class="pdial"></i>
+        </header>
+        <div class="pbody" style="grid-template-rows:1fr auto">
+          <div class="cubewrap">
+            <canvas class="viz" data-viz="hex" style="position:absolute;inset:0"></canvas>
+            <svg class="polybox" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+              <circle cx="50" cy="50" r="46" stroke-dasharray="2 6"/>
+              <circle cx="50" cy="50" r="38"/>
+              <polygon class="p1" points="50,4 88,27 88,73 50,96 12,73 12,27"/>
+              <polygon class="p2" points="50,14 82,32 82,68 50,86 18,68 18,32"/>
+              <polygon class="p3" points="50,24 40,60 50,76 60,60"/>
+            </svg>
+            <div class="cube">
+              <i class="f f1"></i><i class="f f2"></i><i class="f f3"></i>
+              <i class="f f4"></i><i class="f f5"></i><i class="f f6"></i>
+            </div>
+            <div class="cube cube2">
+              <i class="f f1"></i><i class="f f2"></i><i class="f f3"></i>
+              <i class="f f4"></i><i class="f f5"></i><i class="f f6"></i>
+            </div>
+          </div>
+          <div class="conveyor" data-conveyor="18"></div>
+        </div>
+        <i class="p-zap"></i>
+      </section>
+    </div>
+
+    <!-- ─── CENTER · VORTEX ─── -->
+    <div class="vxcol">
+      <div class="vortex" id="vortex">
+        <div class="halo"></div>
+        <i class="ring r6"></i>
+        <div class="corewrap"><i class="spoke"></i></div>
+        <canvas id="cv-vortex"></canvas>
+        <i class="ring r1"></i><i class="ring r5"></i><i class="ring r2"></i>
+        <i class="ring r4"></i><i class="ring r3"></i>
+        <div class="orbit o1">
+          <i class="onode big" style="--or:0deg;   --od:min(26vmin,50%)"></i>
+          <i class="onode g"   style="--or:112deg; --od:min(26vmin,50%)"></i>
+          <i class="onode"     style="--or:228deg; --od:min(26vmin,50%)"></i>
+        </div>
+        <div class="orbit o2">
+          <i class="onode p" style="--or:40deg;  --od:min(21vmin,50%)"></i>
+          <i class="onode"   style="--or:160deg; --od:min(21vmin,50%)"></i>
+          <i class="onode p" style="--or:280deg; --od:min(21vmin,50%)"></i>
+        </div>
+        <div class="orbit o3">
+          <i class="onode g" style="--or:0deg;   --od:min(15vmin,50%)"></i>
+          <i class="onode"   style="--or:90deg;  --od:min(15vmin,50%)"></i>
+          <i class="onode g" style="--or:180deg; --od:min(15vmin,50%)"></i>
+          <i class="onode"   style="--or:270deg; --od:min(15vmin,50%)"></i>
+        </div>
+        <div class="core"></div>
+      </div>
+    </div>
+
+    <!-- ─── RIGHT RAIL ─── -->
+    <div class="rail">
+      <section class="panel" data-p="2">
+        <svg class="panel-frame" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <defs>
+            <filter id="rough2" x="-15%" y="-15%" width="130%" height="130%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.03 0.07" numOctaves="5" seed="5" result="n"/>
+              <feDisplacementMap in="SourceGraphic" in2="n" scale="5.5" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+          </defs>
+          <g filter="url(#rough2)">
+            <rect class="wire" x="1" y="1" width="98" height="98" rx="1.5"/>
+            <rect class="wire2" x="3.5" y="3.5" width="93" height="93" rx="1"/>
+          </g>
+          <rect class="wire-dash" x="2.5" y="2.5" width="95" height="95" rx="1"/>
+          <rect class="wire-ghost" x="1" y="1" width="98" height="98" rx="1.5"/>
+          <path class="bkt" d="M0 10V0H10"/><path class="bkt b2" d="M90 0H100V10"/>
+          <path class="bkt b3" d="M100 90V100H90"/><path class="bkt b4" d="M10 100H0V90"/>
+        </svg>
+        <header class="phead">
+          <i class="chip b"></i><div class="glyphbar" data-glyphs="13"></div><i class="pdial"></i>
+        </header>
+        <div class="pbody" style="grid-template-rows:1fr auto auto">
+          <div class="zstack">
+            <canvas class="viz" data-viz="radar"></canvas>
+            <canvas class="viz" data-viz="poly"></canvas>
+          </div>
+          <div class="spectrum" data-spectrum="26"></div>
+        </div>
+        <i class="p-zap"></i>
+      </section>
+
+      <section class="panel" data-p="4">
+        <svg class="panel-frame" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <defs>
+            <filter id="rough4" x="-15%" y="-15%" width="130%" height="130%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.02 0.045" numOctaves="4" seed="41" result="n"/>
+              <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+          </defs>
+          <g filter="url(#rough4)">
+            <path class="wire" d="M0 4L5 0H95L100 5V95L95 100H5L0 95Z"/>
+            <path class="wire2" d="M2 7L7 2H93L98 7V93L93 98H7L2 93Z"/>
+          </g>
+          <rect class="wire-dash" x="5" y="2" width="90" height="96" rx="2"/>
+          <rect class="wire-ghost" x="0" y="4" width="100" height="92"/>
+          <path class="bkt" d="M0 14V0H14"/><path class="bkt b2" d="M86 0H100V14"/>
+          <path class="bkt b3" d="M100 86V100H86"/><path class="bkt b4" d="M14 100H0V86"/>
+        </svg>
+        <header class="phead">
+          <i class="chip d"></i><div class="glyphbar" data-glyphs="16"></div><i class="pdial"></i>
+        </header>
+        <div class="pbody" style="grid-template-rows:1fr auto">
+          <div class="zstack">
+            <canvas class="viz" data-viz="rings"></canvas>
+            <canvas class="viz" data-viz="gauge"></canvas>
+          </div>
+          <div class="conveyor" data-conveyor="20"></div>
+        </div>
+        <i class="p-zap"></i>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div class="flashlayer"></div>
+<div class="blackout"></div>
+<svg id="bolt-layer" aria-hidden="true"><g id="bolt-g" fill="none" stroke-linecap="round"
+  stroke-linejoin="round"></g></svg>
+
+<script>
+(() => {
+'use strict';
+/* ═════════ utils ═════════ */
+const TAU = Math.PI * 2, PI = Math.PI;
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const lerp = (a, b, t) => a + (b - a) * t;
+const rnd = (a, b) => a + Math.random() * (b - a);
+const pick = a => a[(Math.random() * a.length) | 0];
+const DPR = () => Math.min(2, window.devicePixelRatio || 1);
+const root = document.documentElement;
+const stage = document.getElementById('stage');
+const REDUCED = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+const NS = 'http://www.w3.org/2000/svg';
+const mk = (n, a) => { const e = document.createElementNS(NS, n);
+  for (const k in a) e.setAttribute(k, a[k]); return e; };
+
+function fit(cv, ctx) {
+  const r = cv.getBoundingClientRect(), d = DPR();
+  cv.width = Math.max(1, Math.round(r.width * d));
+  cv.height = Math.max(1, Math.round(r.height * d));
+  ctx.setTransform(d, 0, 0, d, 0, 0);
+  ctx.clearRect(0, 0, r.width, r.height);
+  return { w: r.width, h: r.height };
+}
+
+/* glyph soup — symbols only, zero lexical content */
+const GLYPH = ('ΛΞΣΩΔ∇ΠΘΦΨ⌁∞≠±×÷◈◉◎●○◐◑△▽▲▼◆◇■□▓▒░╱╲╳⏦⧗⟨⟩⌘⏢│─┌┐└┘├┤┬┴┼║═╔╗╚╝∿⊕⊗⊘⊙⟁◫⬡⬢⏣⏥⇅⧖')
+  .split('').filter((g, i, a) => a.indexOf(g) === i);
+(function prune() {
+  const c = document.createElement('canvas').getContext('2d');
+  c.font = '16px monospace';
+  const w0 = c.measureText('█').width;
+  for (let i = GLYPH.length - 1; i >= 0; i--)
+    if (Math.abs(c.measureText(GLYPH[i]).width - w0) > .6) GLYPH.splice(i, 1);
+})();
+const g1 = () => GLYPH[(Math.random() * GLYPH.length) | 0];
+
+/* ═════════ DOM scaffolding ═════════ */
+document.querySelectorAll('[data-glyphs]').forEach(el => {
+  const n = +el.dataset.glyphs;
+  for (let i = 0; i < n; i++) {
+    const b = document.createElement('i');
+    b.style.animationDelay = (-Math.random() * 1.6).toFixed(2) + 's';
+    el.appendChild(b);
+  }
+});
+const RUNE_BLOCK = 80;
+document.querySelectorAll('[data-rain]').forEach(el => {
+  const n = +el.dataset.rain;
+  for (let c = 0; c < n; c++) {
+    const col = document.createElement('div');
+    col.className = 'rain-col';
+    col.style.setProperty('--d', rnd(1.1, 2.6).toFixed(2) + 's');
+    col.style.setProperty('--dl', (-rnd(0, 2.6)).toFixed(2) + 's');
+    const build = () => {
+      let h = '';
+      for (let i = 0; i < RUNE_BLOCK; i++) h += '<span>' + g1() + '</span>';
+      col.innerHTML = h + h;
+    };
+    build();
+    col._rebuild = build;
+    el.appendChild(col);
+  }
+});
+document.querySelectorAll('[data-readout]').forEach(el => {
+  for (let i = 0, n = +el.dataset.readout; i < n; i++) {
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = '<i class="tick a"></i><span class="bar"><i></i></span><i class="pip"></i>';
+    el.appendChild(row);
+  }
+});
+document.querySelectorAll('[data-spectrum]').forEach(el => {
+  for (let i = 0, n = +el.dataset.spectrum; i < n; i++) el.appendChild(document.createElement('i'));
+});
+document.querySelectorAll('[data-conveyor]').forEach(el => {
+  for (let i = 0, n = +el.dataset.conveyor; i < n; i++) {
+    const b = document.createElement('i');
+    b.style.setProperty('--i', i);
+    el.appendChild(b);
+  }
+});
+/* glitch tear strips (HTML so they can blur independently of the SVG frame) */
+const TEARS = [];
+document.querySelectorAll('.panel').forEach(p => {
+  for (let i = 0; i < 3; i++) {
+    const s = document.createElement('i');
+    s.className = 'tear';
+    p.appendChild(s);
+    TEARS.push(s);
+  }
+});
+
+/* ═════════ 1 · BACKGROUND DATA STREAMS ═════════ */
+const CW = 18, CH = 18;
+const st = { cv: document.getElementById('cv-streams'), ctx: null, cols: [], w: 0, h: 0 };
+st.ctx = st.cv.getContext('2d', { alpha: true });
+function paintStrip(c) {
+  const d = Math.min(1.5, DPR()), h = c.len * CH;
+  if (!c.strip) c.strip = document.createElement('canvas');
+  c.strip.width = Math.ceil(13 * d);
+  c.strip.height = Math.ceil(h * d);
+  const g = c.strip.getContext('2d');
+  g.setTransform(d, 0, 0, d, 0, 0);
+  g.clearRect(0, 0, 13, h);
+  g.textBaseline = 'top';
+  g.font = '13px ui-monospace, monospace';
+  for (let j = 0; j < c.len; j++) {
+    const e = Math.pow(1 - j / c.len, 1.55);
+    g.globalAlpha = Math.max(0, e * c.a);
+    g.fillStyle = 'hsl(' + c.hue + ' 100% ' + (56 + j * 1.2).toFixed(0) + '%)';
+    g.fillText(GLYPH[(Math.random() * GLYPH.length) | 0], 0, j * CH);
+  }
+  g.globalAlpha = 1;
+}
+function buildStreams() {
+  const s = fit(st.cv, st.ctx);
+  st.w = s.w; st.h = s.h;
+  st.cols = [];
+  const n = Math.max(8, Math.ceil(s.w / CW));
+  for (let i = 0; i < n; i++) {
+    const r = Math.random();
+    const c = {
+      x: i * CW + 3, y: rnd(0, 4000), sp: rnd(26, 200) * (r > .93 ? 3.4 : 1),
+      len: Math.round(rnd(9, 26)),
+      hue: r < .34 ? 212 : r < .64 ? 268 : 88,
+      a: r < .34 ? .8 : r < .64 ? .75 : 1, t: 0
+    };
+    paintStrip(c);
+    st.cols.push(c);
+  }
+}
+function drawStreams(dt, t, f) {
+  const ctx = st.ctx, W = st.w, H = st.h;
+  if (!W) return;
+  ctx.clearRect(0, 0, W, H);
+  for (const c of st.cols) {
+    c.y += c.sp * dt * (1 + f * 2.6);
+    c.t -= dt;
+    if (c.t <= 0) { if (Math.random() < .28) paintStrip(c); c.t = rnd(.14, .34); }
+    const Hh = c.len * CH, s = ((c.y % Hh) + Hh) % Hh;
+    ctx.globalAlpha = .40 + f * .55;
+    ctx.drawImage(c.strip, c.x, s, 13, Hh);
+    ctx.drawImage(c.strip, c.x, s - Hh, 13, Hh);
+  }
+  ctx.globalAlpha = 1;
+  /* horizontal packet burst */
+  if (Math.random() < .3 + f * .9) {
+    const y = Math.random() * H, x = Math.random() < .5 ? 0 : W, dir = x === 0 ? 1 : -1;
+    const len = rnd(40, 280), hue = pick([212, 268, 88, 190]);
+    ctx.strokeStyle = 'hsla(' + hue + ',100%,68%,.9)';
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    const ex = x + dir * len;
+    ctx.moveTo(x, y);
+    for (let k = 1; k <= 6; k++) ctx.lineTo(lerp(x, ex, k / 6), y + rnd(-1.4, 1.4));
+    ctx.stroke();
+  }
+}
+/* ═════════ 2 · VORTEX PARTICLE ENGINE ═════════ */
+const vx = { cv: document.getElementById('cv-vortex'), ctx: null, w: 0, h: 0,
+  cx: 0, cy: 0, R: 0, arms: 3, parts: [], dust: [], rings: [], bolts: [],
+  N: 900, quality: 1 };
+vx.ctx = vx.cv.getContext('2d', { alpha: true });
+/* cached stroke ramp: white-cyan core → electric blue → deep purple → acid green rim */
+const RAMP = 32, COLS = [];
+for (let i = 0; i < RAMP; i++) {
+  const u = i / (RAMP - 1);
+  let h, s, l;
+  if (u < .16) { h = 190; s = 100; l = 88; }
+  else if (u < .44) { const k = (u - .16) / .28; h = lerp(214, 224, k); s = 100; l = lerp(72, 58, k); }
+  else if (u < .74) { const k = (u - .44) / .30; h = lerp(224, 268, k); s = lerp(100, 88, k); l = lerp(58, 66, k); }
+  else { const k = (u - .74) / .26; h = lerp(268, 88, k); s = lerp(88, 100, k); l = lerp(66, 64, k); }
+  COLS.push('hsla(' + (h | 0) + ',' + (s | 0) + '%,' + (l | 0) + '%');
+}
+const bucket = u => clamp((u * (RAMP - 1)) | 0, 0, RAMP - 1);
+function seedPart(p, inner) {
+  p.arm = (Math.random() * vx.arms) | 0;
+  p.tw = rnd(.55, 1.35) * (Math.random() < .5 ? -1 : 1);
+  p.r = rnd(vx.R * inner, vx.R * rnd(1, 1.18));
+  p.jit = rnd(0, TAU);
+  p.sz = Math.random() < .85 ? rnd(.7, 1.7) : rnd(1.9, 3.1);
+  p.dr = rnd(6, 28);
+  p.al = rnd(.28, .95);
+  p.tf = rnd(.4, 1.5);
+}
+function buildVortex() {
+  const s = fit(vx.cv, vx.ctx);
+  vx.w = s.w; vx.h = s.h; vx.cx = s.w / 2; vx.cy = s.h / 2; vx.R = s.w / 2;
+  const area = (s.w * s.h) / (DPR() * DPR());
+  vx.N = Math.round(clamp(area / 600, 380, 1500) * vx.quality);
+  vx.parts.length = 0; vx.dust.length = 0;
+  for (let i = 0; i < vx.N; i++) {
+    const p = {}; seedPart(p, .06); p.r *= Math.pow(Math.random(), .6); vx.parts.push(p);
+  }
+  for (let i = 0, n = Math.round(vx.N * .22); i < n; i++) {
+    const p = {}; seedPart(p, .3); p.r = rnd(vx.R * .3, vx.R * 1.3); p.dr = rnd(-10, 12);
+    vx.dust.push(p);
+  }
+}
+function drawVortex(dt, t, f) {
+  const ctx = vx.ctx, cx = vx.cx, cy = vx.cy, R = vx.R;
+  if (!R) return;
+  ctx.clearRect(0, 0, vx.w, vx.h);
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.lineCap = 'round';
+  const pulse = .5 + .5 * Math.sin(t * 1.55) + .16 * Math.sin(t * 4.1);
+  const flare = 1 + f * 1.6;
+
+  /* ── swirling logarithmic-spiral body ── */
+  for (const p of vx.parts) {
+    p.r -= p.dr * dt * flare;
+    p.jit += dt * p.tf;
+    if (p.r < R * .055) { seedPart(p, .86); continue; }
+    if (p.r > R * 1.2) p.r = R * 1.2;
+    let a = p.arm * TAU / vx.arms + Math.log(p.r / R * 6 + 1e-3) * p.tw * 3.1 + p.jit;
+    a += Math.sin(p.r * .055 + t * 1.6 + p.jit) * .13 * Math.cos(a * 3 - t * .9) * dt * 1.2;
+    const c1 = Math.cos(a), s1 = Math.sin(a);
+    const x = cx + p.r * c1, y = cy + p.r * s1;
+    const b = a - .17 * (1 + p.r / R);
+    const u = clamp(1 - p.r / (R * 1.2), 0, 1);
+    ctx.strokeStyle = COLS[bucket(u)] + ',' + (p.al * (.32 + .68 * pulse) * (.5 + f * 1.4)).toFixed(3) + ')';
+    ctx.lineWidth = p.sz;
+    ctx.beginPath();
+    ctx.moveTo(cx + p.r * Math.cos(b), cy + p.r * Math.sin(b));
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  }
+  /* ── outer dust field ── */
+  ctx.lineWidth = 1;
+  for (const p of vx.dust) {
+    p.r -= p.dr * dt * (1 + f);
+    p.jit += dt * .9;
+    if (p.r < R * .2 || p.r > R * 1.35) { seedPart(p, .35); p.r = rnd(R * .3, R * 1.3); p.dr = rnd(-14, 16); }
+    const a = p.arm * TAU / vx.arms + p.jit;
+    const u = clamp(1 - p.r / (R * 1.3), 0, 1);
+    ctx.fillStyle = COLS[bucket(u)] + ',' + (p.al * .42 * (.35 + f)).toFixed(3) + ')';
+    ctx.fillRect(cx + p.r * Math.cos(a) - p.sz * .5, cy + p.r * Math.sin(a) - p.sz * .5, p.sz, p.sz);
+  }
+  /* ── plasma filaments around the core ── */
+  ctx.lineWidth = 1.4;
+  for (let i = 0; i < 7; i++) {
+    const rr = R * (.1 + .055 * i) * (1 + pulse * .22);
+    const off = t * (1.3 + i * .31) * (i % 2 ? -1 : 1);
+    ctx.strokeStyle = COLS[bucket(clamp(.1 + i * .07, 0, 1))] + ',' + (.5 + f).toFixed(3) + ')';
+    ctx.shadowColor = COLS[bucket(clamp(.2 + i * .06, 0, 1))] + ',.9)';
+    ctx.shadowBlur = 14 + f * 22;
+    ctx.beginPath();
+    for (let k = 0; k <= 54; k++) {
+      const a = off + k / 54 * TAU * 1.6;
+      const wob = 1 + Math.sin(a * 5 + t * 3.4 + i) * .09 + Math.sin(a * 11 - t * 2.1) * .035;
+      const x = cx + Math.cos(a) * rr * wob, y = cy + Math.sin(a) * rr * wob * .86;
+      k ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    }
+    ctx.stroke();
+  }
+  ctx.shadowBlur = 0;
+
+  /* ── shockwave rings (spawned by strikes) ── */
+  for (let i = vx.rings.length - 1; i >= 0; i--) {
+    const g = vx.rings[i];
+    g.r += g.v * dt; g.a -= g.d * dt;
+    if (g.a <= 0) { vx.rings.splice(i, 1); continue; }
+    ctx.strokeStyle = g.c + ',' + clamp(g.a, 0, 1).toFixed(3) + ')';
+    ctx.lineWidth = g.w * (1 + g.r / (R * 2.4));
+    ctx.shadowColor = g.c + ',.95)'; ctx.shadowBlur = 22;
+    ctx.beginPath(); ctx.arc(cx, cy, g.r, 0, TAU); ctx.stroke();
+  }
+  /* ── inner arc lightning ── */
+  for (let i = vx.bolts.length - 1; i >= 0; i--) {
+    const b = vx.bolts[i];
+    b.life -= dt;
+    if (b.life <= 0) { vx.bolts.splice(i, 1); continue; }
+    const k = b.life / b.max;
+    ctx.strokeStyle = 'rgba(255,255,255,' + clamp(k, 0, 1).toFixed(3) + ')';
+    ctx.lineWidth = 2.2 * k + .4;
+    ctx.shadowColor = 'rgba(160,220,255,' + clamp(k, 0, 1).toFixed(3) + ')';
+    ctx.shadowBlur = 26;
+    ctx.beginPath();
+    let a = b.a0;
+    ctx.moveTo(cx + Math.cos(a) * b.r0, cy + Math.sin(a) * b.r0);
+    for (let j = 1; j <= 9; j++) {
+      a += b.sweep / 9 + rnd(-.14, .14);
+      const rr = b.r0 * (1 + j * .06);
+      ctx.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr);
+    }
+    ctx.stroke();
+  }
+  ctx.shadowBlur = 0;
+
+  /* ── white-hot core bloom ── */
+  const cr = R * (.11 + .03 * pulse) * (1 + f * .5);
+  const gd = ctx.createRadialGradient(cx, cy, 0, cx, cy, cr * 3.4);
+  gd.addColorStop(0, 'rgba(255,255,255,' + (.95 + f * .05) + ')');
+  gd.addColorStop(.16, 'rgba(143,246,255,' + (.8 + f * .2) + ')');
+  gd.addColorStop(.38, 'rgba(99,180,255,' + (.45 + f * .4) + ')');
+  gd.addColorStop(.66, 'rgba(106,24,255,' + (.22 + f * .5) + ')');
+  gd.addColorStop(1, 'rgba(106,24,255,0)');
+  ctx.fillStyle = gd;
+  ctx.beginPath(); ctx.arc(cx, cy, cr * 3.4, 0, TAU); ctx.fill();
+  ctx.globalCompositeOperation = 'source-over';
+}
+
+/* ═════════ 3 · PANEL VISUALISERS ═════════ */
+function grid(ctx, w, h, col, step) {
+  ctx.strokeStyle = col; ctx.lineWidth = 1; ctx.globalAlpha = .5;
+  ctx.beginPath();
+  for (let x = 0; x <= w; x += step) { ctx.moveTo(x + .5, 0); ctx.lineTo(x + .5, h); }
+  for (let y = 0; y <= h; y += step) { ctx.moveTo(0, y + .5); ctx.lineTo(w, y + .5); }
+  ctx.stroke(); ctx.globalAlpha = 1;
+}
+const VIZ = {};
+/* oscilloscope */
+VIZ.scope = (ctx, w, h, t, f) => {
+  ctx.clearRect(0, 0, w, h);
+  grid(ctx, w, h, 'rgba(99,180,255,.16)', Math.max(9, w / 9));
+  ctx.strokeStyle = 'rgba(140,255,26,.16)';
+  ctx.beginPath(); ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2); ctx.stroke();
+  const waves = [['rgba(99,180,255,.95)', 1, .9], ['rgba(140,255,26,.8)', -1, .6],
+                 ['rgba(185,129,255,.7)', 2.1, .42]];
+  for (const wv of waves) {
+    ctx.strokeStyle = wv[0]; ctx.lineWidth = wv[1] === 1 ? 1.9 : 1.2;
+    ctx.shadowColor = wv[0]; ctx.shadowBlur = 8 + f * 16;
+    ctx.beginPath();
+    for (let x = 0; x <= w; x += 2) {
+      const u = x / w;
+      const y = h / 2 + (Math.sin(u * 11 + t * 4.4 * wv[1]) * .42
+        + Math.sin(u * 27 - t * 6.1 * wv[1]) * .24
+        + Math.sin(u * 53 + t * 9 * wv[1]) * .12
+        + Math.sin(u * 97 - t * 13 * wv[1]) * .05) * h * .42 * wv[2] * (1 + f * 1.6);
+      x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    }
+    ctx.stroke();
+  }
+  ctx.shadowBlur = 0;
+  const mx = (Math.sin(t * 1.7) * .5 + .5) * w;
+  ctx.strokeStyle = 'rgba(255,255,255,' + (.25 + f).toFixed(3) + ')';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(mx, 0); ctx.lineTo(mx, h); ctx.stroke();
+};
+/* radar sweep with decaying contacts */
+VIZ.radar = (ctx, w, h, t, f) => {
+  ctx.clearRect(0, 0, w, h);
+  const cx = w * .5, cy = h * .40, R = Math.min(w * .48, h * .37);
+  for (let i = 1; i <= 4; i++) {
+    ctx.strokeStyle = 'rgba(99,180,255,' + (.34 - i * .05) + ')';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(cx, cy, R * i / 4, 0, TAU); ctx.stroke();
+  }
+  ctx.strokeStyle = 'rgba(99,180,255,.22)';
+  for (let i = 0; i < 8; i++) {
+    const a = i * TAU / 8;
+    ctx.beginPath(); ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); ctx.stroke();
+  }
+  const sweep = t * 1.55;
+  if (ctx.createConicGradient) {
+    const g = ctx.createConicGradient(sweep, cx, cy);
+    g.addColorStop(0, 'rgba(140,255,26,.55)');
+    g.addColorStop(.07, 'rgba(99,180,255,.30)');
+    g.addColorStop(.22, 'rgba(106,24,255,0)');
+    g.addColorStop(1, 'rgba(106,24,255,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU); ctx.fill();
+  }
+  ctx.strokeStyle = 'rgba(216,255,99,.95)'; ctx.lineWidth = 1.6;
+  ctx.shadowColor = '#D8FF63'; ctx.shadowBlur = 12;
+  ctx.beginPath(); ctx.moveTo(cx, cy);
+  ctx.lineTo(cx + Math.cos(sweep) * R, cy + Math.sin(sweep) * R); ctx.stroke();
+  for (let i = 0; i < 12; i++) {
+    const a = (i * 2.399 + t * (.05 + (i % 3) * .02)) % TAU;
+    const rr = R * (.16 + ((i * 37) % 100) / 118);
+    const x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr;
+    const d = Math.abs(((a - sweep) % TAU + TAU) % TAU);
+    const hot = Math.max(0, 1 - d / 1.3);
+    ctx.fillStyle = 'hsla(' + (hot > .35 ? 88 : 212) + ',100%,' + (60 + hot * 30) + '%,'
+      + (.3 + hot * .7).toFixed(2) + ')';
+    ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 8 + hot * 14;
+    ctx.beginPath(); ctx.arc(x, y, 1.5 + hot * 4.5 + f * 3, 0, TAU); ctx.fill();
+  }
+  ctx.shadowBlur = 0;
+  /* corner brackets */
+  ctx.strokeStyle = 'rgba(185,129,255,' + (.5 + f * .5) + ')'; ctx.lineWidth = 2;
+  const m = 3, L = Math.min(w, h) * .14;
+  for (const s of [[1, 1], [-1, 1], [1, -1], [-1, -1]]) {
+    const x = cx + s[0] * (R + m), y = cy + s[1] * (R + m);
+    ctx.beginPath();
+    ctx.moveTo(x - s[0] * L, y); ctx.lineTo(x, y); ctx.lineTo(x, y - s[1] * L);
+    ctx.stroke();
+  }
+};
+/* streaming polyline chart — clipped to a lower instrument band */
+VIZ.poly = (ctx, w, h, t, f) => {
+  ctx.clearRect(0, 0, w, h);
+  const top = h * .46, hh = h - top;
+  ctx.save();
+  ctx.beginPath(); ctx.rect(0, top, w, hh); ctx.clip();
+  ctx.strokeStyle = 'rgba(99,180,255,.22)'; ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let i = 0; i <= 4; i++) { const y = top + hh * i / 4; ctx.moveTo(0, y); ctx.lineTo(w, y); }
+  ctx.stroke();
+  const N = 64;
+  const series = [[1.1, .5, 1.6], [1.7, .9, 1.3], [2.3, 1.4, 1.1]];
+  const cols = ['rgba(140,255,26,.85)', 'rgba(185,129,255,.8)', 'rgba(99,180,255,.75)'];
+  for (let s = 0; s < 3; s++) {
+    ctx.beginPath();
+    for (let i = 0; i <= N; i++) {
+      const u = i / N, x = u * w;
+      const v = Math.sin(u * 8.1 + t * series[s][1] + series[s][0]) * .5
+        + Math.sin(u * 19.3 - t * series[s][1] * 1.7 + series[s][0]) * .28
+        + Math.sin(u * 41.7 + t * 3.1 + series[s][0]) * .13;
+      const y = top + hh * .5 + v * hh * .42 * (1 + f * .9);
+      i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    }
+    ctx.strokeStyle = cols[s]; ctx.lineWidth = series[s][2];
+    ctx.shadowColor = cols[s]; ctx.shadowBlur = 7 + f * 10;
+    ctx.stroke();
+  }
+  ctx.shadowBlur = 0;
+  const hx = ((t * .28) % 1) * w;
+  const gx = ctx.createLinearGradient(hx - 30, 0, hx, 0);
+  gx.addColorStop(0, 'rgba(99,180,255,0)');
+  gx.addColorStop(1, 'rgba(99,180,255,.18)');
+  ctx.fillStyle = gx; ctx.fillRect(hx - 30, top, 30, hh);
+  ctx.restore();
+};
+/* hex lattice with radiating ripple */
+VIZ.hex = (ctx, w, h, t, f) => {
+  ctx.clearRect(0, 0, w, h);
+  const s = Math.max(8, Math.min(w, h) / 10);
+  const hw = Math.sqrt(3) * s / 2, cx = w / 2, cy = h / 2;
+  ctx.lineWidth = 1;
+  const rows = Math.ceil(h / (s * .75)) + 2, cols = Math.ceil(w / (hw * 2)) + 2;
+  for (let row = -rows; row < rows; row++) {
+    for (let col = -cols; col < cols; col++) {
+      const x = col * hw * 2 + (row % 2 ? hw : 0), y = row * s * .75;
+      if (x < -s || x > w + s || y < -s || y > h + s) continue;
+      const d = Math.hypot(x - cx, y - cy);
+      const wv = Math.sin(d * .09 - t * 3.1) * .5 + .5;
+      const a = .05 + wv * .17 + f * .28;
+      ctx.strokeStyle = 'hsla(' + (d < 58 ? 190 : 212) + ',100%,' + (58 + a * 40).toFixed(0)
+        + '%,' + a.toFixed(3) + ')';
+      ctx.beginPath();
+      for (let k = 0; k < 6; k++) {
+        const ang = k * TAU / 6;
+        const px = x + Math.cos(ang) * s * .5, py = y + Math.sin(ang) * s * .5;
+        k ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+      }
+      ctx.closePath(); ctx.stroke();
+    }
+  }
+  for (let i = 0; i < 4; i++) {
+    const ph = (t * .55 + i * .25) % 1;
+    ctx.strokeStyle = 'hsla(88,100%,68%,' + ((1 - ph) * .5).toFixed(3) + ')';
+    ctx.lineWidth = 2 * (1 - ph) + .3;
+    ctx.shadowColor = 'rgba(140,255,26,.8)'; ctx.shadowBlur = 12;
+    ctx.beginPath(); ctx.arc(cx, cy, ph * Math.hypot(w, h) * .6, 0, TAU); ctx.stroke();
+  }
+  ctx.shadowBlur = 0;
+};
+/* kinetic gauges: sweeping needles + orbiting nodes + spoke rotor */
+VIZ.gauge = (ctx, w, h, t, f) => {
+  ctx.clearRect(0, 0, w, h);
+  const cx = w / 2, cy = h * .54, R = Math.min(w, h) * .42;
+  const specs = [[1.00, 1.9, 'rgba(99,180,255,.9)', 48],
+                 [0.76, -2.7, 'rgba(140,255,26,.85)', 32],
+                 [0.54, 3.6, 'rgba(185,129,255,.85)', 20]];
+  const a0 = PI * .75, a1 = PI * 2.25;
+  for (const S of specs) {
+    const rr = R * S[0];
+    ctx.lineWidth = Math.max(2, R * .045);
+    ctx.strokeStyle = 'rgba(99,180,255,.14)';
+    ctx.beginPath(); ctx.arc(cx, cy, rr, a0, a1); ctx.stroke();
+    const head = a0 + ((((t * S[1] * .5) % 1) + 1) % 1) * (a1 - a0);
+    const g = ctx.createLinearGradient(cx - rr, cy, cx + rr, cy);
+    g.addColorStop(0, S[2]); g.addColorStop(1, 'rgba(99,180,255,.05)');
+    ctx.strokeStyle = g; ctx.shadowColor = S[2]; ctx.shadowBlur = 10 + f * 18;
+    ctx.beginPath(); ctx.arc(cx, cy, rr, a0, head); ctx.stroke();
+    ctx.lineWidth = 1;
+    const frac = (head - a0) / (a1 - a0);
+    for (let i = 0; i <= S[3]; i++) {
+      const u = i / S[3], a = a0 + u * (a1 - a0), on = u < frac;
+      const l0 = rr - R * .03, l1 = rr + (on ? R * .045 : R * .022);
+      ctx.strokeStyle = on ? S[2] : 'rgba(99,180,255,.28)';
+      ctx.beginPath();
+      ctx.moveTo(cx + Math.cos(a) * l0, cy + Math.sin(a) * l0);
+      ctx.lineTo(cx + Math.cos(a) * l1, cy + Math.sin(a) * l1);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = 'rgba(255,255,255,.92)'; ctx.lineWidth = 2;
+    ctx.shadowColor = S[2]; ctx.shadowBlur = 16;
+    ctx.beginPath();
+    ctx.moveTo(cx + Math.cos(head + PI) * R * .05, cy + Math.sin(head + PI) * R * .05);
+    ctx.lineTo(cx + Math.cos(head) * rr, cy + Math.sin(head) * rr);
+    ctx.stroke();
+  }
+  ctx.shadowBlur = 0;
+  for (let i = 0; i < 7; i++) {
+    const a = t * (.7 + i * .14) * (i % 2 ? -1 : 1) + i;
+    const rr = R * (.28 + .5 * ((i * 31) % 7) / 7);
+    ctx.fillStyle = 'hsla(' + [212, 268, 88, 190][i % 4] + ',100%,66%,' + (.6 + f * .4) + ')';
+    ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.arc(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr, 2.2 + f * 2, 0, TAU);
+    ctx.fill();
+  }
+  ctx.shadowBlur = 0;
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(t * 2.2);
+  ctx.strokeStyle = 'rgba(143,246,255,' + (.28 + f * .4) + ')'; ctx.lineWidth = 1;
+  for (let i = 0; i < 12; i++) {
+    ctx.rotate(TAU / 12);
+    ctx.beginPath(); ctx.moveTo(R * .08, 0); ctx.lineTo(R * 1.14, 0); ctx.stroke();
+  }
+  ctx.restore();
+  ctx.fillStyle = 'rgba(140,255,26,' + (.5 + f * .5) + ')';
+  ctx.beginPath(); ctx.arc(cx, cy, R * .06, 0, TAU); ctx.fill();
+};
+/* reactive concentric rings */
+VIZ.rings = (ctx, w, h, t, f) => {
+  ctx.clearRect(0, 0, w, h);
+  const cx = w / 2, cy = h / 2, R = Math.min(w, h) * .5;
+  for (let i = 0; i < 7; i++) {
+    const ph = (t * .32 + i / 7) % 1;
+    const rr = R * (.18 + ph * .86);
+    const a = Math.sin(ph * PI) * (.5 + f * .45);
+    ctx.strokeStyle = 'hsla(' + [212, 268, 88][i % 3] + ',100%,62%,' + a.toFixed(3) + ')';
+    ctx.lineWidth = (1 - ph) * 2.4 + .25;
+    ctx.beginPath();
+    for (let k = 0; k <= 72; k++) {
+      const ang = k / 72 * TAU;
+      const seg = 6 + i, gap = Math.sin(ang * seg + t * 2) < -.25;
+      const px = cx + Math.cos(ang) * rr, py = cy + Math.sin(ang) * rr * .9;
+      if (gap) { ctx.stroke(); ctx.beginPath(); ctx.moveTo(px, py); }
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+  }
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(-t * .8);
+  ctx.strokeStyle = 'rgba(185,129,255,.4)'; ctx.lineWidth = 1;
+  ctx.setLineDash([3, 7]);
+  ctx.beginPath(); ctx.arc(0, 0, R * .72, 0, TAU); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+};
+/* ═════════ 4 · CANVAS REGISTRY ═════════ */
+const PANES = [...document.querySelectorAll('canvas.viz')].map(cv => ({
+  cv, ctx: cv.getContext('2d', { alpha: true }), fn: VIZ[cv.dataset.viz], w: 0, h: 0
+}));
+function fitPanes() {
+  for (const p of PANES) {
+    if (!p.fn) continue;
+    const r = p.cv.getBoundingClientRect();
+    if (r.width < 2 || r.height < 2) continue;
+    const d = DPR();
+    p.cv.width = Math.max(1, Math.round(r.width * d));
+    p.cv.height = Math.max(1, Math.round(r.height * d));
+    p.ctx.setTransform(d, 0, 0, d, 0, 0);
+    p.w = r.width; p.h = r.height;
+  }
+}
+
+/* ═════════ 5 · ELECTRICAL STORM ═════════ */
+const boltG = document.getElementById('bolt-g');
+let pulses = [], nextFlash = .45, nextGlitch = .8, strobe = 0, flash = 0;
+
+function jagged(x0, y0, x1, y1, disp, depth) {
+  if (depth <= 0) return [[x0, y0], [x1, y1]];
+  const mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
+  const dx = x1 - x0, dy = y1 - y0, len = Math.hypot(dx, dy) || 1;
+  const off = rnd(-1, 1) * len * disp;
+  const nx = mx - dy / len * off, ny = my + dx / len * off;
+  return jagged(x0, y0, nx, ny, disp * .55, depth - 1)
+    .concat(jagged(nx, ny, x1, y1, disp * .55, depth - 1));
+}
+const d2s = pts => 'M' + pts.map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('L');
+function strike() {
+  const W = innerWidth, H = innerHeight;
+  const col = 'hsl(' + pick([190, 212, 268, 88]) + ',100%,78%)';
+  const fromTop = Math.random() < .62;
+  const x0 = fromTop ? rnd(-40, W + 40) : (Math.random() < .5 ? -30 : W + 30);
+  const y0 = fromTop ? -20 : H + 20;
+  const x1 = rnd(W * .12, W * .88), y1 = rnd(H * .08, H * .92);
+  const main = jagged(x0, y0, x1, y1, .055, 6);
+  const g = mk('g', {});
+  /* hard-edged (unblurred) high-contrast shadows */
+  g.appendChild(mk('path', { d: d2s(main), stroke: '#000', 'stroke-width': 8, opacity: .7,
+    transform: 'translate(8,8)' }));
+  g.appendChild(mk('path', { d: d2s(main), stroke: col, 'stroke-width': 7, opacity: .26,
+    transform: 'translate(-6,-5)' }));
+  const core = mk('path', { d: d2s(main), stroke: '#fff', 'stroke-width': 2.1, pathLength: 1,
+    'stroke-dasharray': '1 1', 'stroke-dashoffset': 1 });
+  core.style.animation = 'boltDraw .19s steps(7) forwards';
+  g.appendChild(core);
+  /* branches */
+  for (let i = 0; i < 3; i++) {
+    const k = ((i * 7 + 3) % (main.length - 2)) + 1;
+    const a = main[k], b = main[k + 1] || main[k];
+    g.appendChild(mk('path', { d: d2s(jagged(a[0], a[1], b[0] + rnd(-90, 90), b[1] + rnd(-160, 160), .06, 3)),
+      stroke: col, 'stroke-width': 1.1, opacity: .5 }));
+    g.appendChild(mk('path', { d: d2s(jagged(a[0], a[1], b[0] + rnd(-70, 70), b[1] + rnd(-120, 120), .05, 3)),
+      stroke: '#fff', 'stroke-width': .7, opacity: .65 }));
+  }
+  boltG.appendChild(g);
+  setTimeout(() => g.remove(), 320);
+  /* inner vortex arcs + shockwave */
+  for (let i = 0; i < 3; i++) vx.bolts.push({
+    r0: vx.R * rnd(.12, .3), a0: rnd(0, TAU), sweep: rnd(1.2, 3.4) * pick([-1, 1]),
+    life: rnd(.12, .3), max: .3
+  });
+  vx.rings.push({ r: vx.R * .1, v: vx.R * rnd(2.2, 4.6), a: .95, d: rnd(1.1, 2.1), w: 3,
+    c: 'hsla(' + pick([190, 212, 268, 88]) + ',100%,70%' });
+  /* envelope: main slam + delayed after-strike */
+  const now = performance.now() / 1000, amp = rnd(.6, 1);
+  pulses.push({ t0: now, amp, k: 14 });
+  pulses.push({ t0: now + .07, amp: amp * rnd(.35, .7), k: 20 });
+  if (Math.random() < .26) strobe = .5 + Math.random() * .5;
+}
+function glare(x, y, sz, hue) {
+  const g = mk('g', {});
+  g.appendChild(mk('rect', { x: -sz / 2, y: -sz / 2, width: sz, height: sz * .5,
+    fill: 'hsl(' + hue + ',100%,80%)', opacity: .2,
+    transform: 'translate(' + x + ' ' + y + ') rotate(' + rnd(-40, 40) + ')' }));
+  g.appendChild(mk('rect', { x: -sz, y: -sz * .06, width: sz * 2, height: sz * .12, fill: '#fff',
+    opacity: .45, transform: 'translate(' + x + ' ' + y + ') rotate(' + rnd(-70, 70) + ')',
+    filter: 'drop-shadow(0 0 18px #fff)' }));
+  boltG.appendChild(g);
+  setTimeout(() => g.remove(), 170);
+}
+function flashAt(now) {
+  let f = 0;
+  for (let i = pulses.length - 1; i >= 0; i--) {
+    const p = pulses[i], age = now - p.t0;
+    if (age > 1.3) { pulses.splice(i, 1); continue; }
+    if (age < 0) continue;
+    f += p.amp * Math.exp(-age * p.k) * (1 + Math.sin(age * 90) * .5);
+  }
+  return clamp(f, 0, 1.25);
+}
+
+/* ═════════ 6 · GLITCH BURSTS ═════════ */
+let glitchOn = false, glitchEnd = 0;
+function doGlitch() {
+  glitchOn = true; glitchEnd = T + rnd(.05, .16);
+  stage.classList.add('glitching');
+  root.style.setProperty('--gx', rnd(-9, 9).toFixed(1) + 'px');
+  root.style.setProperty('--gy', rnd(-6, 6).toFixed(1) + 'px');
+  for (let i = 0; i < TEARS.length; i++) {
+    const b = i % 3;
+    TEARS[i].style.top = (b === 0 ? rnd(4, 30) : b === 1 ? rnd(34, 70) : rnd(71, 95)).toFixed(1) + '%';
+    TEARS[i].style.opacity = rnd(.5, 1).toFixed(2);
+  }
+  if (Math.random() < .45)
+    glare(rnd(0, innerWidth), rnd(0, innerHeight), rnd(40, 240), pick([190, 268, 88]));
+}
+function endGlitch() {
+  if (glitchOn && T > glitchEnd) {
+    glitchOn = false;
+    stage.classList.remove('glitching');
+    root.style.setProperty('--gx', '0px');
+    root.style.setProperty('--gy', '0px');
+    for (const s of TEARS) s.style.opacity = '';
+  }
+}
+
+/* ═════════ 7 · DOM DRIVERS (abstract readouts) ═════════ */
+const SPEC = [...document.querySelectorAll('[data-spectrum]')].map(el => ({
+  kids: [...el.children], v: new Float32Array(el.children.length),
+  w: new Float32Array(el.children.length).fill(-1)
+}));
+const BARS = [...document.querySelectorAll('.readout .bar i')].map(b => ({
+  el: b, v: Math.random(), t: rnd(0, .5)
+}));
+const RAIN = [...document.querySelectorAll('.rain-col')];
+const GLYPHBARS = [...document.querySelectorAll('.glyphbar i')];
+function driveDOM(dt, t, f) {
+  for (const S of SPEC) {
+    for (let i = 0; i < S.kids.length; i++) {
+      const n = Math.sin(t * 2.1 + i * .38) * .5 + Math.sin(t * 5.7 - i * .21) * .28
+        + Math.sin(t * 11.3 + i * .9) * .12;
+      const target = clamp(Math.abs(n) * (.62 + f * .8) + .04, .03, 1);
+      S.v[i] = target > S.v[i] ? lerp(S.v[i], target, .55) : lerp(S.v[i], target, .12);
+      if (Math.abs(S.v[i] - S.w[i]) > .008) {
+        S.w[i] = S.v[i];
+        S.kids[i].style.setProperty('--v', S.v[i].toFixed(3));
+      }
+    }
+  }
+  for (const B of BARS) {
+    B.t -= dt;
+    if (B.t <= 0) { B.v = rnd(.08, 1); B.t = rnd(.1, .55); }
+    B.el.style.setProperty('--v', (B.v * (.75 + f * .45)).toFixed(3));
+  }
+  /* churn the glyph soup so nothing repeats */
+  if (Math.random() < .012) {
+    const c = RAIN[(Math.random() * RAIN.length) | 0];
+    if (c) c._rebuild();
+  }
+  for (let i = 0; i < GLYPHBARS.length; i++) {
+    if (Math.random() < .01) GLYPHBARS[i].style.animationDuration = rnd(.3, 2.4).toFixed(2) + 's';
+  }
+}
+
+/* ═════════ 8 · MAIN LOOP ═════════ */
+let T = 0, last = 0, frames = 0, acc = 0, running = true, lastF = -1, lastS = -1;
+
+function frame(now) {
+  if (!running) return;
+  requestAnimationFrame(frame);
+  if (!last) last = now;
+  let dt = (now - last) / 1000;
+  last = now;
+  if (dt > .05) dt = .05;
+  T += dt;
+  const t = T;
+
+  /* adaptive quality: keep the storm at 60fps */
+  acc += dt; frames++;
+  if (frames >= 60) {
+    const avg = acc / frames;
+    if (avg > .024 && vx.quality > .35) { vx.quality = Math.max(.35, vx.quality * .78); buildVortex(); }
+    else if (avg < .0155 && vx.quality < 1) { vx.quality = Math.min(1, vx.quality * 1.14); buildVortex(); }
+    frames = 0; acc = 0;
+  }
+
+  if (t > nextFlash) { strike(); nextFlash = t + rnd(.85, 3.6); }
+  if (t > nextGlitch) { doGlitch(); nextGlitch = t + rnd(.18, 1.1); }
+  endGlitch();
+
+  flash = flashAt(performance.now() / 1000);
+  strobe *= Math.pow(.012, dt);
+  /* only touch custom properties when they actually move (style recalc is costly) */
+  if (Math.abs(flash - lastF) > .012) {
+    root.style.setProperty('--f', flash.toFixed(3));
+    lastF = flash;
+  }
+  if (strobe > .004) { root.style.setProperty('--f2', strobe.toFixed(3)); lastS = strobe; }
+  else if (lastS !== 0) { root.style.setProperty('--f2', '0'); lastS = 0; }
+
+  drawStreams(dt, t, flash);
+  drawVortex(dt, t, flash);
+  for (const p of PANES) if (p.fn && p.w) p.fn(p.ctx, p.w, p.h, t, flash);
+  driveDOM(dt, t, flash);
+}
+
+/* ═════════ 9 · BOOT ═════════ */
+function boot() {
+  buildStreams();
+  fitPanes();
+  buildVortex();
+  /* prime a few strikes + a burst so the opening frame is already electric */
+  for (let i = 0; i < 3; i++) {
+    vx.rings.push({ r: vx.R * rnd(.15, .6), v: vx.R * rnd(2, 4), a: rnd(.2, .7), d: rnd(1, 2),
+      w: 3, c: 'hsla(' + pick([190, 212, 268, 88]) + ',100%,70%' });
+  }
+  if (REDUCED) {
+    root.style.setProperty('--f', '0');
+    T = 1.2;
+    drawStreams(.016, T, 0);
+    drawVortex(.016, T, 0);
+    for (const p of PANES) if (p.fn && p.w) p.fn(p.ctx, p.w, p.h, T, 0);
+    driveDOM(1, T, 0);
+    return;
+  }
+  requestAnimationFrame(frame);
+}
+let rt = 0;
+addEventListener('resize', () => {
+  clearTimeout(rt);
+  rt = setTimeout(() => { buildStreams(); fitPanes(); buildVortex(); }, 160);
+});
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { running = false; }
+  else if (!REDUCED) { running = true; last = 0; requestAnimationFrame(frame); }
+});
+boot();
+})();
+</script>
+</body>
+</html>
