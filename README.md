@@ -1,50 +1,62 @@
-# 1RY — High-Voltage Engineering Portfolio
+# 1RY — Sonic Rush Portfolio
 
 Live: https://1ry-o.github.io — vanilla HTML/CSS/JS, no build step, GitHub Pages ready.
 
 ## What this is
 
-A futuristic racing-garage / engineering-lab portfolio for a first-year
-Mechatronics Engineering student. Near-black graphite, frost white, one
-radioactive-green accent used sparingly (active states, transitions,
-benchmark highlight). No purple-blue gradients, no fake terminals, no
-fake telemetry.
+A high-velocity "Sonic Rush" portfolio and interactive resume for a first-year
+Mechatronics Engineering student: deep obsidian void (#050505), electric blue
+WebGL core (#0059FF), stark velocity yellow (#FFDE00). Heavy italicised
+forward-leaning display type (Archivo 900 italic/expanded, standing in for
+Monument Extended) paired with JetBrains Mono for resume data. Buttons, tags and
+panels use `transform: skewX(-15deg)` and `clip-path` polygons.
 
-## Sections (in order)
+## Architecture
 
-1. **Hero** — "BUILDING MACHINES. TEACHING SYSTEMS TO THINK." with
-   crystal/reactor motif, energy pulse, Explore Projects + Resume actions,
-   and the Normal/Professional mode selector. Usable instantly, no loader.
-2. **01 · VI-071 (flagship)** — audio-to-notation workflow:
-   conversion motif (waveform → note events → score), pipeline panel,
-   engineering-work panel, and a labeled local CPU benchmark table
-   (Legacy FP32 / Streaming FP32 / BF16 / FP16 with the ~27% BF16 finding
-   and environment caveats). Real repo link (https://github.com/1RY-O/Vi-071); no demo URL claimed — the reported deployment address is unverified. A separately-reported ~690 MB run is labeled as a separate unverified-setup run, not merged into the benchmark table.
-3. **02 · Supporting grid** — CircuitMate (no links published until
-   deployment verifies), Bobby (source + live demo, both verified),
-   Lumis Journal — labeled INCOMPLETE PROTOTYPE (app + source linked as work-in-progress, real screenshots; broken/unimplemented features not claimed).
-4. **03 · Capabilities** — evidence-grouped skills, every group tied to a
-   project. No percentage bars.
-5. **04 · About** — short, credible, first-year framing.
-6. **05 · Resume** — Download + View buttons against the approved
-   `Pilla_Sri_Sai_Rahul_Resume.pdf` (source of truth). Old `resume.pdf` kept
-   untouched as a checkpoint. VI-071 listed first.
-7. **06 · Contact** — email, GitHub, LinkedIn, resume, site.
+| Piece | What it does |
+|---|---|
+| **Velocity core** (`#gl`) | Raw WebGL (no Three.js, no CDN) fullscreen fragment shader: infinite electric-blue tunnel with rushing rings, shockwaves, radial spokes and a streaming particle field. Mouse drives parallax; hovering a portal opens a gravitational well (`u_warp`/`u_amp`) and speeds the stream up; portal transitions spike chromatic aberration (`u_ab`) and velocity (`u_speed`). |
+| **Streak fallback** | If WebGL is unavailable the same canvas becomes a Canvas2D radial streak field with identical parallax + well behaviour. If canvas fails entirely, the CSS radial core stands in. |
+| **Boot sequence** | 5-step system log, skewed scale-line rail, 000→100% counter, and the hero name scrambling into place via a text-decode effect (`GLYPHS` charset). Skippable with click, Enter, Space or Escape; auto-dismisses in ~1.4s. |
+| **Portal array** | Five skewed portal cards (4 case files + resume). Opening one animates `clip-path: circle()` from the cursor origin to full bleed with `expo.out`, per `--ox/--oy/--or` custom props. Real `#/p/<key>` hrefs, `pushstate` + `popstate` support, Escape to close, Tab is trapped inside the dialog, focus returns to the trigger. Clicking a "RESUME SUMMARY" link inside a case file swaps views without collapsing the circle. |
+| **Resume HUD** | Telemetry dashboard injected from `RESUME` data: identity record, snapshot tiles, an engagement log rendered as a glowing blue vertical track whose nodes blast in, glitch their dates and scramble them, a skills matrix of velocity/evidence gauges that fill fast as they enter view, and a project log. |
+| **Magnetic physics** | `gsap.quickTo` spring-pull on portals, buttons, HUD links and timeline nodes; each hover also warps the WebGL field behind the element. Pointer-fine devices only, and never double-bound. |
+| **Diagonal ticker** | "VELOCITY // ENGINEER // SYSTEM ARCHITECT" runs diagonally in yellow/black at the hero and as an outlined band across the flagship section. |
+| **Bottom rail** | Continuous system ticker (portal count, PDF mounted, live read mode, core status) plus back-to-top. |
 
 ## Normal / Professional switch
 
-Two `radiogroup` controls (header + hero). Session-only via
-`sessionStorage` — no cookies. Swaps 24 text nodes from structured copy in
-`script.js` without reload or duplicated markup. Keyboard arrows move within
-a group; `aria-checked` + visible selected state; screen-reader live region
-announces changes. Honors `prefers-reduced-motion` (instant swap, no fade).
+Two `radiogroup` controls (header + resume HUD note) swap the copy on hero,
+portals and every case file. Session-only via `sessionStorage`, no cookies.
+Keyboard arrows move within the group, `aria-checked` + visible selected state,
+and a screen-reader live region announces changes. Open portals rebuild their
+copy so the mode always applies.
 
-## Motion
+## Honesty policy (unchanged, and load-bearing)
 
-IntersectionObserver reveals (transform + opacity only), light-streak scene
-dividers, one low-frequency hero glow. Reduced-motion and mobile fall back
-to short fades / static. Content is never hidden unless JS init succeeds
-(`js-armed` gate); no-JS still reads the full document.
+The approved `Pilla_Sri_Sai_Rahul_Resume.pdf` remains the source of truth:
+
+- No GPA, employment, awards or credentials are claimed beyond that file.
+- VI-071 is labelled an active experiment; the BF16 table (1157.1 → 844.9 MB,
+  ~27%) is a local measurement, and the separately-reported ~690 MB optimized
+  run is shown as **unverified setup, not merged** into the comparison.
+- Lumis is labelled an INCOMPLETE PROTOTYPE everywhere it appears.
+- CircuitMate's demo URLs are listed in the resume, so they are presented as
+  resume-listed and marked "verify" rather than guaranteed.
+- Skills gauges are labelled relative, self-assessed evidence depth — each row
+  names the build it comes from; they are not certification claims.
+
+## Accessibility & fallbacks
+
+- `prefers-reduced-motion`: boot skipped, no rAF loop (one static frame), tickers
+  paused, hero shown immediately, portal content appears without the circle.
+- No JS: the `<noscript>` resume summary renders a full plain-text resume, and
+  CSS keeps content visible (all hidden states are gated on `.js`/`.anim`, plus
+  a 5.2s global failsafe that can never leave the page blank).
+- GSAP CDN unreachable: content is revealed instantly, portraits still open,
+  magnetic hover is skipped, the WebGL core still runs.
+- Dialog semantics (`role="dialog"`, `aria-modal`, labelled by the portal
+  title), skip link, visible focus rings, and buttons all carry `type`.
 
 ## Run locally
 
@@ -56,17 +68,23 @@ Open http://localhost:8000.
 
 ## Deploy
 
-Static files only — push `main` serves via GitHub Pages. Do not push or
+Static files only — pushing `main` serves via GitHub Pages. Do not push or
 change repo settings without explicit approval.
 
 ## Files
 
 | File | Purpose |
 |---|---|
-| `index.html` | All sections, mode-bound copy via `data-mode-text` |
-| `styles.css` | Graphite/acid system, hero, flagship, grid, responsive |
-| `script.js` | Mode copy maps, radiogroup wiring, reveals, progress |
-| `assets/` | Real Lumis screenshots only |
-| `Pilla_Sri_Sai_Rahul_Resume.pdf` | Approved resume, linked by all View/Download actions |
-| `resume.pdf` | Old resume, kept untouched as checkpoint (not linked) |
-| `Reference/` | Source material, not shipped as content |
+| `index.html` | HUD chrome, hero, portal array, flagship telemetry, skills matrix, profile, signal, portal overlay, noscript resume |
+| `styles.css` | Token system, tactile/electric styling, ticker, portal clip-path, resume HUD, responsive, reduced-motion, print |
+| `script.js` | WebGL velocity core + 2D fallback, boot/decode, portals, magnetic physics, HUD animation, read modes |
+| `assets/` | Real Lumis screenshots (used in the Lumis case file) |
+| `Pilla_Sri_Sai_Rahul_Resume.pdf` | Approved resume, linked by every View/Download/Print action |
+| `resume.pdf` | Old resume, kept untouched as a checkpoint (not linked) |
+| `Reference/`, `mockup-vortex.html` | Source material / earlier mockup, not shipped as content |
+
+## Print
+
+`PRINT / SAVE` inside the resume HUD calls `window.print()`; the print
+stylesheet hides the whole site chrome and renders the resume HUD as a plain
+black-on-white document with gauges forced full.
