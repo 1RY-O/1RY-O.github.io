@@ -137,7 +137,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;}
 .hud-right{display:flex;align-items:center;gap:14px;}
 .readmode{display:flex;border:1px solid var(--edge);transform:skewX(var(--skew));}
 .readmode button{font:700 10px/1 var(--mono);letter-spacing:.18em;padding:9px 12px;color:var(--ink-faint);
-  transition:all var(--fast) var(--expo);}
+  transition:color var(--fast) var(--expo),background var(--fast) var(--expo);}
 .readmode button.is-on{background:var(--blue);color:#fff;}
 .led{width:9px;height:9px;border-radius:50%;background:var(--blue);flex:0 0 auto;
   box-shadow:0 0 0 4px rgba(0,89,255,.16),0 0 18px rgba(61,130,255,.9);animation:ledPulse 1.6s var(--expo) infinite;}
@@ -185,7 +185,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;}
 .btn-sm{padding:12px 18px;font-size:11px;}
 
 .link-ext{font:700 10px/1 var(--mono);letter-spacing:.2em;color:var(--ink-faint);text-decoration:none;
-  padding:8px 10px;border-bottom:1px solid transparent;transition:all var(--fast) var(--expo);}
+  padding:8px 10px;border-bottom:1px solid transparent;transition:color var(--fast) var(--expo),border-color var(--fast) var(--expo);}
 .link-ext:hover{color:var(--yellow);border-bottom-color:var(--yellow);}
 
 /* ══════════ REVEALS · snap-in ══════════ */
@@ -362,7 +362,7 @@ html.booted .hero-in>*{opacity:1;transform:none;}
 .signal-mail:hover{color:var(--yellow);border-color:var(--yellow);}
 .signal-links{display:flex;flex-wrap:wrap;gap:12px;list-style:none;padding:0;margin:0;}
 .signal-links a{display:inline-block;font:700 11px/1 var(--mono);letter-spacing:.2em;text-decoration:none;
-  padding:13px 16px;border:1px solid var(--edge);transform:skewX(var(--skew));transition:all var(--fast) var(--expo);}
+  padding:13px 16px;border:1px solid var(--edge);transform:skewX(var(--skew));transition:background var(--fast) var(--expo),border-color var(--fast) var(--expo),color var(--fast) var(--expo);}
 .signal-links a:hover{background:var(--blue);border-color:var(--blue);color:#fff;}
 
 /* ══════════ HUD · BOTTOM RAIL ══════════ */
@@ -376,7 +376,7 @@ main{padding-bottom:56px;}
 .ticker b{color:var(--yellow);}
 .to-top{font:700 10px/1 var(--mono);letter-spacing:.24em;color:var(--ink-dim);text-decoration:none;
   padding:9px 13px;border:1px solid var(--edge);transform:skewX(var(--skew));
-  transition:all var(--fast) var(--expo);white-space:nowrap;}
+  transition:background var(--fast) var(--expo),color var(--fast) var(--expo),border-color var(--fast) var(--expo);white-space:nowrap;}
 .to-top:hover{background:var(--yellow);color:#000;border-color:var(--yellow);}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
 .head-bar{display:block;height:3px;width:min(340px,62%);margin-top:28px;transform:scaleX(1);
@@ -408,7 +408,7 @@ main{padding-bottom:56px;}
 .portal-title{font-size:clamp(20px,2.6vw,36px);letter-spacing:-.03em;}
 .portal-kind{font:500 10px/1 var(--mono);letter-spacing:.24em;color:var(--blue-hot);text-transform:uppercase;}
 .portal-close{margin-left:auto;font:700 11px/1 var(--mono);letter-spacing:.2em;padding:12px 16px;
-  border:1px solid var(--edge);transform:skewX(var(--skew));transition:all var(--fast) var(--expo);}
+  border:1px solid var(--edge);transform:skewX(var(--skew));transition:background var(--fast) var(--expo),color var(--fast) var(--expo),border-color var(--fast) var(--expo);}
 .portal-close:hover{background:var(--yellow);color:#000;border-color:var(--yellow);}
 .pc-hint{font-size:9px;color:inherit;opacity:.6;padding-left:6px;}
 .portal-body{position:relative;z-index:2;padding:clamp(26px,4vh,54px) var(--gutter) 12vh;
@@ -466,7 +466,7 @@ code{font-family:var(--mono);font-size:.92em;color:var(--yellow);}
   background:linear-gradient(180deg,var(--blue),rgba(0,89,255,.15));box-shadow:0 0 18px rgba(0,89,255,.65);}
 .tnode{position:relative;display:grid;grid-template-columns:132px 1fr;gap:20px;padding:0 0 30px;}
 .tnode-dot{position:absolute;left:-34px;top:5px;width:12px;height:12px;background:var(--void);border:2px solid var(--blue);
-  border-radius:50%;box-shadow:0 0 0 4px rgba(0,89,255,.14);transition:all .4s var(--expo);}
+  border-radius:50%;box-shadow:0 0 0 4px rgba(0,89,255,.14);transition:background .4s var(--expo),border-color .4s var(--expo),box-shadow .4s var(--expo);}
 .tnode:hover .tnode-dot,.tnode.is-hot .tnode-dot{background:var(--yellow);border-color:var(--yellow);
   box-shadow:0 0 0 6px rgba(255,222,0,.16);}
 .tnode-date{font:700 11px/1.4 var(--mono);letter-spacing:.2em;color:var(--yellow);padding-top:3px;}
@@ -588,7 +588,38 @@ code{font-family:var(--mono);font-size:.92em;color:var(--yellow);}
   opacity:0;pointer-events:none;transition:opacity .3s var(--expo),transform .3s var(--expo);}
 .toast.is-on{opacity:1;transform:translate(-50%,0);}
 
-/* ══════════ NO-JS RESUME FALLBACK ══════════ */
+/* ══════════ PLATFORM CORRECTNESS ══════════ */
+/* iOS Safari inflates text in landscape orientation whenever it decides a page
+   "looks like a desktop site", which re-flows the hero and every skewed panel
+   mid-interaction. Pinning text-size-adjust stops it. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+
+/* The diagonal marquee bands (.marq) sit at left:-8% / width:116% and are then
+   rotated -7deg, so documentElement.scrollWidth legitimately exceeds
+   clientWidth — that is the marquee track being wider than the screen so it can
+   scroll, and .marq already clips it with overflow:hidden.
+   VERIFIED: this is NOT a user-visible bug. Programmatic scrollTo(300,0) leaves
+   window.scrollX at 0 both with and without the rule below, on 1440px and 360px
+   viewports, i.e. there is no horizontal scrollbar and no sideways drag.
+   `overflow-x:clip` is therefore kept purely as cheap insurance so a future
+   off-screen element cannot introduce one. It is `clip` and not `hidden` on
+   purpose: `hidden` would turn <html> into a scroll container and break the
+   position:sticky portal bar plus scroll anchoring behind the SCROLL readout.
+   `clip` does neither, and position:fixed chrome still escapes unclipped. */
+html{overflow-x:clip;}
+
+/* NOTE on content-visibility: deliberately NOT applied. The initial DOM is
+   only ~28KB and the heavy portal/resume content is already injected on demand,
+   so skipping layout for off-screen sections would buy nothing measurable while
+   making root.scrollHeight (and therefore the SCROLL progress bar) jitter as
+   sections swap placeholder for real size. Not worth the regression. */
+
+/* NOTE on font preloading: the Google Fonts request is render-blocking, but the
+   standard `rel=preload ... onload=this.rel='stylesheet'` trick needs an inline
+   event handler, which `script-src 'self'` correctly blocks. All five requested
+   Archivo faces (700/900 normal + italic, 900 expanded) are genuinely used, so
+   there is no unused face to trim either. Left as-is deliberately. */
+
 .ns{border-top:1px solid var(--edge);}
 .ns-note{color:var(--ink-dim);max-width:70ch;font-size:13px;margin:18px 0 0;}
 .ns-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:30px;}

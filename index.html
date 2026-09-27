@@ -2,7 +2,17 @@
 <html lang="en" class="no-js">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- CSP. 'unsafe-inline' on style-src is required because GSAP animates CSS
+     custom properties (--pr, --ox, --oy) and inline styles at runtime; there is
+     no way to pre-author those hashes. There is no inline script element and no
+     inline event handler anywhere, so script-src stays a strict 'self'.
+     NOTE: frame-ancestors is deliberately absent — it is ignored in a meta
+     CSP and only produces a console error. Framing is blocked by the
+     frame-busting guard in script.js, and frame-ancestors is set properly in
+     the _headers file for hosts that can send real headers. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; media-src 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Pilla Sri Sai Rahul — Mechatronics · Embedded · Applied AI</title>
 <meta name="description" content="Sonic Rush portfolio and interactive resume of Pilla Sri Sai Rahul (1RY) — first-semester Mechatronics Engineering student building audio-AI pipelines, embedded/IoT prototypes, and developer tooling.">
 <link rel="canonical" href="https://1ry-o.github.io/">
@@ -11,14 +21,18 @@
 <meta property="og:url" content="https://1ry-o.github.io/">
 <meta property="og:title" content="Pilla Sri Sai Rahul — Mechatronics · Embedded · Applied AI">
 <meta property="og:description" content="Velocity-cored portfolio with project portals and an interactive resume HUD. Mechatronics Engineering, Mahindra University.">
-<meta property="og:image" content="https://1ry-o.github.io/assets/lumis-landing.png">
+<meta property="og:image" content="https://1ry-o.github.io/og-preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="1RY — Sonic Rush portfolio, Mechatronics · Embedded · Applied AI">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://1ry-o.github.io/og-preview.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23050505'/%3E%3Cpath d='M38 4 15 37h11l-2 23 23-35H34z' fill='%230059FF'/%3E%3Crect x='6' y='54' width='52' height='6' fill='%23FFDE00'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,100,700;0,100,900;1,100,700;1,100,900;1,125,900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script defer src="vendor/gsap-3.12.5.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script defer src="script.js"></script>
 </head>
 <body>
@@ -69,7 +83,7 @@
 </header>
 
 <div class="rail rail-l" aria-hidden="true">
-  <span>17.3850°N / 78.4867°E</span><span>HYDERABAD · IN</span>
+  <span>SYS.OP //</span><span>SECURE CONNECTION</span>
 </div>
 <div class="rail rail-r" aria-hidden="true">
   <span id="rail-fps">CORE --.- FPS</span><span id="rail-scroll">SCROLL 000%</span>

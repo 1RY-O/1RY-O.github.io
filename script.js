@@ -22,6 +22,44 @@ function qsa(s,b){return Array.prototype.slice.call((b||document).querySelectorA
 function clamp(v,a,b){return v<a?a:v>b?b:v;}
 function lerp(a,b,t){return a+(b-a)*t;}
 
+/* ══════════════════════════════════════════════════════════════════════
+   0 · HARDENING PRIMITIVES
+   ── Own-property lookup. `CONTENT[key]` alone walks the prototype chain,
+      so '#/constructor' or '#/toString' satisfies the truthiness guard and
+      a native function's source gets injected into #portal-body.
+      Every CONTENT read goes through this.
+   ══════════════════════════════════════════════════════════════════════ */
+var hasOwn=Object.prototype.hasOwnProperty;
+function contentFor(key){
+  if(typeof key!=='string'||!CONTENT){return null;}
+  return hasOwn.call(CONTENT,key)?CONTENT[key]:null;
+}
+
+/* Allow only navigational schemes in data-supplied hrefs. Anything else
+   (javascript:, data:, vbscript:) is dropped rather than rendered. */
+var SAFE_HREF=/^(https:\/\/|mailto:|#|\/(?!\/)|\.{1,2}\/|[A-Za-z0-9._~-]+\/)/;
+function safeHref(href){
+  var h=String(href==null?'':href).trim();
+  return SAFE_HREF.test(h)?h:null;
+}
+/* Escape for use inside a double-quoted attribute. */
+function attr(v){
+  return String(v==null?'':v).replace(/&/g,'&amp;').replace(/"/g,'&quot;')
+    .replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+/* Escape for use as element text content. */
+function txt(v){
+  return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* Clickjacking: CSP `frame-ancestors` is ignored in a <meta> CSP and
+   GitHub Pages sends no X-Frame-Options, so refuse to render framed. */
+if(window.top!==window.self){
+  try{window.top.location=window.self.location;}catch(e){}
+  document.documentElement.innerHTML='<head><title>Blocked</title></head><body></body>';
+  return;
+}
+
 /* global failsafe — content can never stay hidden, whatever happens later */
 window.setTimeout(function(){
   var els=document.querySelectorAll('.rise,.hero-in>*');
@@ -141,9 +179,27 @@ var VIS={
   setAberration:function(a){CORE.abTarget=a;}
 };
 
+/* Fullscreen fragment shaders are expensive, and cost scales with AREA, not
+   with CSS pixels. A 4K display at dpr 2 rendered at 1.75 shades 11.3M pixels
+   every frame — enough to thermally throttle a good GPU in under a minute.
+   So cap on a shaded-pixel budget, not just a device-pixel-ratio ceiling:
+   a 4K desktop renders the background below 1:1 and a phone stays crisp. */
+var isCoarse=window.matchMedia&&window.matchMedia('(pointer:coarse)').matches;
+var lowPower=isCoarse||(navigator.hardwareConcurrency||8)<=4;
+var PIXEL_BUDGET=lowPower?1.1e6:2.6e6;   /* shaded pixels per frame */
+var DPR_STEPS=[1.75,1.5,1.25,1.0,0.85,0.75];
+var dprStep=0;
+function dprCap(){
+  var ceiling=lowPower?1.25:1.75;
+  var dpr=Math.min(window.devicePixelRatio||1,ceiling,DPR_STEPS[dprStep]);
+  var w=Math.max(1,window.innerWidth),h=Math.max(1,window.innerHeight);
+  var area=w*h*dpr*dpr;
+  if(area>PIXEL_BUDGET){dpr=Math.max(0.5,dpr*Math.sqrt(PIXEL_BUDGET/area));}
+  return dpr;
+}
 function sizeCanvas(){
   var c=VIS.canvas;if(!c)return;
-  VIS.dpr=Math.min(window.devicePixelRatio||1,1.75);
+  VIS.dpr=dprCap();
   VIS.w=Math.max(1,Math.round(window.innerWidth));
   VIS.h=Math.max(1,Math.round(window.innerHeight));
   c.width=Math.round(VIS.w*VIS.dpr);c.height=Math.round(VIS.h*VIS.dpr);
@@ -156,12 +212,21 @@ function initGL(){
   var opts={alpha:false,antialias:false,depth:false,stencil:false,powerPreference:'high-performance',preserveDrawingBuffer:false};
   var gl=c.getContext('webgl',opts)||c.getContext('experimental-webgl',opts);
   if(!gl){return false;}
+  /* Fragment highp is optional in WebGL1. Older Adreno/Mali parts report a
+     precision of 0, the shader fails to compile, and the whole site silently
+     drops to the much slower Canvas2D streak field. Detect and downgrade the
+     precision instead of losing the effect entirely. */
+  var fragSrc=FRAG;
+  try{
+    var pf=gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER,gl.HIGH_FLOAT);
+    if(!pf||!pf.precision){fragSrc=FRAG.replace('precision highp float;','precision mediump float;');}
+  }catch(e){}
   function compile(type,src){
     var s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);
     if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){try{console.warn(gl.getShaderInfoLog(s));}catch(e){}return null;}
     return s;
   }
-  var vs=compile(gl.VERTEX_SHADER,VERT),fs=compile(gl.FRAGMENT_SHADER,FRAG);
+  var vs=compile(gl.VERTEX_SHADER,VERT),fs=compile(gl.FRAGMENT_SHADER,fragSrc);
   if(!vs||!fs){return false;}
   var prog=gl.createProgram();gl.attachShader(prog,vs);gl.attachShader(prog,fs);gl.linkProgram(prog);
   if(!gl.getProgramParameter(prog,gl.LINK_STATUS)){return false;}
@@ -253,7 +318,7 @@ function integrate(dt){
   CORE.ab=lerp(CORE.ab,CORE.abTarget,1-Math.pow(0.05,dt));
 }
 
-var t0=null,throttle=1;
+var t0=null;
 function loop(now){
   window.requestAnimationFrame(loop);
   if(document.hidden){return;}
@@ -264,7 +329,7 @@ function loop(now){
   if(fpsAcc>0.5){
     fpsShown=Math.round(fpsFrames/fpsAcc);fpsAcc=0;fpsFrames=0;
     if(fpsEl){fpsEl.textContent='CORE '+String(fpsShown).padStart(3,'0')+' FPS';}
-    if(fpsShown<40&&throttle<2){throttle=2;VIS.dpr=Math.min(VIS.dpr,1.25);sizeCanvas();}
+    if(fpsShown<40&&dprStep<DPR_STEPS.length-1){dprStep++;sizeCanvas();}
   }
   var r=(glRenderer||ctxRenderer);
   if(r){r.draw(now/1000);}
@@ -335,6 +400,7 @@ var BOOT_STEPS=[
   ['CALIBRATING WARP FIELD',0.84],
   ['VELOCITY CORE ONLINE',1.00]
 ];
+var bootDone=false;                 /* gates hash routing until boot settles */
 function runBoot(done){
   var boot=qs('#boot'),fill=qs('#boot-fill'),pct=qs('#boot-pct'),logEl=qs('#boot-log'),skip=qs('#boot-skip');
   var finished=false;
@@ -457,8 +523,9 @@ function setOrigin(x,y){
   PORTAL.style.setProperty('--or0','0px');
 }
 function openPortal(key,originEl){
-  if(portalOpen||!CONTENT[key]){return;}
-  P_BODY.innerHTML=CONTENT[key];
+  var html=contentFor(key);
+  if(portalOpen||!html){return;}
+  P_BODY.innerHTML=html;
   P_IDX.textContent=PORTAL_META[key]?PORTAL_META[key].idx:'--';
   P_TITLE.textContent=PORTAL_META[key]?PORTAL_META[key].title:key.toUpperCase();
   P_KIND.textContent=PORTAL_META[key]?PORTAL_META[key].kind:'CASE FILE';
@@ -497,8 +564,10 @@ function closePortal(){
   document.body.classList.remove('is-locked');
   PORTAL.classList.remove('is-settled');
   VIS.setAberration(0.85);VIS.setSpeed(1.6);
+  /* replace, not push: pushing '#top' on close stacks a history entry per
+     open/close cycle, so Back walks a dead portal trail instead of leaving. */
   if(history.state&&history.state.portal){
-    try{history.pushState({},'','#top');}catch(e){}
+    try{history.replaceState({},'',location.pathname+location.search);}catch(e){}
   }
   var finish=function(){
     PORTAL.classList.remove('is-open');
@@ -519,9 +588,10 @@ if(P_CLOSE){P_CLOSE.addEventListener('click',closePortal);}
 
 /* swap one portal view for another without collapsing the circle */
 function swapPortal(key){
-  if(!CONTENT[key]){return;}
+  var html=contentFor(key);
+  if(!html){return;}
   currentKey=key;
-  P_BODY.innerHTML=CONTENT[key];
+  P_BODY.innerHTML=html;
   P_IDX.textContent=PORTAL_META[key]?PORTAL_META[key].idx:'--';
   P_TITLE.textContent=PORTAL_META[key]?PORTAL_META[key].title:key.toUpperCase();
   P_KIND.textContent=PORTAL_META[key]?PORTAL_META[key].kind:'CASE FILE';
@@ -627,8 +697,9 @@ function applyMode(){
     if(map[k]){el.textContent=map[k];}
   });
   /* rebuild any open portal so its copy follows the mode */
-  if(portalOpen&&currentKey&&CONTENT[currentKey]){
-    P_BODY.innerHTML=CONTENT[currentKey];
+  var openHtml=portalOpen?contentFor(currentKey):null;
+  if(openHtml){
+    P_BODY.innerHTML=openHtml;
     if(G&&!reduceMotion){
       G.fromTo(qsa('.portal-anim',P_BODY),{y:18,autoAlpha:0},
         {y:0,autoAlpha:1,duration:0.34,ease:'expo.out',stagger:0.03});
@@ -675,22 +746,34 @@ function initMode(){
    11 · CASE FILES — portal content
    ═══════════════════════════════════════════════════════════════ */
 function caseFile(o){
-  var links=o.links.map(function(l){
-    return '<a class="'+(l.primary?'btn btn-blue':'btn btn-ghost')+' magnet" href="'+l.href+'"'+
-      (l.download?' download="'+l.download+'"':' target="_blank" rel="noopener"')+'><span>'+l.label+'</span></a>';
+  /* hrefs come from the CONTENT data block. Today they are all hand-authored
+     constants, but this is the one place where a data-supplied value reaches
+     an href — enforce the scheme allowlist here so the day CONTENT is fed
+     from a CMS or API it cannot become a javascript:/data: XSS sink. */
+  var links=o.links.filter(function(l){return !!safeHref(l.href);}).map(function(l){
+    var href=attr(safeHref(l.href));
+    return '<a class="'+(l.primary?'btn btn-blue':'btn btn-ghost')+' magnet" href="'+href+'"'+
+      (l.download?' download="'+attr(l.download)+'"':' target="_blank" rel="noopener noreferrer"')+
+      '><span>'+txt(l.label)+'</span></a>';
   }).join('');
-  var chips=o.stack.map(function(s){return '<li>'+s+'</li>';}).join('');
+  var chips=o.stack.map(function(s){return '<li>'+txt(s)+'</li>';}).join('');
   var done=o.done.map(function(s){return '<li>'+s+'</li>';}).join('');
   var state=o.state.map(function(s){return '<li>'+s+'</li>';}).join('');
+  /* NOTE: done / state / nested are deliberately passed through raw — they
+     are authored inline in the CONTENT block below and carry <b> emphasis and
+     the benchmark <table>. They are trusted constants, never user input. */
   var nested=o.nested||'';
+  var flags=o.flags.map(function(f){
+    return '<li class="'+attr(f.cls)+'">'+txt(f.t)+'</li>';
+  }).join('');
   return ''+
   '<div class="cf">'+
     '<section class="cf-lead portal-anim">'+
-      '<p class="cf-kicker">'+o.kicker+'</p>'+
-      '<h3 class="cf-title">'+o.title+'</h3>'+
-      '<p class="cf-sub">'+o.sub+'</p>'+
-      '<p class="cf-body">'+o.body+'</p>'+
-      '<ul class="cf-flags">'+o.flags.map(function(f){return '<li class="'+f.cls+'">'+f.t+'</li>';}).join('')+'</ul>'+
+      '<p class="cf-kicker">'+txt(o.kicker)+'</p>'+
+      '<h3 class="cf-title">'+txt(o.title)+'</h3>'+
+      '<p class="cf-sub">'+txt(o.sub)+'</p>'+
+      '<p class="cf-body">'+txt(o.body)+'</p>'+
+      '<ul class="cf-flags">'+flags+'</ul>'+
       '<ul class="cf-stack">'+chips+'</ul>'+
       '<div class="cf-links">'+links+'</div>'+
     '</section>'+
@@ -814,8 +897,8 @@ var CONTENT={
       {label:'RESUME SUMMARY',href:'#/resume',primary:true}
     ],
     nested:'<section class="cf-shots portal-anim"><h4 class="cf-h">Interface <span>real screenshots</span></h4>'+
-      '<div class="shot-row"><figure><img src="assets/lumis-landing.png" alt="Lumis landing screen" loading="lazy" width="1200" height="750"><figcaption>Landing</figcaption></figure>'+
-      '<figure><img src="assets/lumis-app.png" alt="Lumis journal view" loading="lazy" width="1200" height="750"><figcaption>Journal view</figcaption></figure></div></section>'
+      '<div class="shot-row"><figure><picture><source srcset="assets/lumis-landing.webp" type="image/webp"><img src="assets/lumis-landing.png" alt="Lumis landing screen" loading="lazy" decoding="async" width="952" height="903"></picture><figcaption>Landing</figcaption></figure>'+
+      '<figure><picture><source srcset="assets/lumis-app.webp" type="image/webp"><img src="assets/lumis-app.png" alt="Lumis journal view" loading="lazy" decoding="async" width="942" height="910"></picture><figcaption>Journal view</figcaption></figure></div></section>'
   })
 };
 /* ═══════════════════════════════════════════════════════════════
@@ -1062,7 +1145,7 @@ function initPortalTriggers(){
     var trigger=e.target.closest?e.target.closest('[data-open-portal]'):null;
     if(!trigger){return;}
     var key=trigger.getAttribute('data-open-portal');
-    if(!CONTENT[key]){return;}
+    if(!contentFor(key)){return;}
     var isLink=trigger.tagName==='A';
     var hashLink=isLink&&/#\//.test(trigger.getAttribute('href')||'');
     if(!isLink||hashLink){
@@ -1125,10 +1208,40 @@ function bootStrip(){
   var el=qs('#boot');
   if(el){el.classList.add('is-done');el.setAttribute('aria-hidden','true');}
 }
+
+/* ── WebGL context loss recovery ──────────────────────────────────────────
+   iOS Safari drops the GL context on every app switch and on memory pressure,
+   and Android Chrome does the same under backgrounding or a low-memory kill.
+   Without these handlers the canvas stays permanently black after the user
+   returns to the tab — the hero background simply dies with no error.
+   preventDefault() on 'webglcontextlost' is what makes the browser willing to
+   fire 'webglcontextrestored' at all. */
+function bindGLRecovery(){
+  var c=VIS.canvas;
+  if(!c||!c.addEventListener){return;}
+  c.addEventListener('webglcontextlost',function(e){
+    e.preventDefault();
+    glRenderer=null;
+    if(fpsEl){fpsEl.textContent='CORE PAUSED';}
+  },false);
+  c.addEventListener('webglcontextrestored',function(){
+    sizeCanvas();
+    glRenderer=initGL();
+    if(glRenderer){
+      if(fpsEl){fpsEl.textContent='CORE RESUMED';}
+      /* a single frame proves the pipeline works again */
+      glRenderer.draw((t0||0)/1000+2.4);
+    }else{
+      /* GPU refused to come back — degrade to Canvas2D, never to a black box */
+      ctxRenderer=ctxRenderer||init2D();
+    }
+  },false);
+}
 function init(){
   sizeCanvas();
   glRenderer=initGL();
   if(!glRenderer){ctxRenderer=init2D();}
+  bindGLRecovery();
   if(!glRenderer&&!ctxRenderer){
     CORE.fluxTarget=1;CORE.flux=1;             /* CSS radial core stands in */
   }else if(reduceMotion){
@@ -1161,23 +1274,47 @@ function init(){
 
   if(reduceMotion||!G){
     bootStrip();
+    bootDone=true;
+    root.classList.add('booted');   /* keep parity with the GSAP boot path */
     CORE.fluxTarget=1;CORE.flux=1;
     heroEntrance();
     scrambleAll(qs('.hero'),0);
   }else{
     runBoot(function(){
+      bootDone=true;
       heroEntrance();
       root.classList.add('booted');
     });
   }
 
-  /* deep link — #/resume or #/p/vi071 opens straight into a portal */
-  var deep=/^#\/(?:p\/)?([a-z0-9]+)/i.exec(window.location.hash||'');
-  if(deep&&CONTENT[deep[1]]){
+  /* deep link — #/resume or #/p/vi071 opens straight into a portal.
+     Keys are normalised to lower case: CONTENT keys are lower case, so a
+     case-insensitive match would resolve a key that can never exist. */
+  function deepKey(){
+    var m=/^#\/(?:p\/)?([a-z0-9]+)$/i.exec(window.location.hash||'');
+    if(!m){return null;}
+    var k=m[1].toLowerCase();
+    return contentFor(k)?k:null;
+  }
+  function handleDeepLink(){
+    var k=deepKey();
+    if(k&&!portalOpen){openPortal(k,qs('[data-open-portal="'+k+'"]'));}
+    else if(!k&&portalOpen){closePortal();}
+  }
+  var deep=deepKey();
+  if(deep){
     window.setTimeout(function(){
-      openPortal(deep[1],qs('[data-open-portal="'+deep[1]+'"]'));
+      openPortal(deep,qs('[data-open-portal="'+deep+'"]'));
     },reduceMotion?220:1500);
   }
+  /* manual hash edits (address bar, in-page anchor) must route too */
+  window.addEventListener('hashchange',function(){
+    if(!bootDone){return;}
+    handleDeepLink();
+  });
+  window.addEventListener('pageshow',function(e){
+    if(e.persisted){t0=null;}
+  });
 }
 
 if(document.readyState==='loading'){

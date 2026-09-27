@@ -1,0 +1,43 @@
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.keystore
+id_rsa
+id_ed25519
+credentials.json
+secrets.json
+service-account*.json
+
+# Design/source references — 2.1MB of working files, not deployed.
+# These were tracked before this rule existed; `git rm --cached -r Reference/`
+# has since untracked them, so the rule now actually takes effect.
+Reference/
+
+# Build & tooling output
+node_modules/
+.cache/
+dist/
+build/
+*.log
+npm-debug.log*
+.eslintcache
+.stylelintcache
+coverage/
+*.tsbuildinfo
+
+# Editor / OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Local image-optimisation intermediates
+*.opt.png

@@ -1,0 +1,32 @@
+# Response headers for Cloudflare Pages / Netlify / any static host that
+# supports a _headers file.
+#
+# NOT honoured by GitHub Pages, which cannot set response headers at all. While
+# the site is on GitHub Pages the equivalent protections are:
+#   * the <meta http-equiv="Content-Security-Policy"> in index.html
+#   * the frame-busting guard at the top of script.js
+#   * GitHub's own X-Content-Type-Options: nosniff and HSTS
+# Move this file into effect by deploying the same static tree to a host that
+# reads it; nothing in the site needs to change.
+#
+# MDN reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers
+
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), fullscreen=(self)
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+  X-DNS-Prefetch-Control: off
+
+# Fingerprint these paths on rename to make the immutable caching below safe.
+/vendor/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML must always revalidate so a deploy is picked up immediately.
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
