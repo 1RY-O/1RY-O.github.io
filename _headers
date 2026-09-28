@@ -27,6 +27,14 @@
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
+# Stylesheets and scripts are not fingerprinted, so they must revalidate —
+# otherwise a host that reads this file could serve a stale design after a
+# deploy. (GitHub Pages ignores this file entirely.)
+/css/*
+  Cache-Control: public, max-age=0, must-revalidate
+/js/*
+  Cache-Control: public, max-age=0, must-revalidate
+
 # HTML must always revalidate so a deploy is picked up immediately.
 /*.html
   Cache-Control: public, max-age=0, must-revalidate

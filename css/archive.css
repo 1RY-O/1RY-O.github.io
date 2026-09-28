@@ -1,0 +1,128 @@
+/* ══════════════════════════════════════════════════════════════════════
+   1RY · THE ARCHIVE — layer 3 of 3
+   Composition: editorial. A wide record with hairlines, numbered sections,
+   a sticky contents index, and case files written to be scanned
+   top-to-bottom without interaction.
+
+   Same data as The Signal (window.PORTFOLIO_DATA). Different composition,
+   different navigation, different motion.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.shell--archive .shell__inner{
+  max-width:var(--container);margin:0 auto;
+  padding:clamp(2rem,6vh,4.5rem) var(--gutter) var(--space-3xl);
+}
+
+/* ── Masthead: identity and record side by side; this is a title page,
+      not a hero. ── */
+.archive-masthead{
+  display:grid;gap:var(--space-m);
+  padding-bottom:var(--space-l);border-bottom:1px solid var(--line-strong);
+}
+@media (min-width:1000px){
+  .archive-masthead{grid-template-columns:minmax(0,7fr) minmax(0,5fr);column-gap:var(--space-xl);align-items:start;}
+}
+.archive-kicker{color:var(--ink-ghost);}
+.archive-name{font-size:var(--text-display);font-weight:600;letter-spacing:-0.04em;margin:var(--space-2xs) 0 0;}
+.archive-discipline{
+  margin:var(--space-2xs) 0 0;
+  font:500 var(--text-sm)/1.6 var(--font-mono);letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);
+}
+.archive-statement{margin:var(--space-s) 0 0;max-width:var(--measure);color:var(--ink-muted);}
+.archive-actions{display:flex;flex-wrap:wrap;gap:var(--space-xs);margin-top:var(--space-m);}
+
+/* Definition list for record facts — used in the masthead and case files */
+.archive-facts{display:grid;gap:0.75rem;margin:0;padding-left:var(--space-s);border-left:1px solid var(--line);}
+.archive-facts > div{display:grid;grid-template-columns:minmax(6.5rem,auto) minmax(0,1fr);gap:var(--space-xs);}
+.archive-facts dt{
+  font:600 var(--text-3xs)/1.5 var(--font-mono);letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--ink-ghost);
+}
+.archive-facts dd{margin:0;font-size:var(--text-sm);color:var(--ink-muted);}
+
+/* ── Sticky contents index: direct and predictable, the opposite of the
+      Signal's floating pill. ── */
+.archive-index{
+  position:sticky;top:var(--head-h);z-index:var(--z-nav);
+  display:flex;gap:var(--space-m);overflow-x:auto;
+  margin-bottom:var(--space-l);padding:0.9rem 0;
+  background:var(--void);border-bottom:1px solid var(--line-dim);
+  scrollbar-width:none;
+}
+.archive-index::-webkit-scrollbar{display:none;}
+.archive-index a{
+  display:inline-flex;align-items:baseline;gap:0.5rem;white-space:nowrap;
+  color:var(--ink-faint);text-decoration:none;
+  font:600 var(--text-2xs)/1 var(--font-mono);letter-spacing:var(--tracking-label);text-transform:uppercase;
+  transition:color var(--dur-fast) var(--ease-editorial);
+}
+.archive-index a span{color:var(--accent);}
+.archive-index a:hover{color:var(--ink);}
+
+/* ── Sections ── */
+.archive-section{
+  padding:var(--space-l) 0 var(--space-2xl);
+  border-top:1px solid var(--line-dim);
+  scroll-margin-top:calc(var(--head-h) + 4.5rem);
+}
+.archive-section:first-of-type{border-top:0;}
+.archive-section__head{display:grid;gap:0.45rem;margin-bottom:var(--space-m);}
+.archive-section__num{margin:0;font:600 var(--text-2xs)/1 var(--font-mono);letter-spacing:0.24em;color:var(--accent);}
+.archive-section__title{font-size:var(--text-2xl);}
+.archive-section__note{margin:0;max-width:var(--measure);font-size:var(--text-sm);color:var(--ink-muted);}
+
+/* ── Case file: summary and facts in two columns, evidence below ── */
+.case-file{display:grid;gap:var(--space-s);padding:var(--space-m) 0 var(--space-l);border-top:1px solid var(--line-dim);}
+.case-file:first-of-type{border-top:0;padding-top:0;}
+.case-file__head{display:flex;flex-wrap:wrap;align-items:center;gap:0.5rem 1rem;}
+.case-file__code{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;letter-spacing:-0.02em;margin:0;}
+.case-file__category{
+  font:500 var(--text-2xs)/1.4 var(--font-mono);letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-ghost);
+}
+.case-file__body{display:grid;gap:var(--space-m);}
+@media (min-width:1000px){
+  .case-file__body{grid-template-columns:minmax(0,7fr) minmax(0,5fr);column-gap:var(--space-xl);align-items:start;}
+}
+.case-file__summary{margin:0;max-width:var(--measure);color:var(--ink-muted);}
+.case-file__links{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-xs) var(--space-m);font-size:var(--text-sm);}
+.case-file__limits{
+  margin:0;max-width:var(--measure);padding-left:var(--space-xs);
+  border-left:1px solid var(--warn-line);
+  font-size:var(--text-xs);color:var(--ink-faint);
+}
+.case-file__limits b{color:var(--warn);font-weight:600;}
+.bench__takeaway{margin:0.85rem 0 0;max-width:var(--measure);font-size:var(--text-xs);color:var(--ink-muted);}
+.shots{display:grid;gap:var(--space-s);grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr));}
+
+/* ── Matrix: capability grouped by the work that proves it ── */
+.matrix{display:grid;gap:var(--space-m);grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr));}
+.matrix__group{padding-top:var(--space-xs);border-top:1px solid var(--line);}
+.matrix__title{font-size:var(--text-lg);margin-bottom:0.4rem;}
+.matrix__proof{margin:0 0 0.7rem;max-width:var(--measure-tight);font-size:var(--text-xs);color:var(--ink-faint);}
+
+/* ── Ledger: dated record rows ── */
+.ledger{list-style:none;padding:0;display:grid;}
+.ledger li{display:grid;gap:0.3rem;padding:var(--space-s) 0;border-bottom:1px solid var(--line-dim);}
+@media (min-width:820px){.ledger li{grid-template-columns:11rem minmax(0,1fr);column-gap:var(--space-l);}}
+.ledger__period{
+  font:600 var(--text-2xs)/1.6 var(--font-mono);letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);
+}
+.ledger__title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;margin:0;}
+.ledger__org{margin:0.2rem 0 0;font:500 var(--text-2xs)/1.6 var(--font-mono);color:var(--ink-ghost);}
+.ledger__note{margin:0.4rem 0 0;max-width:var(--measure);font-size:var(--text-sm);color:var(--ink-muted);}
+
+/* ── Contact ── */
+.archive-contact__mail{
+  display:inline-block;margin:0 0 var(--space-s);word-break:break-word;
+  font-family:var(--font-display);font-size:var(--text-2xl);font-weight:600;letter-spacing:-0.03em;
+  color:var(--ink);text-decoration:none;border-bottom:1px solid var(--accent-line);
+  transition:color var(--dur-fast) var(--ease-editorial),border-color var(--dur-fast) var(--ease-editorial);
+}
+.archive-contact__mail:hover{color:var(--accent);border-bottom-color:var(--accent);}
+.contact-links{display:flex;flex-wrap:wrap;gap:var(--space-s);list-style:none;padding:0;}
+.archive-footnote{margin-top:var(--space-m);max-width:var(--measure);font-size:var(--text-xs);color:var(--ink-faint);}
+
+/* ── Reveal: shorter and flatter than the Signal's. Editorial motion
+      reinforces hierarchy instead of staging a scene. ── */
+@keyframes archive-reveal{from{opacity:0;}to{opacity:1;}}
+.shell--archive.is-revealing{animation:archive-reveal var(--dur-base) var(--ease-editorial) both;}
+@media (prefers-reduced-motion:reduce){.shell--archive.is-revealing{animation:none;}}

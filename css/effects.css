@@ -1,0 +1,163 @@
+/* ══════════════════════════════════════════════════════════════════════
+   1RY · EFFECTS — the shared atmosphere layer.
+   Loaded after tokens and before the two compositions. Four things live
+   here, all of them mode-independent and none of them carrying
+   information: micro-grain · machined glass · magnetic cards · mode
+   transitions.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Micro-grain ──
+   A static 140×140 noise tile over the whole viewport, blended with
+   `overlay` at 3.5%. Stacking, in order: .signal-stage (fixed, z 0,
+   painted first) < body::after here (fixed, z 0, painted last because
+   it is the last child of body) < .shell__inner / .site-foot /
+   .fallback (z 1). So the grain sits over the cosmic backdrop and under
+   every piece of content — which is why tokens.css no longer isolates
+   .shell: isolation would trap z 1 inside an auto stacking context and
+   lift the content above the grain.
+   It never animates. A moving grain re-rasterises a full-screen layer
+   every frame; this one rasterises once and blends in hardware. */
+body::after{
+  content:"";
+  position:fixed;inset:0;z-index:0;
+  pointer-events:none;
+  opacity:0.035;
+  mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:140px 140px;
+}
+/* Grain over prose is noise for its own sake — a reader who asks for
+   more contrast gets a clean surface. */
+@media (prefers-contrast:more){
+  body::after{display:none;}
+}
+
+/* ── Machined glass ──
+   The edge is a real 1px border filled by --glass-edge: brightest at the
+   top-left, dying to nothing by the bottom-right, with one quiet lift of
+   ion cyan in the far corner. The surface layer lives in
+   --glass-surface so hover states repaint only that layer — the border
+   gradient is never re-declared. Statement typography (section titles,
+   case-file rows, transmissions) stays on hairlines: a glowing card
+   around a paragraph would fight the editorial structure. */
+.chip,.status,.figure,.fallback__card,.mode-switch,
+.btn:not(.btn--primary){
+  --glass-surface:var(--surface-1);
+  border-color:transparent;
+  background:
+    linear-gradient(var(--glass-surface),var(--glass-surface)) padding-box,
+    var(--glass-edge) border-box;
+  box-shadow:var(--glass-hair),var(--glass-drop);
+}
+.btn:not(.btn--primary):hover{--glass-surface:var(--surface-2);}
+
+/* Status tones keep their meaning inside the glass: both the surface
+   tint and the edge gradient take the tone's own colour, so a project
+   state still reads as that state at a glance (tones come from
+   js/data.js: verified · progress · prototype · plain). */
+.status--verified{
+  --glass-surface:rgba(123,231,255,0.10);
+  --glass-edge:linear-gradient(145deg,
+    rgba(123,231,255,0.45) 0%,rgba(123,231,255,0.10) 38%,
+    rgba(123,231,255,0.03) 62%,rgba(123,231,255,0.20) 100%);
+}
+.status--progress{
+  --glass-surface:rgba(242,201,138,0.10);
+  --glass-edge:linear-gradient(145deg,
+    rgba(242,201,138,0.45) 0%,rgba(242,201,138,0.10) 38%,
+    rgba(242,201,138,0.03) 62%,rgba(242,201,138,0.20) 100%);
+}
+.status--prototype{
+  --glass-surface:rgba(169,148,255,0.10);
+  --glass-edge:linear-gradient(145deg,
+    rgba(169,148,255,0.45) 0%,rgba(169,148,255,0.10) 38%,
+    rgba(169,148,255,0.03) 62%,rgba(169,148,255,0.20) 100%);
+}
+.status--plain{--glass-surface:var(--surface-2);}
+
+/* ── Magnetic cards ──
+   The attribute is added by js/motion.js, which only arms tilt on
+   pointer:fine devices with reduced motion off — so this block is inert
+   without JavaScript, on touch, and under reduced motion (belt and
+   braces: the transform rule is suppressed there too). Rotation never
+   exceeds 6°, set by JS. The glare reads --mouse-x/--mouse-y, which JS
+   writes as percentages once per frame, inside its rAF. */
+[data-tilt]{
+  position:relative;
+  transform-style:preserve-3d;
+  will-change:transform;
+  --mouse-x:50%;
+  --mouse-y:50%;
+}
+[data-tilt]::after{
+  content:"";
+  position:absolute;inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  opacity:0;
+  mix-blend-mode:screen;
+  background:radial-gradient(340px circle at var(--mouse-x) var(--mouse-y),
+    rgba(234,243,255,0.15) 0%,
+    rgba(123,231,255,0.07) 32%,
+    rgba(234,243,255,0) 66%);
+  transition:opacity var(--dur-base) var(--ease-drift);
+}
+[data-tilt]:hover::after,
+[data-tilt]:focus-within::after{opacity:1;}
+@media (prefers-reduced-motion:reduce){
+  [data-tilt]{transform:none !important;}
+  [data-tilt]::after{display:none;}
+}
+
+/* ── Mode switch: View Transitions ──
+   Only the two shells are named, so only they are captured — header,
+   footer and grain stay painted where they are. js/mode.js runs the
+   swap inside document.startViewTransition() when the API exists and
+   skips it under reduced motion; without the API these rules are inert.
+   Timing follows the destination: the Archive arrives quick and
+   precise, Signal arrives slow and expansive. */
+.shell--signal{view-transition-name:shell-signal;}
+.shell--archive{view-transition-name:shell-archive;}
+
+::view-transition-old(root){animation:vt-root-out var(--dur-fast) linear both;}
+::view-transition-new(root){animation:vt-root-in var(--dur-fast) linear both;}
+
+::view-transition-old(shell-signal),
+::view-transition-old(shell-archive){
+  animation:vt-out var(--dur-base) var(--ease-editorial) both;
+}
+::view-transition-new(shell-signal),
+::view-transition-new(shell-archive){
+  animation:vt-in var(--dur-slow) var(--ease-celestial) both;
+}
+html[data-vt="archive"]::view-transition-new(shell-archive){
+  animation-duration:var(--dur-fast);
+  animation-timing-function:var(--ease-editorial);
+}
+html[data-vt="signal"]::view-transition-new(shell-signal){
+  animation-duration:var(--dur-slow);
+  animation-timing-function:var(--ease-celestial);
+}
+html[data-vt="archive"]::view-transition-old(shell-signal),
+html[data-vt="signal"]::view-transition-old(shell-archive){
+  animation-duration:var(--dur-fast);
+}
+html[data-vt] .is-revealing{animation:none;}   /* never stack both reveals */
+
+@keyframes vt-root-out{to{opacity:0;}}
+@keyframes vt-root-in{from{opacity:0;}}
+@keyframes vt-out{
+  from{opacity:1;transform:none;}
+  to{opacity:0;transform:translate3d(0,-1.5%,0) scale(0.99);}
+}
+@keyframes vt-in{
+  from{opacity:0;transform:translate3d(0,2%,0) scale(0.994);}
+  to{opacity:1;transform:none;}
+}
+@media (prefers-reduced-motion:reduce){
+  ::view-transition-old(root),::view-transition-new(root),
+  ::view-transition-old(shell-signal),::view-transition-new(shell-signal),
+  ::view-transition-old(shell-archive),::view-transition-new(shell-archive){
+    animation-duration:1ms;
+  }
+}

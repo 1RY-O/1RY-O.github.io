@@ -2,455 +2,217 @@
 <html lang="en" class="no-js">
 <head>
 <meta charset="UTF-8">
-<!-- CSP. 'unsafe-inline' on style-src is required because GSAP animates CSS
-     custom properties (--pr, --ox, --oy) and inline styles at runtime; there is
-     no way to pre-author those hashes. There is no inline script element and no
-     inline event handler anywhere, so script-src stays a strict 'self'.
-     NOTE: frame-ancestors is deliberately absent — it is ignored in a meta
-     CSP and only produces a console error. Framing is blocked by the
-     frame-busting guard in script.js, and frame-ancestors is set properly in
-     the _headers file for hosts that can send real headers. -->
+<!-- CSP. script-src stays a strict 'self': there is no inline <script> and no
+     inline event handler anywhere in this document. 'unsafe-inline' is kept on
+     style-src because the motion layer planned for phase 4 writes style
+     attributes on the elements it animates; phase 7 re-tests whether it can be
+     removed. connect-src 'none' means the page cannot make a runtime request —
+     all content is in js/data.js.
+     NOTE: frame-ancestors is deliberately absent — it is ignored in a meta CSP
+     and only produces a console error. Framing is blocked by the guard at the
+     top of js/boot.js, and set properly in _headers on hosts that can send
+     real response headers. -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; media-src 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Pilla Sri Sai Rahul — Mechatronics · Embedded · Applied AI</title>
-<meta name="description" content="Sonic Rush portfolio and interactive resume of Pilla Sri Sai Rahul (1RY) — first-semester Mechatronics Engineering student building audio-AI pipelines, embedded/IoT prototypes, and developer tooling.">
+<meta name="description" content="Portfolio of Pilla Sri Sai Rahul (1RY) — first-semester Mechatronics Engineering student at Mahindra University. Two ways to read the work: The Signal, an immersive experience, and The Archive, an editorial record. Project states and limits are labelled.">
 <link rel="canonical" href="https://1ry-o.github.io/">
-<meta name="theme-color" content="#050505">
+<meta name="theme-color" content="#070A12">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://1ry-o.github.io/">
 <meta property="og:title" content="Pilla Sri Sai Rahul — Mechatronics · Embedded · Applied AI">
-<meta property="og:description" content="Velocity-cored portfolio with project portals and an interactive resume HUD. Mechatronics Engineering, Mahindra University.">
-<meta property="og:image" content="https://1ry-o.github.io/og-preview.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="1RY — Sonic Rush portfolio, Mechatronics · Embedded · Applied AI">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://1ry-o.github.io/og-preview.jpg">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23050505'/%3E%3Cpath d='M38 4 15 37h11l-2 23 23-35H34z' fill='%230059FF'/%3E%3Crect x='6' y='54' width='52' height='6' fill='%23FFDE00'/%3E%3C/svg%3E">
+<meta property="og:description" content="Audio-to-notation experiments, embedded/IoT bench work, and developer tooling — presented either as The Signal or as The Archive.">
+<!-- NOTE: og:image is intentionally absent. The previous preview image belongs
+     to the retired Sonic Rush identity; a replacement is scheduled for phase 5.
+     Pointing social previews at the old artwork would misrepresent the site. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070A12'/%3E%3Cpath d='M32 6 35.4 28.6 58 32 35.4 35.4 32 58 28.6 35.4 6 32 28.6 28.6Z' fill='%23A994FF' fill-opacity='.5'/%3E%3Ccircle cx='32' cy='32' r='5.5' fill='%237BE7FF'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,100,700;0,100,900;1,100,700;1,100,900;1,125,900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
-<script defer src="vendor/gsap-3.12.5.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script defer src="script.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<!-- Load order is the cascade order: boot (acquisition sequence), tokens
+     (truth), effects (grain · glass · tilt · transitions), then the two
+     compositions. -->
+<link rel="stylesheet" href="css/boot.css">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/effects.css">
+<link rel="stylesheet" href="css/signal.css">
+<link rel="stylesheet" href="css/archive.css">
+<!-- Synchronous on purpose: the mode and the render-state flag must be set
+     before the first paint, or a returning reader sees the wrong experience
+     flash. It is tiny, same-origin, and the only blocking script on the
+     page. It also arms html.is-booting, so the acquisition sequence paints
+     in the very first frame. -->
+<script src="js/boot.js"></script>
+<!-- Vendored and SRI-pinned. script-src is 'self', so no CDN is reachable;
+     the versioned file names keep the immutable /vendor/* cache rule honest.
+     Integrity values are sha384 of these exact files (REDESIGN_PROGRESS.md). -->
+<script defer src="vendor/gsap-3.12.5.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
+<script defer src="vendor/ScrollTrigger-3.12.5.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous"></script>
+<script defer src="vendor/lenis-1.3.26.min.js" integrity="sha384-jqpi9VmOdhyLoLURgjCn7EpnG9BbnHW57ibIZoeaIU+erWDH3k8fQQg0xH2ySjnw" crossorigin="anonymous"></script>
+<!-- Execution order after parsing: data and render are pure string work;
+     quasar and telemetry only define themselves; mode.js registers its
+     DOMContentLoaded init here and therefore renders before motion arms
+     against the finished DOM; motion then owns the single frame loop;
+     preloader runs last and hands off. -->
+<script defer src="js/data.js"></script>
+<script defer src="js/render.js"></script>
+<script defer src="js/quasar.js"></script>
+<script defer src="js/telemetry.js"></script>
+<script defer src="js/mode.js"></script>
+<script defer src="js/motion.js"></script>
+<script defer src="js/preloader.js"></script>
 </head>
 <body>
 
-<!-- ══════════ WEBGL VELOCITY CORE (fixed background) ══════════ -->
-<div class="behind" aria-hidden="true">
-  <canvas id="gl"></canvas>
-  <div class="behind-fallback"></div>
-  <div class="behind-scanlines"></div>
-  <div class="behind-vignette"></div>
-</div>
+<a class="skip-link" href="#stage">Skip to content</a>
 
-<!-- ══════════ BOOT-UP SEQUENCE ══════════ -->
-<div class="boot" id="boot">
-  <div class="boot-core">
-    <p class="boot-mark"><span class="boot-bolt" aria-hidden="true"></span>SONIC RUSH PROTOCOL</p>
-    <p class="boot-log" id="boot-log" role="status" aria-live="polite">INITIALISING VELOCITY CORE</p>
-    <div class="boot-rail"><i id="boot-fill"></i></div>
-    <div class="boot-meta"><span>1RY / PORTFOLIO</span><span id="boot-pct">000%</span></div>
+<!-- ══════════ BOOT · the acquisition sequence ══════════
+     Displayed only while html.is-booting exists (js/boot.js sets it
+     before first paint when JavaScript is on and motion is allowed;
+     js/preloader.js, Escape, the Skip button or the 5 s failsafe remove
+     it). Every number below it is real: each log line is a promise for a
+     true milestone — fonts resolved, experience rendered, near-viewport
+     images decoded, shader compiled, first frame presented — and the
+     counter never claims more than has actually finished. The log is
+     decorative; the Skip button is the only focusable thing inside. -->
+<div class="boot" data-boot>
+  <div class="boot__panel">
+    <p class="boot__mark">1RY · signal acquisition</p>
+    <ol class="boot__log" data-boot-log>
+      <li data-step><span class="boot__state">[ .. ]</span><span class="boot__task">Parsing document structure</span><span class="boot__ms"></span></li>
+      <li data-step><span class="boot__state">[ .. ]</span><span class="boot__task">Acquiring type matrix</span><span class="boot__ms"></span></li>
+      <li data-step><span class="boot__state">[ .. ]</span><span class="boot__task">Composing experience layers</span><span class="boot__ms"></span></li>
+      <li data-step><span class="boot__state">[ .. ]</span><span class="boot__task">Decompressing asset payload</span><span class="boot__ms"></span></li>
+      <li data-step><span class="boot__state">[ .. ]</span><span class="boot__task">Compiling signal kernel</span><span class="boot__ms"></span></li>
+      <li data-step><span class="boot__state">[ .. ]</span><span class="boot__task">Spooling first frame</span><span class="boot__ms"></span></li>
+      <li data-step><span class="boot__state">[ .. ]</span><span class="boot__task">Signal lock</span><span class="boot__ms"></span></li>
+    </ol>
+    <div class="boot__rail"><span class="boot__fill" data-boot-fill></span></div>
+    <p class="boot__read">
+      <span data-boot-task>Standing by</span>
+      <span class="boot__pct"><span data-boot-pct>0.00</span>%</span>
+    </p>
   </div>
-  <button class="boot-skip" id="boot-skip" type="button">SKIP ⏎</button>
+  <button class="boot__skip" type="button" data-boot-skip>Skip intro</button>
 </div>
 
-<a class="skip" href="#portals">Skip to project portals</a>
-
-<!-- ══════════ HUD · TOP RAIL ══════════ -->
-<header class="hud hud-top" id="hud-top">
-  <a class="brand" href="#top" aria-label="1RY — home">
-    <span class="brand-bolt" aria-hidden="true"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M13 2 5 13.5h5L10 22l8-11.5h-5z"/></svg></span>
-    <span class="brand-id">1RY</span>
-    <span class="brand-sub">MECHATRONICS · SYSTEMS</span>
+<!-- ══════════ CHROME · shared by both experiences ══════════ -->
+<header class="site-head">
+  <a class="brand" href="#stage">
+    <span class="brand__beacon" aria-hidden="true"></span>
+    <span class="brand__id">1RY</span>
+    <span class="brand__role">Mechatronics Engineering</span>
   </a>
-  <nav class="hud-nav" aria-label="Primary">
-    <a class="hud-link" href="#portals">PORTALS</a>
-    <a class="hud-link" href="#flagship">FLAGSHIP</a>
-    <a class="hud-link" href="#caps">MATRIX</a>
-    <button class="hud-link" type="button" data-open-portal="resume">RESUME HUD</button>
-    <a class="hud-link" href="#signal">SIGNAL</a>
-  </nav>
-  <div class="hud-right">
-    <div class="readmode" role="radiogroup" aria-label="Read mode">
-      <button type="button" role="radio" aria-checked="true" data-mode-btn="normal" class="is-on">NORMAL</button>
-      <button type="button" role="radio" aria-checked="false" data-mode-btn="professional" tabindex="-1">PRO</button>
-    </div>
-    <span class="led" id="sys-led" title="Velocity core online" aria-hidden="true"></span>
-    <span class="hud-clock" id="hud-clock" aria-hidden="true">--:--:--</span>
+
+  <div class="mode-switch" role="radiogroup" aria-label="Reading experience">
+    <button type="button" role="radio" aria-checked="true" class="mode-switch__btn" data-mode-btn="signal">
+      <span class="mode-switch__dot" aria-hidden="true"></span>
+      <span>Signal</span><span class="mode-switch__hint">immersive</span>
+    </button>
+    <button type="button" role="radio" aria-checked="false" tabindex="-1" class="mode-switch__btn" data-mode-btn="archive">
+      <span class="mode-switch__dot" aria-hidden="true"></span>
+      <span>Archive</span><span class="mode-switch__hint">editorial</span>
+    </button>
   </div>
 </header>
 
-<div class="rail rail-l" aria-hidden="true">
-  <span>SYS.OP //</span><span>SECURE CONNECTION</span>
-</div>
-<div class="rail rail-r" aria-hidden="true">
-  <span id="rail-fps">CORE --.- FPS</span><span id="rail-scroll">SCROLL 000%</span>
-</div>
-
-<!-- ══════════ DIAGONAL KINETIC TICKER ══════════ -->
-<div class="marq marq-hero" aria-hidden="true">
-  <div class="marq-track">
-    <span>VELOCITY // ENGINEER // SYSTEM ARCHITECT // VELOCITY // ENGINEER // SYSTEM ARCHITECT // VELOCITY // ENGINEER // SYSTEM ARCHITECT // </span>
-    <span>VELOCITY // ENGINEER // SYSTEM ARCHITECT // VELOCITY // ENGINEER // SYSTEM ARCHITECT // VELOCITY // ENGINEER // SYSTEM ARCHITECT // </span>
-  </div>
-</div>
-
 <main id="stage">
 
-  <!-- ═══════════════════════ HERO ═══════════════════════ -->
-  <section class="hero" id="top" aria-label="Introduction">
-    <div class="hero-in">
-      <p class="hero-tagline" data-decode="MECHATRONICS ENG · EMBEDDED SYSTEMS · APPLIED AI">MECHATRONICS ENG · EMBEDDED SYSTEMS · APPLIED AI</p>
-
-      <h1 class="hero-name">
-        <span class="kin"><span class="kin-t" data-decode="PILLA">PILLA</span></span>
-        <span class="kin"><span class="kin-t alt" data-decode="SRI SAI">SRI SAI</span></span>
-        <span class="kin"><span class="kin-t out" data-decode="RAHUL">RAHUL</span></span>
-      </h1>
-
-      <p class="hero-role"><span class="role-bar" aria-hidden="true"></span><span data-decode="MECHATRONICS × SYSTEMS ENGINEER">MECHATRONICS × SYSTEMS ENGINEER</span></p>
-
-      <p class="hero-lede" data-mode-text="hero-lede">First-semester Mechatronics Engineering student at Mahindra University building independent projects across software, embedded systems, and AI-assisted applications.</p>
-
-      <div class="hero-cta">
-        <button class="btn btn-blue magnet" type="button" data-open-portal="resume"><span>OPEN RESUME HUD</span></button>
-        <a class="btn btn-yellow magnet" href="Pilla_Sri_Sai_Rahul_Resume.pdf" download="Pilla_Sri_Sai_Rahul_Resume.pdf"><span>DOWNLOAD RESUME</span></a>
-        <a class="btn btn-ghost magnet" href="#portals"><span>PROJECT PORTALS</span></a>
-      </div>
-
-      <dl class="hero-tele">
-        <div><dt>PROGRAM</dt><dd>B.Tech · Mechatronics</dd></div>
-        <div><dt>INSTITUTION</dt><dd>Mahindra University</dd></div>
-        <div><dt>WINDOW</dt><dd>2026 → 2030</dd></div>
-        <div><dt>STATUS</dt><dd>Active builds</dd></div>
-      </dl>
+  <!-- ══════════ THE SIGNAL ══════════
+       Composition: asymmetric, atmospheric, spatial. Filled from js/data.js
+       by js/render.js. -->
+  <section class="shell shell--signal" data-shell="signal" aria-labelledby="signal-heading">
+    <!-- Backdrop scaffold. Phase 2 mounts the celestial renderer on
+         [data-quasar]; this layer is the CSS-only atmosphere that stands in
+         until it exists and behind it once it does. -->
+    <div class="signal-stage" data-quasar aria-hidden="true">
+      <div class="signal-stage__glow"></div>
+      <div class="signal-stage__horizon"></div>
     </div>
-    <div class="scroll-cue" aria-hidden="true"><i></i><span>SCROLL / VELOCITY</span></div>
+    <div class="shell__inner" data-shell-inner="signal"></div>
   </section>
 
-  <!-- ═══════════════════════ PORTAL ARRAY ═══════════════════════ -->
-  <section class="sec portals" id="portals" aria-label="Project portals">
-    <header class="sec-head rise">
-      <p class="kick">01 · PORTAL ARRAY</p>
-      <h2 class="sec-title">Select a<br><span class="twist">portal</span>.</h2>
-      <p class="sec-lede" data-mode-text="portals-lede">Four builds, four case files. Open a portal for the full engineering record — stack, decisions, and current state.</p>
-    </header>
-
-    <div class="pcard-grid">
-
-      <article class="pcard rise">
-        <a class="pcard-hit" href="#/p/vi071" data-open-portal="vi071" aria-label="Open the VI-071 case file"></a>
-        <span class="pcard-idx">01</span>
-        <span class="pcard-flag flag-blue">FLAGSHIP</span>
-        <h3 class="pcard-title">VI-071</h3>
-        <p class="pcard-sub">Audio → sheet music</p>
-        <p class="pcard-desc" data-mode-text="vi071-tag">Audio-to-symbolic-music workflow: inference worker, backend orchestration, notation.</p>
-        <ul class="pcard-stack"><li>MuScriptor</li><li>Python</li><li>Node/Express</li><li>FFmpeg</li><li>MusicXML</li></ul>
-        <div class="pcard-foot">
-          <span class="pcard-cta">OPEN PORTAL <b aria-hidden="true">→</b></span>
-          <a class="link-ext" href="https://github.com/1RY-O/Vi-071" target="_blank" rel="noopener">SOURCE ↗</a>
-        </div>
-      </article>
-
-      <article class="pcard rise">
-        <a class="pcard-hit" href="#/p/bobby" data-open-portal="bobby" aria-label="Open the Bobby case file"></a>
-        <span class="pcard-idx">02</span>
-        <span class="pcard-flag flag-blue">LIVE DEMO</span>
-        <h3 class="pcard-title">Bobby</h3>
-        <p class="pcard-sub">Guided debugging investigation</p>
-        <p class="pcard-desc" data-mode-text="bobby-tag">Plan the work, inspect the error and code, move toward a focused fix.</p>
-        <ul class="pcard-stack"><li>Next.js</li><li>FastAPI</li><li>LangGraph</li><li>React Flow</li><li>Tailwind</li></ul>
-        <div class="pcard-foot">
-          <span class="pcard-cta">OPEN PORTAL <b aria-hidden="true">→</b></span>
-          <a class="link-ext" href="https://bobby-neon.vercel.app" target="_blank" rel="noopener">DEMO ↗</a>
-        </div>
-      </article>
-
-      <article class="pcard rise">
-        <a class="pcard-hit" href="#/p/circuitmate" data-open-portal="circuitmate" aria-label="Open the CircuitMate case file"></a>
-        <span class="pcard-idx">03</span>
-        <span class="pcard-flag flag-yellow">VOICE-NATIVE</span>
-        <h3 class="pcard-title">CircuitMate</h3>
-        <p class="pcard-sub">Electronics troubleshooting by voice</p>
-        <p class="pcard-desc" data-mode-text="circuitmate-tag">Hands-busy debugging for Arduino and ESP32 work, driven by speech.</p>
-        <ul class="pcard-stack"><li>AssemblyAI</li><li>Backend API</li><li>Knowledge base</li><li>Arduino</li><li>ESP32</li></ul>
-        <div class="pcard-foot">
-          <span class="pcard-cta">OPEN PORTAL <b aria-hidden="true">→</b></span>
-          <a class="link-ext" href="https://github.com/1RY-O/CircuitMate" target="_blank" rel="noopener">SOURCE ↗</a>
-        </div>
-      </article>
-
-      <article class="pcard rise">
-        <a class="pcard-hit" href="#/p/lumis" data-open-portal="lumis" aria-label="Open the Lumis case file"></a>
-        <span class="pcard-idx">04</span>
-        <span class="pcard-flag flag-warn">INCOMPLETE PROTOTYPE</span>
-        <h3 class="pcard-title">Lumis</h3>
-        <p class="pcard-sub">AI journaling prototype</p>
-        <p class="pcard-desc" data-mode-text="lumis-tag">Full-stack journaling experiment — features and deployment still being validated.</p>
-        <ul class="pcard-stack"><li>React</li><li>Firebase</li><li>Node/Express</li><li>Cloud Run</li><li>Gemini</li></ul>
-        <div class="pcard-foot">
-          <span class="pcard-cta">OPEN PORTAL <b aria-hidden="true">→</b></span>
-          <a class="link-ext" href="https://github.com/1RY-O/lumis-journal" target="_blank" rel="noopener">SOURCE ↗</a>
-        </div>
-      </article>
-
-      <article class="pcard pcard-resume rise">
-        <a class="pcard-hit" href="#/resume" data-open-portal="resume" aria-label="Open the resume HUD"></a>
-        <span class="pcard-idx">05</span>
-        <span class="pcard-flag flag-yellow">RESUME HUD</span>
-        <h3 class="pcard-title">Telemetry</h3>
-        <p class="pcard-sub">Interactive resume dashboard</p>
-        <p class="pcard-desc">Education timeline, skills matrix, engagement log, and the approved PDF.</p>
-        <ul class="pcard-stack"><li>Timeline</li><li>Skills matrix</li><li>Projects</li><li>PDF</li></ul>
-        <div class="pcard-foot">
-          <span class="pcard-cta">ENTER HUD <b aria-hidden="true">→</b></span>
-          <a class="link-ext" href="Pilla_Sri_Sai_Rahul_Resume.pdf" target="_blank" rel="noopener">PDF ↗</a>
-        </div>
-      </article>
-
-    </div>
+  <!-- ══════════ THE ARCHIVE ══════════
+       Composition: editorial record. Same data, different shape. -->
+  <section class="shell shell--archive" data-shell="archive" aria-labelledby="archive-heading">
+    <div class="shell__inner" data-shell-inner="archive"></div>
   </section>
 
-  <!-- ═══════════════════════ FLAGSHIP TELEMETRY ═══════════════════════ -->
-  <section class="sec flagship" id="flagship" aria-label="Flagship project: VI-071">
-    <header class="sec-head rise">
-      <p class="kick">02 · FLAGSHIP TELEMETRY</p>
-      <h2 class="sec-title">VI-071 —<br>audio to <span class="twist">notation</span>.</h2>
-      <p class="sec-lede" data-mode-text="vi071-lede">An audio-to-sheet-music workflow built around the messy part of transcription: turning a recording into structured notes, readable notation, and usable musical files.</p>
-      <p class="sec-note">Described from the documented design. Inspect the project code before treating every stage as fully implemented or production-ready.</p>
-    </header>
+  <!-- ══════════ READABLE FALLBACK ══════════
+       Shown when JavaScript is off, and left on screen if the render ever
+       fails, so the page is never blank and never silent. Every fact here is
+       the same fact the two experiences use. -->
+  <section class="fallback" id="fallback" aria-labelledby="fallback-title">
+    <p class="eyebrow">Plain summary · JavaScript not required</p>
+    <h1 class="fallback__title" id="fallback-title">Pilla Sri Sai Rahul</h1>
+    <p class="fallback__note">The Signal and The Archive are interactive experiences that need JavaScript. Everything they present is here, and the approved resume PDF remains the source of truth.</p>
+    <div class="fallback__grid">
 
-    <ol class="pipeline rise">
-      <li class="pipe-step"><span class="pipe-n">01</span><b>Waveform</b><i>Audio input · FFmpeg handling</i></li>
-      <li class="pipe-arrow" aria-hidden="true"></li>
-      <li class="pipe-step"><span class="pipe-n">02</span><b>Note events</b><i>MuScriptor · Python worker · backend jobs</i></li>
-      <li class="pipe-arrow" aria-hidden="true"></li>
-      <li class="pipe-step"><span class="pipe-n">03</span><b>Symbolic</b><i>MIDI / MusicXML conversion</i></li>
-      <li class="pipe-arrow" aria-hidden="true"></li>
-      <li class="pipe-step"><span class="pipe-n">04</span><b>Score</b><i>Verovio render · inspect · export</i></li>
-    </ol>
+      <article class="fallback__card">
+        <h2>Identity</h2>
+        <p>Mechatronics Engineering · Embedded Systems · Software &amp; AI · Hyderabad, India</p>
+        <p><a href="mailto:fabledadventurer.pssr@gmail.com">fabledadventurer.pssr@gmail.com</a><br>
+           <a href="https://github.com/1RY-O" target="_blank" rel="noopener noreferrer">github.com/1RY-O</a> ·
+           <a href="https://www.linkedin.com/in/sri-sai-rahul-pilla" target="_blank" rel="noopener noreferrer">LinkedIn</a></p>
+        <p><a href="Pilla_Sri_Sai_Rahul_Resume.pdf" download="Pilla_Sri_Sai_Rahul_Resume.pdf">Download the resume PDF</a></p>
+      </article>
 
-    <div class="marq marq-flagship" aria-hidden="true">
-      <div class="marq-track">
-        <span>VELOCITY // ENGINEER // SYSTEM ARCHITECT // VELOCITY // ENGINEER // SYSTEM ARCHITECT // VELOCITY // ENGINEER // SYSTEM ARCHITECT // </span>
-        <span>VELOCITY // ENGINEER // SYSTEM ARCHITECT // VELOCITY // ENGINEER // SYSTEM ARCHITECT // VELOCITY // ENGINEER // SYSTEM ARCHITECT // </span>
-      </div>
-    </div>
+      <article class="fallback__card">
+        <h2>Education</h2>
+        <p>B.Tech Mechatronics Engineering — Mahindra University, Hyderabad · 2026–2030, first semester. No CGPA has been issued, so none is shown.</p>
+        <p>Class XII — Andhra Pradesh State Board — 89% (2026).<br>Class X — CBSE — 85.4% (2024).</p>
+      </article>
 
-    <div class="flag-grid">
-      <article class="fpanel rise">
-        <h3>Engineering <span>what was actually built</span></h3>
-        <ul class="bullets">
-          <li>Python transcription worker integrated with a TypeScript backend.</li>
-          <li>Job-oriented backend processing and status handling.</li>
-          <li>MIDI and MusicXML symbolic output formats.</li>
-          <li>Score rendering plus audio-processing components.</li>
-          <li>CPU memory profiling across model-loading configurations.</li>
-          <li>Streaming BF16 experiment to reduce peak memory.</li>
-          <li>KV-cache adjustments and FlashAttention trials.</li>
-          <li>ONNX inference and INT8 quantization evaluated — not adopted after an unacceptable accuracy trade-off in testing.</li>
-          <li>Cloudflare Tunnel used to reach the development worker.</li>
-          <li>Backend tests for core workflow behaviour.</li>
+      <article class="fallback__card">
+        <h2>Selected projects</h2>
+        <ul>
+          <li><b>VI-071</b> — audio-to-sheet-music workflow (MuScriptor, Python inference worker, job backend, MIDI/MusicXML, Verovio). Active experiment, CPU-only local work.</li>
+          <li><b>Bobby</b> — developer troubleshooting assistant (Next.js, FastAPI, LangGraph, React Flow). Live demo verified 28 September 2026.</li>
+          <li><b>CircuitMate</b> — voice-oriented electronics troubleshooting (AssemblyAI, Arduino/ESP32 knowledge base). Prototype; backend demo unverified at the last check.</li>
+          <li><b>Lumis</b> — incomplete AI journaling prototype (React, Firebase, Node/Express, Cloud Run, Gemini API).</li>
         </ul>
       </article>
 
-      <article class="fpanel rise">
-        <h3>Measured experiment <span>local CPU benchmark</span></h3>
-        <p class="fpanel-lede">Streaming BF16 cut combined Node + Python peak memory from <b>1157.1 MB</b> to <b>844.9 MB</b> — roughly <b>27%</b> — on a local CPU benchmark.</p>
-        <table class="bench">
-          <caption>MuScriptor model-loading on CPU · peak memory, measured locally</caption>
-          <thead><tr><th scope="col">Configuration</th><th scope="col">Python peak</th><th scope="col">Node + Python</th></tr></thead>
-          <tbody>
-            <tr><td>Legacy FP32</td><td>1080.2 MB</td><td>1157.1 MB</td></tr>
-            <tr><td>Streaming FP32</td><td>1073.7 MB</td><td>1149.8 MB</td></tr>
-            <tr class="is-best"><td>Streaming BF16 ★ selected</td><td>766.9 MB</td><td>844.9 MB</td></tr>
-            <tr><td>Streaming FP16</td><td>762.8 MB</td><td>836.6 MB</td></tr>
-          </tbody>
-        </table>
-        <ul class="bullets bullets-sm">
-          <li>FP16 measured slightly lower, but BF16 was selected: FP16 showed slower generation and a narrower dynamic range in this setup.</li>
-          <li>Synthetic piano-like melody parity applies to that test only — not arbitrary recordings.</li>
-          <li>Local results for the tested environment and workload — not universal guarantees.</li>
-        </ul>
+      <article class="fallback__card">
+        <h2>Technical skills</h2>
+        <p><b>Languages:</b> Python, C, C++, Java, HTML, CSS. <b>Embedded &amp; IoT:</b> Arduino, ESP32, sensors, actuators. <b>Web &amp; backend:</b> React, Vite, Node.js, Express, Next.js, FastAPI, REST APIs. <b>AI &amp; development:</b> Gemini API, Claude, AssemblyAI, LangGraph, structured outputs, prompt engineering, OpenCode, Cline. <b>Tools:</b> Git, GitHub, VS Code, Fedora/Linux, Tinkercad, Firebase, Firestore, Vercel, Render.</p>
       </article>
-    </div>
 
-    <p class="fineprint rise"><b>Separate later run — setup unverified:</b> approximately 690 MB combined peak was reported for an optimized run, down from an earlier ~1.15 GB baseline. Its measurement method and environment are not confirmed comparable to the table above, so it is presented separately and not merged into the comparison.</p>
-    <p class="fineprint rise"><b>Limitations:</b> transcription accuracy and long-recording reliability remain active evaluation areas. Synthetic test parity does not establish accuracy on arbitrary music. Current state: active experiment, CPU-only local work. No public demo URL is claimed — a deployment address appears in the repository resources but its working state is unverified.</p>
+      <article class="fallback__card">
+        <h2>Training &amp; activities</h2>
+        <p>IoT &amp; Robotics Trainee — Unlox Academy (a training programme, not employment). Team Leader — E-Cell, Mahindra University. Builder at Hack2Skill Gen-AI APAC and AssemblyAI × LabLab AI — no awards claimed. BE10X AI Tools &amp; Claude Workshop certificate, August 2026. Member, Blockchain Club and Computer Science Club (Enigma).</p>
+      </article>
 
-    <div class="link-row rise">
-      <button class="btn btn-blue magnet" type="button" data-open-portal="vi071"><span>OPEN CASE FILE</span></button>
-      <a class="btn btn-ghost magnet" href="https://github.com/1RY-O/Vi-071" target="_blank" rel="noopener"><span>SOURCE REPOSITORY ↗</span></a>
     </div>
   </section>
-
-  <!-- ═══════════════════════ SKILLS MATRIX ═══════════════════════ -->
-  <section class="sec caps" id="caps" aria-label="Skills matrix">
-    <header class="sec-head rise">
-      <p class="kick">03 · SKILLS MATRIX</p>
-      <h2 class="sec-title">Stack, grouped<br>by <span class="twist">evidence</span>.</h2>
-      <p class="sec-lede">Every group traces back to work that exists. Velocity gauges for core skills live inside the resume HUD, each one tagged with the build that proves it.</p>
-    </header>
-
-    <div class="caps-grid">
-      <article class="cap rise">
-        <h3>Programming</h3>
-        <ul class="tags"><li>Python</li><li>C</li><li>C++</li><li>Java</li><li>HTML</li><li>CSS</li></ul>
-        <p class="cap-proof">Seen in: VI-071 inference worker + backend · embedded C/C++ bench work · web builds.</p>
-      </article>
-      <article class="cap rise">
-        <h3>Embedded &amp; IoT</h3>
-        <ul class="tags"><li>Arduino</li><li>ESP32</li><li>Sensors</li><li>Actuators</li><li>Circuit troubleshooting</li></ul>
-        <p class="cap-proof">Seen in: IoT &amp; Robotics trainee bench work · CircuitMate hardware domain.</p>
-      </article>
-      <article class="cap rise">
-        <h3>Web &amp; Backend</h3>
-        <ul class="tags"><li>React</li><li>Vite</li><li>Node.js</li><li>Express</li><li>Next.js</li><li>FastAPI</li><li>REST APIs</li></ul>
-        <p class="cap-proof">Seen in: VI-071 job API · Lumis journal app · Bobby console.</p>
-      </article>
-      <article class="cap rise">
-        <h3>AI &amp; Dev Tooling</h3>
-        <ul class="tags"><li>Gemini API</li><li>AssemblyAI</li><li>LangGraph</li><li>Structured outputs</li><li>Prompt engineering</li><li>Claude</li><li>OpenCode</li><li>Cline</li></ul>
-        <p class="cap-proof">Seen in: VI-071 transcription · CircuitMate voice agent · Bobby orchestration · Lumis reflection.</p>
-      </article>
-      <article class="cap rise">
-        <h3>Platforms</h3>
-        <ul class="tags"><li>Git</li><li>GitHub</li><li>VS Code</li><li>Fedora / Linux</li><li>Firebase</li><li>Firestore</li><li>Vercel</li><li>Render</li><li>Tinkercad</li></ul>
-        <p class="cap-proof">Seen in: shipped demos · Firebase-backed prototype · hardware simulation benches.</p>
-      </article>
-      <article class="cap rise">
-        <h3>Audio &amp; Notation</h3>
-        <ul class="tags"><li>FFmpeg</li><li>MuScriptor</li><li>MIDI</li><li>MusicXML</li><li>Verovio</li><li>Cloudflare Tunnel</li></ul>
-        <p class="cap-proof">Seen in: VI-071 pipeline — audio handling, symbolic formats, score rendering.</p>
-      </article>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════ PROFILE ═══════════════════════ -->
-  <section class="sec profile" id="profile" aria-label="Profile">
-    <div class="profile-grid">
-      <div class="profile-main rise">
-        <p class="kick">04 · PROFILE</p>
-        <h2 class="sec-title">Between physical<br>systems and <span class="twist">software</span>.</h2>
-        <p class="profile-copy">I am a Mechatronics Engineering student exploring the space between physical systems and software — building embedded tools, AI-assisted workflows, and experiments that make complex systems easier to understand.</p>
-        <ul class="profile-facts">
-          <li><b>Base</b>Hyderabad, India</li>
-          <li><b>Program</b>B.Tech Mechatronics · first semester</li>
-          <li><b>Focus</b>Embedded / IoT · software &amp; AI · developer tooling</li>
-          <li><b>Open to</b>Mechatronics, embedded/IoT, and software engineering opportunities</li>
-        </ul>
-      </div>
-      <div class="profile-side">
-        <article class="pnode rise">
-          <h3>Education</h3>
-          <p>B.Tech Mechatronics Engineering — Mahindra University, Hyderabad · 2026 → 2030, first semester.</p>
-          <p class="pnode-meta">Class XII — Andhra Pradesh State Board — 89% (2026)<br>Class X — CBSE — 85.4% (2024)</p>
-        </article>
-        <article class="pnode rise">
-          <h3>Training &amp; roles</h3>
-          <p>IoT &amp; Robotics Trainee — Unlox Academy · Team Leader — E-Cell, Mahindra University.</p>
-        </article>
-        <article class="pnode rise">
-          <h3>Hackathons</h3>
-          <p>Hack2Skill Gen-AI APAC · AssemblyAI × LabLab AI — builder roles.</p>
-        </article>
-        <article class="pnode rise">
-          <h3>Certification</h3>
-          <p>BE10X — AI Tools &amp; Claude Workshop · Certificate of Completion · August 2026.</p>
-        </article>
-        <article class="pnode rise">
-          <h3>Clubs</h3>
-          <p>Member — Blockchain Club and Computer Science Club (Enigma), Mahindra University.</p>
-        </article>
-        <button class="btn btn-yellow magnet" type="button" data-open-portal="resume"><span>OPEN FULL RESUME HUD</span></button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════ SIGNAL ═══════════════════════ -->
-  <section class="sec signal" id="signal" aria-label="Contact">
-    <p class="kick">05 · SIGNAL · OPEN CHANNEL</p>
-    <h2 class="sec-title">Send a <span class="twist">signal</span>.</h2>
-    <a class="signal-mail magnet" href="mailto:fabledadventurer.pssr@gmail.com">fabledadventurer.pssr@gmail.com</a>
-    <ul class="signal-links">
-      <li><a href="https://github.com/1RY-O" target="_blank" rel="noopener">GITHUB · 1RY-O</a></li>
-      <li><a href="https://www.linkedin.com/in/sri-sai-rahul-pilla" target="_blank" rel="noopener">LINKEDIN</a></li>
-      <li><a href="Pilla_Sri_Sai_Rahul_Resume.pdf" download="Pilla_Sri_Sai_Rahul_Resume.pdf">RESUME ↓</a></li>
-      <li><a href="https://1ry-o.github.io/" target="_blank" rel="noopener">1RY-O.GITHUB.IO</a></li>
-    </ul>
-    <p class="fineprint">Built by hand — HTML · CSS · JS · raw WebGL. No build step, no templates. Read-mode preference lives for this session only.</p>
-  </section>
-
-  <!-- ═══════════════════════ NO-JS RESUME ═══════════════════════ -->
-  <noscript>
-    <section class="sec ns" aria-label="Resume summary (no JavaScript)">
-      <p class="kick">RESUME · PLAIN FALLBACK</p>
-      <h2 class="sec-title">Resume<br>summary.</h2>
-      <p class="ns-note">The interactive resume HUD and project portals need JavaScript. Everything below is the same information, and the approved PDF is the source of truth.</p>
-      <div class="ns-grid">
-        <article class="ns-card">
-          <h3>Pilla Sri Sai Rahul</h3>
-          <p>Mechatronics Engineering · Embedded Systems · Software &amp; AI · Hyderabad, India</p>
-          <p><a href="mailto:fabledadventurer.pssr@gmail.com">fabledadventurer.pssr@gmail.com</a> · <a href="https://github.com/1RY-O">github.com/1RY-O</a> · <a href="https://www.linkedin.com/in/sri-sai-rahul-pilla">LinkedIn</a></p>
-          <p><a class="ns-pdf" href="Pilla_Sri_Sai_Rahul_Resume.pdf" download="Pilla_Sri_Sai_Rahul_Resume.pdf">Download the resume PDF</a></p>
-        </article>
-        <article class="ns-card">
-          <h3>Education</h3>
-          <p>B.Tech Mechatronics Engineering — Mahindra University, Hyderabad · 2026–2030, first semester.</p>
-          <p>Class XII — AP State Board — 89% (2026) · Class X — CBSE — 85.4% (2024).</p>
-        </article>
-        <article class="ns-card">
-          <h3>Training, roles, activities</h3>
-          <p>IoT &amp; Robotics Trainee — Unlox Academy · Team Leader — E-Cell, Mahindra University · Member, Blockchain Club and Computer Science Club (Enigma) · Builder, Hack2Skill Gen-AI APAC and AssemblyAI × LabLab AI · BE10X AI Tools &amp; Claude Workshop (Aug 2026).</p>
-        </article>
-        <article class="ns-card">
-          <h3>Selected projects</h3>
-          <p><b>VI-071</b> — audio-to-sheet-music application (MuScriptor, Python worker, job backend, MIDI/MusicXML, Verovio). <b>Bobby</b> — developer troubleshooting assistant (Next.js, FastAPI, LangGraph, React Flow). <b>CircuitMate</b> — voice-native electronics troubleshooting. <b>Lumis Journal</b> — incomplete AI journaling prototype.</p>
-        </article>
-        <article class="ns-card">
-          <h3>Technical skills</h3>
-          <p>Programming: Python, C, C++, Java, HTML, CSS. Embedded: Arduino, ESP32, sensors, actuators. Web &amp; backend: React, Vite, Node.js, Express, Next.js, FastAPI, REST APIs. AI &amp; development: Gemini API, AssemblyAI, LangGraph, structured outputs, prompt engineering, Claude, OpenCode, Cline. Tools &amp; platforms: Git, GitHub, VS Code, Fedora/Linux, Tinkercad, Firebase, Firestore, Vercel, Render, FFmpeg, Verovio.</p>
-        </article>
-      </div>
-    </section>
-  </noscript>
 
 </main>
 
-<!-- ══════════ HUD · BOTTOM RAIL ══════════ -->
-<footer class="hud hud-bottom">
-  <div class="ticker" aria-hidden="true">
-    <div class="ticker-track">
-      <span>PORTAL ARRAY · 05 ONLINE // RESUME PDF · MOUNTED // READ MODE · <b id="ticker-mode">NORMAL</b> // VELOCITY CORE · STABLE // HYDERABAD · IN // </span>
-      <span>PORTAL ARRAY · 05 ONLINE // RESUME PDF · MOUNTED // READ MODE · <b id="ticker-mode-b">NORMAL</b> // VELOCITY CORE · STABLE // HYDERABAD · IN // </span>
-    </div>
-  </div>
-  <a class="to-top" href="#top">TOP ↑</a>
-</footer>
-
-<!-- ══════════ PORTAL OVERLAY · liquid clip-path reveal ══════════ -->
-<div class="portal" id="portal" role="dialog" aria-modal="true" aria-labelledby="portal-title" aria-hidden="true">
-  <div class="portal-clip" id="portal-clip">
-    <div class="portal-grid-bg" aria-hidden="true"></div>
-    <header class="portal-bar">
-      <span class="portal-idx" id="portal-idx">--</span>
-      <h2 class="portal-title" id="portal-title">CASE FILE</h2>
-      <span class="portal-kind" id="portal-kind">CASE FILE</span>
-      <button class="portal-close" id="portal-close" type="button">CLOSE ✕ <span class="pc-hint">ESC</span></button>
-    </header>
-    <div class="portal-body" id="portal-body"></div>
-    <div class="portal-scan" aria-hidden="true"></div>
-  </div>
+<!-- ══════════ TELEMETRY · Signal-only HUD chrome.
+     Decorative by design (aria-hidden): scroll depth mapped into a
+     deterministic coordinate frame, rewritten at 15 Hz from the one
+     frame loop (js/telemetry.js). Shown only when html is in Signal
+     mode with a successful render; parked while the footer is in view. -->
+<div class="telemetry" data-telemetry aria-hidden="true">
+  <span class="telemetry__cell"><b>RA</b><span class="telemetry__val telemetry__val--ra" data-tele="ra">00h00m</span></span>
+  <span class="telemetry__sep">/</span>
+  <span class="telemetry__cell"><b>DEC</b><span class="telemetry__val telemetry__val--dec" data-tele="dec">+00°00′</span></span>
+  <span class="telemetry__sep">/</span>
+  <span class="telemetry__cell"><b>DEPTH</b><span class="telemetry__val telemetry__val--depth" data-tele="depth">0.0%</span></span>
+  <span class="telemetry__sep">/</span>
+  <span class="telemetry__cell"><b>FIELD</b><span class="telemetry__val telemetry__val--field" data-tele="field">INNER</span></span>
 </div>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- ══════════ FOOTER · shared chrome. The link list is rendered from the same
+     data object as the experiences; the sentence is static so that a failed
+     render still leaves a meaningful footer. ══════════ -->
+<footer class="site-foot">
+  <div class="site-foot__inner">
+    <p>Built by hand — HTML, CSS, JavaScript. No build step, no framework. The approved resume PDF is the source of truth.</p>
+    <ul data-footer-links></ul>
+  </div>
+</footer>
 
 </body>
 </html>
-
-
-
-
-
-
