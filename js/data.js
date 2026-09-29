@@ -116,6 +116,10 @@ window.PORTFOLIO_DATA = {
     /* ── 01 · VI-071 · flagship ─────────────────────────────────────── */
     {
       id:'vi071',index:'01',code:'VI-071',flagship:true,
+      /* Climate: the colour the lens, the shard edges and the iris flood
+         wear while the orb holds this card — see paintTheme() in
+         motion.js. Any hex the interface is supposed to take on. */
+      theme:'#F6C85B',
       category:'Audio → sheet music',
       status:{label:'Active experiment',tone:'progress'},
       summary:'An audio-to-sheet-music workflow built around the awkward part of transcription: a recording becomes structured note events, readable notation, and musical files that can be inspected and exported.',
@@ -143,6 +147,7 @@ window.PORTFOLIO_DATA = {
     /* ── 02 · Bobby ─────────────────────────────────────────────────── */
     {
       id:'bobby',index:'02',code:'Bobby',flagship:false,
+      theme:'#79F0C0',
       category:'Developer troubleshooting assistant',
       status:{label:'Live demo verified',tone:'verified'},
       summary:'A developer troubleshooting assistant that stages an investigation into planning, error-and-code examination, and remediation instead of answering in a single shot.',
@@ -162,6 +167,7 @@ window.PORTFOLIO_DATA = {
     /* ── 03 · CircuitMate ───────────────────────────────────────────── */
     {
       id:'circuitmate',index:'03',code:'CircuitMate',flagship:false,
+      theme:'#B48CFF',
       category:'Electronics troubleshooting by voice',
       status:{label:'Prototype · links partly unverified',tone:'progress'},
       summary:'Hands-busy debugging for Arduino and ESP32 work: talk the problem through and get clarifying questions back instead of stopping to type at the bench.',
@@ -182,6 +188,7 @@ window.PORTFOLIO_DATA = {
     /* ── 04 · Lumis ─────────────────────────────────────────────────── */
     {
       id:'lumis',index:'04',code:'Lumis',flagship:false,
+      theme:'#FF9A6B',
       category:'AI journaling platform',
       status:{label:'Incomplete prototype',tone:'prototype'},
       summary:'A quieter place to think, write, and reflect, with AI support when it is wanted. A full-stack prototype whose features and deployment are still being validated.',

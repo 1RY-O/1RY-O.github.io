@@ -161,3 +161,609 @@ html[data-vt] .is-revealing{animation:none;}   /* never stack both reveals */
     animation-duration:1ms;
   }
 }
+
+/* ── Kinetic text: line masks (phase 4 refinement) ──
+   Built by the vanilla splitter in js/motion.js — no SplitText plugin on
+   the asset budget. Each .kinetic-mask is a measured line with
+   overflow:hidden; each .kinetic-line rises y:40 → 0 with power4.out.
+   Masks are inline-block so authored hero spans keep their line breaks;
+   the word spans inside the generic path are inline so rows wrap
+   naturally before measurement. Nothing is pre-hidden in CSS: GSAP sets
+   the initial y/opacity, so without JS (or under reduced motion) the
+   text is simply there. */
+.kinetic-mask{
+  display:inline-block;
+  overflow:hidden;
+  vertical-align:bottom;
+  padding-bottom:0.08em;      /* descenders never clip inside the mask */
+  margin-bottom:-0.08em;
+}
+.kinetic-line{display:inline-block;will-change:transform;}
+.kinetic-word{display:inline;}
+/* While the hero waits for its handoff cue, the masks hold their shape
+   without flashing unstyled text. */
+html.is-booting .kinetic-mask{opacity:1;}
+@media (prefers-reduced-motion:reduce){
+  .kinetic-mask{overflow:visible;padding-bottom:0;margin-bottom:0;}
+  .kinetic-line{will-change:auto;}
+}
+
+.signal-nav a,.mode-switch__btn{will-change:transform;}
+.signal-nav a:focus-visible,.mode-switch__btn:focus-visible{
+  outline:2px solid var(--accent-line);outline-offset:2px;
+}
+
+/* ── God-tier mutation: architectural schematic grid ──
+   Active Theory brutalism — faint cyan/white hairlines over the whole
+   viewport at ~0.05 opacity. A dedicated fixed layer (div.schematic,
+   injected in index.html) so parallax in motion.js can drift it at its
+   own speed via --par-grid without touching content. pointer-events:none,
+   z-index below content but above the WebGL stage. Hidden entirely under
+   reduced motion or reduced contrast — structure must never cost clarity. */
+.schematic{
+  position:fixed;inset:-12vh 0;z-index:1;
+  pointer-events:none;
+  background-image:
+    repeating-linear-gradient(0deg,rgba(123,231,255,0.05) 0 1px,transparent 1px 72px),
+    repeating-linear-gradient(90deg,rgba(234,243,255,0.05) 0 1px,transparent 1px 72px),
+    /* The dial: concentric rings struck at the centre of the screen, a
+       hairline every 58 px and a jewelled ring every 290 px. Radially
+       symmetric, so it costs nothing to paint and never has to move — the
+       part that moves is the tick assembly underneath it. */
+    repeating-radial-gradient(circle at 50% 50%,
+      rgba(234,243,255,0.045) 0 1px,transparent 1px 58px),
+    repeating-radial-gradient(circle at 50% 50%,
+      rgba(123,231,255,0.05) 0 1px,transparent 1px 290px);
+  background-image:
+    repeating-linear-gradient(0deg,rgba(123,231,255,0.05) 0 1px,transparent 1px 72px),
+    repeating-linear-gradient(90deg,rgba(234,243,255,0.05) 0 1px,transparent 1px 72px),
+    repeating-radial-gradient(circle at 50% 50%,
+      rgba(234,243,255,0.045) 0 1px,transparent 1px 58px),
+    repeating-radial-gradient(circle at 50% 50%,
+      color-mix(in srgb,var(--theme) 16%,transparent) 0 1px,transparent 1px 290px);
+  transform:translate3d(0,var(--par-grid,0px),0);
+  will-change:transform;
+}
+/* ── The movement: 0.05° per second ──
+   One turn in 720 s. A dial this quiet is not meant to be watched, only
+   noticed when it stops: the hour markers, the twelfth marker in the
+   project's own colour, and a single hand, all on one square layer that
+   the compositor rotates for free. The mask keeps it inside a circle
+   smaller than the layer itself, so no corner is ever exposed as the
+   square turns. */
+.schematic::before{
+  content:"";position:absolute;left:50%;top:50%;
+  width:150vmin;height:150vmin;margin:-75vmin 0 0 -75vmin;
+  background-image:
+    repeating-conic-gradient(from 0deg,
+      rgba(234,243,255,0.085) 0deg 0.5deg,
+      rgba(234,243,255,0) 0.5deg 30deg),
+    conic-gradient(from 0deg,
+      rgba(123,231,255,0) 0deg,rgba(123,231,255,0.20) 0.55deg,
+      rgba(123,231,255,0) 1.1deg,rgba(123,231,255,0) 360deg),
+    repeating-conic-gradient(from 0deg,
+      rgba(255,255,255,0.05) 0deg 0.22deg,
+      rgba(255,255,255,0) 0.22deg 6deg);
+  background-image:
+    repeating-conic-gradient(from 0deg,
+      rgba(234,243,255,0.085) 0deg 0.5deg,
+      rgba(234,243,255,0) 0.5deg 30deg),
+    conic-gradient(from 0deg,
+      color-mix(in srgb,var(--theme) 55%,transparent) 0deg,
+      rgba(234,243,255,0) 1.6deg,rgba(234,243,255,0) 360deg),
+    repeating-conic-gradient(from 0deg,
+      rgba(255,255,255,0.05) 0deg 0.22deg,
+      rgba(255,255,255,0) 0.22deg 6deg);
+  background-repeat:no-repeat;
+  -webkit-mask-image:radial-gradient(circle at 50% 50%,
+    #000 0 24%,rgba(0,0,0,0.85) 44%,rgba(0,0,0,0) 62%);
+  mask-image:radial-gradient(circle at 50% 50%,
+    #000 0 24%,rgba(0,0,0,0.85) 44%,rgba(0,0,0,0) 62%);
+  animation:schematic-movement 720s linear infinite;
+  will-change:transform;
+}
+@keyframes schematic-movement{to{transform:rotate(360deg);}}
+.schematic::after{
+  content:"";position:absolute;inset:0;
+  background-image:
+    repeating-linear-gradient(0deg,rgba(123,231,255,0.05) 0 1px,transparent 1px 360px),
+    repeating-linear-gradient(90deg,rgba(234,243,255,0.05) 0 1px,transparent 1px 360px);
+}
+@media (prefers-reduced-motion:reduce){.schematic{display:none;}}
+@media (prefers-contrast:more){.schematic{display:none;}}
+/* Content rides above the schematic grid; the WebGL stage stays below it.
+   Specificity beats the z-index:1 in the paint-order rules in tokens.css. */
+main.stage-stack,.shell__inner,.site-foot{position:relative;z-index:2;}
+
+/* ── God-tier mutation: hollow display typography ──
+   Massive hero + project titles render as outlines (1px white stroke,
+   transparent fill). Hover, focus or scroll-flood fills them solid ion
+   cyan — html.type-flood (motion.js ScrollTrigger) floods a title as it
+   passes centre viewport; :hover/:focus-within floods instantly. The
+   flood keeps the stroke so edges stay razor sharp. */
+/* ── Lusion cursor: fluid light source ──
+   The orb is a real spotlight: motion.js spends its smoothed position
+   every frame as element-local --spot-x/--spot-y (written by spotStep
+   on each hollow node), and the hollow type carries a cyan copy painted
+   through background-clip:text by a radial gradient centred exactly
+   there. The gradient fades to transparent at 72% of a 220px radius,
+   so the 1px stroke outline stays visible everywhere while the FILL
+   ignites only under the light. No mask pass, no blend mode (that
+   invisibility failure is not repeated). Hover / focus / .type-flood
+   restore the solid flood by switching the light layer off below. */
+.signal-name,.signal-name__line,
+.transmission__code,.signal-section__title{
+  color:transparent;
+  -webkit-text-stroke:1px rgba(255,255,255,0.8);
+  text-stroke:1px rgba(255,255,255,0.8);
+  /* Milled, not printed. Two layers clipped to the glyphs: the orb's
+     spotlight on top, igniting the metal in the climate colour wherever
+     the lens passes, and under it a 3 px pitch micro-brushing at 96° —
+     the angle of a belt-sander's pass — lying across the whole face. */
+  background-image:radial-gradient(circle 220px at var(--spot-x,-999px) var(--spot-y,-999px),
+    var(--theme) 0%,var(--theme) 45%,transparent 72%),
+    repeating-linear-gradient(96deg,
+      rgba(255,255,255,0.075) 0 1px,rgba(255,255,255,0) 1px 3px);
+  background-repeat:no-repeat,repeat;
+  -webkit-background-clip:text;
+  background-clip:text;
+}
+.signal-name__line:nth-child(2){
+  color:transparent;
+  -webkit-text-stroke:1px rgba(147,163,190,0.75);
+  text-stroke:1px rgba(147,163,190,0.75);
+  background-image:radial-gradient(circle 220px at var(--spot-x,-999px) var(--spot-y,-999px),
+    var(--ink-faint) 0%,var(--ink-faint) 45%,transparent 72%);
+}
+/* ── Milled titanium ──
+   Flood used to mean "paint it cyan". Under the Apex model a title that
+   ignites is a machined part: three layers clipped to the glyphs — a long
+   curved shade curve (the anisotropic light of a brushed plate, kept above
+   3:1 against the void at its darkest band), the 3 px milling under it,
+   and on top a hard specular band whose centre is --spec: the orb's
+   position expressed as a percentage across the run of the type, published
+   by spotStep(). Sweep the lens over a title and the flare travels with
+   it; at rest the band sits mid-word. */
+.signal-name:hover,.signal-name:focus-within,
+.signal-name__line:hover,
+.transmission__code:hover,
+.signal-section__title:hover,
+.type-flood .signal-name__line,
+.type-flood.transmission__code,
+.type-flood.signal-section__title{
+  color:transparent;
+  -webkit-text-stroke:1px rgba(230,240,252,0.9);
+  text-stroke:1px rgba(230,240,252,0.9);
+  background-image:
+    linear-gradient(101deg,
+      rgba(255,255,255,0) calc(var(--spec,50%) - 26%),
+      rgba(255,255,255,0.30) calc(var(--spec,50%) - 9%),
+      #ffffff calc(var(--spec,50%)),
+      rgba(255,255,255,0.26) calc(var(--spec,50%) + 10%),
+      rgba(255,255,255,0) calc(var(--spec,50%) + 30%)),
+    repeating-linear-gradient(96deg,
+      rgba(255,255,255,0.22) 0 1px,rgba(9,13,21,0.30) 1px 2px,
+      rgba(255,255,255,0.07) 2px 3px),
+    linear-gradient(178deg,
+      #f4f8ff 0%,#c3d1e2 18%,#7b8ca1 40%,#5a6a7d 52%,
+      #9fb0c2 66%,#eaf1f9 86%,#ffffff 100%);
+  background-repeat:no-repeat,no-repeat,no-repeat;
+  -webkit-background-clip:text;
+  background-clip:text;
+}
+.type-flood .signal-name__line,
+.type-flood.transmission__code,
+.type-flood.signal-section__title{
+  -webkit-text-stroke:1px color-mix(in srgb,var(--theme) 55%,#e6f0fc);
+  text-stroke:1px color-mix(in srgb,var(--theme) 55%,#e6f0fc);
+}
+/* Kinetic line masks ride inside hollow titles: reset the clip so the
+   inherited transparent colour paints plain hollow text and the light
+   layer is never doubled onto an inner span. The title's own gradient
+   background paints through its spans at all times. */
+.signal-name .kinetic-line,
+.signal-name__line .kinetic-line,
+.transmission__code .kinetic-line,
+.signal-section__title .kinetic-line{
+  color:inherit;
+  background:none;
+  -webkit-background-clip:border-box;
+  background-clip:border-box;
+}
+@media (prefers-reduced-motion:reduce){
+  .signal-name,.signal-name__line,
+  .transmission__code,.signal-section__title{
+    background-image:none;
+    -webkit-background-clip:border-box;
+    background-clip:border-box;
+  }
+}
+/* Row inversion wins over title flood: on the cyan-flooded row the title
+   goes void-black so it stays readable (accent-on-accent would vanish). */
+.transmission:hover .transmission__code,
+.transmission:focus-within .transmission__code{
+  color:var(--void);
+  -webkit-text-stroke:1px var(--void);
+  text-stroke:1px var(--void);
+  /* The milled metal must come off entirely here: background-clip:text
+     paints the gradient instead of the colour, and a light alloy on a
+     cyan-flooded row is unreadable. */
+  background-image:none;
+  -webkit-background-clip:border-box;
+  background-clip:border-box;
+}
+@supports not (-webkit-text-stroke:1px #fff){
+  .signal-name,.signal-name__line,.transmission__code,.signal-section__title{color:var(--ink);}
+  .signal-name__line:nth-child(2){color:var(--ink-faint);}
+}
+
+/* ── God-tier mutation: multi-layer scroll parallax ──
+   Depth factors are spent by motion.js inside the single rAF via
+   --par-* custom properties (transform-only, compositor-friendly):
+     stage canvas  0.1  deep background, barely drifts
+     schematic     0.4  grid tears against the field
+     content       1.0  cards ride the native scroll (no offset)
+     hero type     1.3  foreground floats up faster
+   Ranges are clamped in JS so layers never separate into gaps. */
+.signal-stage__canvas{transform:translate3d(0,var(--par-stage,0px),0);will-change:transform;}
+/* Hero parallax now lives inside the composed monolith transform on
+   .signal-name in signal.css (translate --par-hero, then rotate) —
+   one transform owner per element, no override war. */
+@media (prefers-reduced-motion:reduce){
+  .signal-stage__canvas,.schematic{transform:none;will-change:auto;}
+}
+@media (prefers-reduced-motion:reduce){
+  .signal-nav a,.mode-switch__btn{will-change:auto;}
+}
+
+/* ── God-tier mutation: high-contrast inversion for every interactive element ──
+   Resn rule — no subtle fades. Hover/focus swaps the element to ion cyan
+   with void-black ink. One shared declaration so links, buttons, pills,
+   chips and nav all hit the same stark contrast shift. */
+.link,.btn,.chip,.signal-nav a,.mode-switch__btn,
+.archive-index a,.signal-channel__links a,.case-file__links a{
+  transition:color var(--dur-fast) var(--ease-editorial),
+    background-color var(--dur-fast) var(--ease-editorial),
+    border-color var(--dur-fast) var(--ease-editorial);
+}
+.link:hover,.link:focus-visible,
+.archive-index a:hover,.archive-index a:focus-visible,
+.case-file__links a:hover,.case-file__links a:focus-visible{
+  color:var(--void);background:var(--accent);
+}
+.btn:hover,.btn:focus-visible{
+  color:var(--void);background:var(--accent);border-color:var(--accent);
+}
+.btn--primary:hover,.btn--primary:focus-visible{
+  background:var(--starlight);color:var(--void);border-color:var(--starlight);
+}
+.chip:hover{color:var(--void);background:var(--accent);border-color:var(--accent);}
+.mode-switch__btn:hover{color:var(--void);background:var(--accent);}
+.mode-switch__btn[aria-checked="true"]{background:var(--accent);color:var(--void);box-shadow:none;}
+
+/* ── God-tier mutation: custom fluid cursor (glowing orb) ──
+   A physical glowing entity — NO blend mode (difference turned the dot
+   invisible against the void). Solid white core with a dual ion-cyan
+   halo, z-index above every layout layer, pointer-events:none so it
+   never intercepts. Trailed by motion.js quickTo inside the single rAF
+   (transform-only, one write per frame). Over interactive targets it
+   snaps to a large cyan orb (html.cursor-hot, armed by motion.js).
+   Native cursor is hidden only on pointer:fine with motion allowed —
+   touch, keyboard and reduced-motion readers keep their system cursor. */
+/* ── Climate default ──
+   Every themed surface below reads --theme. motion.js overwrites it inline
+   on <html> the instant a shard captures the orb, and removes the property
+   on release, so this declaration is only ever the ambient temperature. */
+:root{--theme:#7BE7FF;}
+
+/* ── God-tier mutation: the sapphire lens (was: a glowing dot) ──
+   Not a light emitter any more — a physical crystal suspended in front of
+   the page. backdrop-filter is what sells it: blur(4px) for optical
+   thickness, brightness/contrast for the way a crystal concentrates the
+   light behind it, saturate so the cyan under it stays cyan rather than
+   going grey. The inset shadows are its two surfaces — a bright hairline
+   where the near face catches the studio light, a dark crescent where the
+   far face falls away — and the rim picks up the colour of whatever it is
+   sitting on. One 26 px layer is re-blurred per frame; that is the entire
+   cost, and it is the only backdrop-filter on the page (the shards
+   deliberately keep none). Native cursor is hidden only on pointer:fine
+   with motion allowed — touch, keyboard and reduced-motion readers keep
+   their system cursor. */
+.cursor-dot{
+  --lens:26px;
+  position:fixed;left:0;top:0;z-index:99999;
+  width:var(--lens);height:var(--lens);
+  margin-left:calc(var(--lens) / -2);
+  margin-top:calc(var(--lens) / -2);
+  border-radius:50%;
+  /* convex glass: bright at the top-left, thick at the bottom-right */
+  background-image:radial-gradient(circle at 32% 26%,
+    rgba(255,255,255,0.62) 0%,rgba(255,255,255,0.10) 34%,
+    rgba(255,255,255,0.02) 58%,rgba(255,255,255,0.20) 100%);
+  -webkit-backdrop-filter:blur(4px) brightness(1.2) contrast(1.5) saturate(1.35);
+  backdrop-filter:blur(4px) brightness(1.2) contrast(1.5) saturate(1.35);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.75),
+    inset 0 -4px 7px rgba(4,7,14,0.60),
+    inset 0 0 0 1px rgba(198,246,255,0.55),
+    0 0 14px rgba(123,231,255,0.45),
+    0 0 40px rgba(123,231,255,0.18);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.75),
+    inset 0 -4px 7px rgba(4,7,14,0.60),
+    inset 0 0 0 1px color-mix(in srgb,var(--theme) 60%,transparent),
+    0 0 14px color-mix(in srgb,var(--theme) 45%,transparent),
+    0 0 40px color-mix(in srgb,var(--theme) 18%,transparent);
+  pointer-events:none;
+  transform:translate(-100px,-100px);
+  transition:width 220ms var(--ease-celestial),height 220ms var(--ease-celestial),
+    margin 220ms var(--ease-celestial),box-shadow 220ms var(--ease-editorial);
+}
+/* A thicker crystal refracts harder: over an interactive target the lens
+   grows to 72 px and its power goes up with it. */
+html.cursor-hot .cursor-dot{
+  width:var(--cursor-size-hot);height:var(--cursor-size-hot);
+  margin-left:calc(var(--cursor-size-hot) / -2);
+  margin-top:calc(var(--cursor-size-hot) / -2);
+  background-image:radial-gradient(circle at 30% 22%,
+    rgba(255,255,255,0.55) 0%,rgba(255,255,255,0.06) 30%,
+    rgba(255,255,255,0.00) 52%,rgba(255,255,255,0.16) 92%,
+    rgba(255,255,255,0.42) 100%);
+  -webkit-backdrop-filter:blur(7px) brightness(1.32) contrast(1.85) saturate(1.7);
+  backdrop-filter:blur(7px) brightness(1.32) contrast(1.85) saturate(1.7);
+  box-shadow:
+    inset 0 2px 2px rgba(255,255,255,0.80),
+    inset 0 -10px 22px rgba(4,7,14,0.65),
+    inset 0 0 0 1px rgba(198,246,255,0.75),
+    0 0 26px rgba(123,231,255,0.55),
+    0 0 90px rgba(123,231,255,0.28);
+  box-shadow:
+    inset 0 2px 2px rgba(255,255,255,0.80),
+    inset 0 -10px 22px rgba(4,7,14,0.65),
+    inset 0 0 0 1px color-mix(in srgb,var(--theme) 78%,transparent),
+    0 0 26px color-mix(in srgb,var(--theme) 55%,transparent),
+    0 0 90px color-mix(in srgb,var(--theme) 26%,transparent);
+  opacity:0.94;
+}
+/* The girdle: a chamfer cut around the crystal, drawn as a conic glint so
+   the lens has an edge that visibly belongs to a solid object. */
+.cursor-dot::after{
+  content:"";position:absolute;inset:-1px;border-radius:50%;
+  background:conic-gradient(from 210deg,
+    rgba(255,255,255,0) 0deg,rgba(255,255,255,0.85) 24deg,
+    rgba(255,255,255,0) 60deg,rgba(255,255,255,0) 180deg,
+    rgba(255,255,255,0.35) 210deg,rgba(255,255,255,0) 250deg);
+  -webkit-mask-image:radial-gradient(circle,transparent 0 62%,#000 66%,#000 100%);
+  mask-image:radial-gradient(circle,transparent 0 62%,#000 66%,#000 100%);
+  opacity:0.7;
+}
+@media (prefers-reduced-motion:reduce){.cursor-dot::after{display:none;}}
+html.cursor-down .cursor-dot{transform-origin:center;}
+@media (pointer:fine){
+  html.has-cursor,html.has-cursor a,html.has-cursor button,
+  html.has-cursor [data-tilt],html.has-cursor .signal-nav a,
+  html.has-cursor .transmission{cursor:none;}
+}
+@media (pointer:coarse){.cursor-dot{display:none;}}
+@media (prefers-reduced-motion:reduce){.cursor-dot{display:none;}}
+
+/* ══════════════════════════════════════════════════════════════════════
+   GOD-TIER MUTATION · LUXURY HOROLOGY LIGHTING
+   ──────────────────────────────────────────────────────────────────────
+   The lighting model of a macro watch plate: one colossal curved shade
+   curve cut across the background, and a single blinding specular that
+   travels it. Nothing here is decoration the page has to pay for twice —
+   .horology is one injected element, its flare is one composited layer,
+   and every shard answers to the same light because motion.js keeps the
+   flare's coordinates in JS (hor.x / hor.y / hor.i) and spends them on
+   each slab's --sh-lit and --sh-glare, while --hor-i rides the flare's
+   own opacity.
+
+   Paint order matters: .horology is the shell's FIRST child at z-index 1,
+   and .shell__inner is z-index 2 — so the sweep reads as light behind the
+   type and never once across a glyph. Contrast was measured with the
+   sweep at full travel; text tokens stayed at AA.
+   ══════════════════════════════════════════════════════════════════════ */
+.horology{
+  position:fixed;inset:0;z-index:1;
+  pointer-events:none;overflow:hidden;
+  contain:paint;
+}
+.horology__svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
+.horology__curve{
+  fill:none;
+  stroke:rgba(123,231,255,0.16);
+  stroke-width:0.35;
+  stroke-linecap:round;
+  filter:blur(0.4px);
+}
+.horology__curve--soft{
+  stroke:rgba(234,243,255,0.07);
+  stroke-width:7;
+  filter:blur(9px);
+}
+/* The specular: a hard white core, a wide ion bloom, and a stretched
+   anamorphic bar — the three things every RM / Patek macro shot shares.
+   Scaled and rotated by the loop; opacity rides --hor-i so the light has
+   a birth and a death instead of blinking. */
+.horology__flare{
+  position:absolute;left:0;top:0;
+  width:min(46vw,620px);height:min(46vw,620px);
+  margin-left:calc(min(46vw,620px) / -2);
+  margin-top:calc(min(46vw,620px) / -2);
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 50% 50%,
+      rgba(255,255,255,0.95) 0%,
+      rgba(226,248,255,0.55) 6%,
+      rgba(123,231,255,0.22) 19%,
+      rgba(169,148,255,0.10) 34%,
+      rgba(7,10,18,0) 62%);
+  opacity:calc(0.25 + var(--hor-i,0) * 0.75);
+  will-change:transform,opacity;
+}
+.horology__flare::after{
+  content:"";position:absolute;left:50%;top:50%;
+  width:170%;height:2px;margin-left:-85%;margin-top:-1px;
+  background:linear-gradient(90deg,
+    rgba(255,255,255,0) 0%,rgba(255,255,255,0.9) 42%,
+    rgba(226,248,255,1) 50%,rgba(255,255,255,0.9) 58%,rgba(255,255,255,0) 100%);
+  opacity:calc(0.2 + var(--hor-i,0) * 0.8);
+}
+/* Bounce light: the fill a softbox throws back up at the slab, riding the
+   same Y as the flare so the rig reads as one studio setup. */
+.horology__bounce{
+  position:absolute;left:0;top:0;
+  width:min(120vw,1500px);height:min(70vh,760px);
+  margin-left:calc(min(120vw,1500px) / -2);
+  margin-top:calc(min(70vh,760px) / -2);
+  background:radial-gradient(ellipse at 50% 50%,
+    rgba(123,231,255,0.10) 0%,rgba(169,148,255,0.05) 38%,rgba(7,10,18,0) 70%);
+  opacity:calc(0.3 + var(--hor-i,0) * 0.5);
+  will-change:transform,opacity;
+}
+@media (prefers-reduced-motion:reduce){.horology{display:none;}}
+
+/* ══════════════════════════════════════════════════════════════════════
+   THE SHARDS · thick sapphire catching a studio light
+   ──────────────────────────────────────────────────────────────────────
+   Metallic and refractive, never glassy-blurred: backdrop-filter is
+   deliberately absent, because four backdrop-blur layers moving every
+   frame is exactly how a 60 fps lock dies. The material is three
+   gradients — a brushed steel body, a specular band whose position
+   (--sh-glare) motion.js derives from the shard's own Z and the flare's
+   distance, and an edge light that ignites as the orb intercepts
+   (--sh-hot).
+   ══════════════════════════════════════════════════════════════════════ */
+.shell--signal .transmissions.is-volume > .transmission{
+  border:1px solid rgba(234,243,255,calc(0.10 + var(--sh-lit,0) * 0.22 + var(--sh-hot,0) * 0.38));
+  background-color:rgba(9,13,21,0.80);
+  background-image:
+    linear-gradient(112deg,
+      rgba(255,255,255,0) calc(var(--sh-glare,50%) - 15%),
+      rgba(255,255,255,0.30) calc(var(--sh-glare,50%) - 3%),
+      rgba(198,246,255,0.14) calc(var(--sh-glare,50%) + 4%),
+      rgba(255,255,255,0) calc(var(--sh-glare,50%) + 18%)),
+    linear-gradient(158deg,
+      rgba(255,255,255,calc(0.05 + var(--sh-lit,0) * 0.07)) 0%,
+      rgba(255,255,255,0) 34%),
+    linear-gradient(200deg,
+      rgba(123,231,255,calc(0.05 + var(--sh-hot,0) * 0.08)) 0%,
+      rgba(7,10,18,0) 58%);
+  background-repeat:no-repeat;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,calc(0.07 + var(--sh-lit,0) * 0.14 + var(--sh-hot,0) * 0.20)),
+    inset 0 0 42px rgba(123,231,255,calc(var(--sh-hot,0) * 0.16)),
+    0 calc(14px * var(--sh-elev,1)) calc(58px * var(--sh-elev,1)) rgba(0,0,0,0.58);
+}
+/* Climate, second pass: on engines that can mix a live custom property,
+   the light the card borrows from the orb is the project's own colour
+   rather than house cyan. The declarations above stay as the floor. */
+.shell--signal .transmissions.is-volume > .transmission{
+  background-image:
+    linear-gradient(112deg,
+      rgba(255,255,255,0) calc(var(--sh-glare,50%) - 15%),
+      rgba(255,255,255,0.30) calc(var(--sh-glare,50%) - 3%),
+      rgba(198,246,255,0.14) calc(var(--sh-glare,50%) + 4%),
+      rgba(255,255,255,0) calc(var(--sh-glare,50%) + 18%)),
+    /* a second, tighter streak at the centre of the band: the reflection
+       off the far surface of a thick crystal sits slightly off the near
+       one, and two hairlines read as depth where one reads as a sticker */
+    linear-gradient(112deg,
+      rgba(255,255,255,0) calc(var(--sh-glare,50%) - 1%),
+      rgba(255,255,255,calc(0.10 + var(--sh-lit,0) * 0.18)) calc(var(--sh-glare,50%) + 0.6%),
+      rgba(255,255,255,0) calc(var(--sh-glare,50%) + 2.4%)),
+    linear-gradient(158deg,
+      rgba(255,255,255,calc(0.05 + var(--sh-lit,0) * 0.07)) 0%,
+      rgba(255,255,255,0) 34%),
+    linear-gradient(200deg,
+      color-mix(in srgb,var(--theme) calc(5% + var(--sh-hot,0) * 13%) ,transparent) 0%,
+      rgba(7,10,18,0) 58%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,calc(0.07 + var(--sh-lit,0) * 0.14 + var(--sh-hot,0) * 0.20)),
+    inset 0 0 42px color-mix(in srgb,var(--theme) calc(var(--sh-hot,0) * 16%) ,transparent),
+    inset 0 0 0 1px color-mix(in srgb,var(--theme) calc(var(--sh-hot,0) * 22%) ,transparent),
+    0 calc(14px * var(--sh-elev,1)) calc(58px * var(--sh-elev,1)) rgba(0,0,0,0.58);
+}
+/* The orb's own light, read back off the slab it is claiming. */
+.shell--signal .transmissions.is-volume > .transmission::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 50% 50%,
+    rgba(123,231,255,calc(var(--sh-hot,0) * 0.16)) 0%,
+    rgba(7,10,18,0) 62%);
+  background:radial-gradient(circle at 50% 50%,
+    color-mix(in srgb,var(--theme) calc(var(--sh-hot,0) * 20%) ,transparent) 0%,
+    rgba(7,10,18,0) 62%);
+  opacity:calc(var(--sh-hot,0));
+}
+/* Depth is legible before it is measured: a shard far down the Z axis is
+   smaller, dimmer and thinner-inked than one at the lens. */
+.shell--signal .transmissions.is-volume > .transmission .transmission__summary{
+  color:rgba(198,214,228,calc(0.55 + var(--sh-elev,1) * 0.35));
+}
+@media (prefers-reduced-motion:reduce){
+  .shell--signal .transmissions.is-volume > .transmission,
+  .shell--signal .transmissions.is-volume > .transmission::after{
+    background-image:none;box-shadow:none;opacity:1;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   THE INTERSTELLAR PORTAL · the DOM half of the tear
+   ──────────────────────────────────────────────────────────────────────
+   The shader eats the starfield; this eats the interface. --portal is
+   written by the same expo.inOut tween that drives u_portalT, so the
+   starfield and the interface are consumed on one clock: the shell
+   collapses toward the centre under a disc that grows past the viewport
+   diagonal. At --portal:1 nothing is left to read, and motion.js routes.
+   No WebGL, no tear — the veil alone still consumes the screen, so the
+   CSS core gets the transition too, just without the spaghettification.
+   ══════════════════════════════════════════════════════════════════════ */
+html.is-portal body::after{
+  content:"";position:fixed;inset:-14%;z-index:9998;
+  pointer-events:none;
+  background:radial-gradient(circle at 50% 50%,
+    var(--void) calc(var(--portal,0) * 148%),
+    rgba(7,10,18,0) calc(var(--portal,0) * 148% + 3%));
+}
+/* The DOM side of the mechanism: the same aperture the shader is cutting,
+   edged in the project's colour and notched by six blade seams. The mask
+   keeps the seams inside a thin annulus at the aperture's own radius, so
+   they travel outward with the iris instead of papering the screen. */
+html.is-portal body::after{
+  background-image:
+    radial-gradient(circle at 50% 50%,
+      var(--void) calc(var(--portal,0) * 148%),
+      color-mix(in srgb,var(--theme) 30%,transparent) calc(var(--portal,0) * 148% + 1.4%),
+      rgba(7,10,18,0) calc(var(--portal,0) * 148% + 5%)),
+    conic-gradient(from 14deg,
+      rgba(4,7,14,0.85) 0deg 0.9deg,rgba(4,7,14,0) 0.9deg 60deg);
+  background-repeat:no-repeat;
+  -webkit-mask-image:radial-gradient(circle at 50% 50%,
+    #000 0 calc(var(--portal,0) * 148% - 1%),
+    rgba(0,0,0,0.55) calc(var(--portal,0) * 148% + 0.6%),
+    transparent calc(var(--portal,0) * 148% + 4.5%));
+  mask-image:radial-gradient(circle at 50% 50%,
+    #000 0 calc(var(--portal,0) * 148% - 1%),
+    rgba(0,0,0,0.55) calc(var(--portal,0) * 148% + 0.6%),
+    transparent calc(var(--portal,0) * 148% + 4.5%));
+}
+html.is-portal .shell__inner,
+html.is-portal .site-foot,
+html.is-portal .schematic,
+html.is-portal .horology{
+  transform:scale(calc(1 - var(--portal,0) * 0.35));
+  transform-origin:50% 50%;
+  filter:blur(calc(var(--portal,0) * 7px));
+  opacity:calc(1 - var(--portal,0) * 1.25);
+}
+html.is-portal .cursor-dot{opacity:calc(1 - var(--portal,0));}
+/* The route must never be a dead end: if navigation cannot complete,
+   motion.js lifts the tear and the interface is whole again. */
+@media (prefers-reduced-motion:reduce){
+  html.is-portal body::after{display:none;}
+  html.is-portal .shell__inner,html.is-portal .site-foot,
+  html.is-portal .schematic,html.is-portal .horology{
+    transform:none;filter:none;opacity:1;
+  }
+}

@@ -71,8 +71,9 @@
   --text-xl:clamp(1.1875rem,1.05rem + 0.7vw,1.625rem);
   --text-2xl:clamp(1.4375rem,1.15rem + 1.4vw,2.375rem);
   --text-3xl:clamp(1.75rem,1.24rem + 2.5vw,3.25rem);
-  --text-display:clamp(2.25rem,1.3rem + 4.6vw,5.25rem);
-  --text-hero:clamp(2.6rem,0.5rem + 9vw,8.25rem);
+  --text-display:clamp(2.5rem,1.1rem + 6.5vw,7rem);
+  --text-hero:clamp(3.75rem,0.75rem + 13.5vw,13rem);
+  --text-cinema:clamp(2rem,0.8rem + 7vw,7.5rem);
 
   --leading-tight:1.04;
   --leading-snug:1.24;
@@ -87,15 +88,21 @@
   --space-s:1rem;
   --space-m:1.5rem;
   --space-l:2.25rem;
-  --space-xl:3.25rem;
-  --space-2xl:5rem;
-  --space-3xl:clamp(4rem,9vh,7.5rem);
+  --space-xl:clamp(3.5rem,2.4rem + 5vw,7rem);
+  --space-2xl:clamp(6rem,3.4rem + 9vw,12rem);
+  --space-3xl:clamp(9rem,4.2rem + 14vw,18rem);
+  --space-cinema:clamp(8rem,4rem + 12vw,16rem);
 
-  /* ── Radii. Squared-off by default; pills only where earned. ────── */
-  --radius-xs:2px;
-  --radius-s:8px;
-  --radius-m:14px;
-  --radius-pill:999px;
+  /* ── Radii — brutalist mutation: sharp and square, zero rounding. ── */
+  --radius-xs:0;
+  --radius-s:0;
+  --radius-m:0;
+  --radius-pill:0;
+
+  /* ── God-tier mutation: fluid cursor + impact ripple budgets ──── */
+  --cursor-size:12px;
+  --cursor-size-hot:72px;
+  --cursor-accent:var(--ion-cyan);
 
   /* ── Layout ─────────────────────────────────────────────────────── */
   --container:1480px;
@@ -179,7 +186,7 @@ a{color:inherit;}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;}
 ::selection{background:var(--accent);color:var(--ink-on-accent);}
 
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:var(--radius-xs);}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:0;}
 :focus:not(:focus-visible){outline:none;}
 
 @media (max-width:700px){:root{--head-h:3.25rem;}}
@@ -198,7 +205,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;}
 .skip-link{
   position:fixed;left:var(--space-s);top:var(--space-s);z-index:var(--z-notice);
   transform:translateY(-200%);
-  padding:0.85rem 1.1rem;border-radius:var(--radius-s);
+  padding:0.85rem 1.1rem;border-radius:0;
   background:var(--accent);color:var(--ink-on-accent);text-decoration:none;
   font:600 var(--text-2xs)/1 var(--font-mono);letter-spacing:var(--tracking-label);text-transform:uppercase;
   transition:transform var(--dur-fast) var(--ease-editorial);
@@ -228,7 +235,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;}
 .chips{display:flex;flex-wrap:wrap;gap:0.4rem;list-style:none;padding:0;margin:0;}
 .chip{
   display:inline-flex;align-items:center;
-  padding:0.4rem 0.6rem;border:1px solid var(--line-dim);border-radius:var(--radius-xs);
+  padding:0.4rem 0.6rem;border:1px solid var(--line-dim);border-radius:0;
   font:500 var(--text-3xs)/1.3 var(--font-mono);letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-muted);
 }
 .chip--accent{color:var(--accent);border-color:var(--accent-line);background:var(--accent-wash);}
@@ -236,10 +243,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;}
 /* ── Status badge: label + tone. Tone carries meaning, not decoration. ── */
 .status{
   display:inline-flex;align-items:center;gap:0.5em;
-  padding:0.42rem 0.7rem;border:1px solid var(--line);border-radius:var(--radius-pill);
+  padding:0.42rem 0.7rem;border:1px solid var(--line);border-radius:0;
   font:600 var(--text-3xs)/1 var(--font-mono);letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-muted);
 }
-.status::before{content:"";width:0.42em;height:0.42em;border-radius:50%;background:currentColor;}
+.status::before{content:"";width:0.42em;height:0.42em;border-radius:0;background:currentColor;}
 .status--verified{color:var(--accent);border-color:var(--accent-line);background:var(--accent-wash);}
 .status--progress{color:var(--warn);border-color:var(--warn-line);background:var(--warn-wash);}
 .status--prototype{color:var(--corona);border-color:var(--corona-line);background:var(--corona-wash);}
@@ -249,7 +256,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;}
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:0.55em;
   min-height:44px;padding:0.85rem 1.25rem;
-  border:1px solid var(--line);border-radius:var(--radius-xs);
+  border:1px solid var(--line);border-radius:0;
   background:transparent;color:var(--ink);text-decoration:none;text-align:center;
   font:600 var(--text-2xs)/1 var(--font-mono);letter-spacing:var(--tracking-label);text-transform:uppercase;
   transition:background-color var(--dur-fast) var(--ease-editorial),
@@ -265,7 +272,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;}
 @media (prefers-reduced-motion:no-preference){.btn:active{transform:translateY(1px);}}
 
 /* ── Figure (real screenshots only) ── */
-.figure{margin:0;border:1px solid var(--line-dim);border-radius:var(--radius-s);overflow:hidden;background:var(--surface-1);}
+.figure{margin:0;border:1px solid var(--line-dim);border-radius:0;overflow:hidden;background:var(--surface-1);}
 .figure img{width:100%;height:auto;}
 .figure figcaption{
   padding:0.7rem 0.8rem;border-top:1px solid var(--line-dim);
@@ -296,7 +303,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;}
 }
 .brand{display:flex;align-items:baseline;gap:0.6rem;text-decoration:none;}
 .brand__beacon{
-  width:0.5rem;height:0.5rem;border-radius:50%;background:var(--accent);flex:0 0 auto;
+  width:0.5rem;height:0.5rem;border-radius:0;background:var(--accent);flex:0 0 auto;
   box-shadow:0 0 10px rgba(123,231,255,0.8);
 }
 .brand__id{font-family:var(--font-display);font-weight:700;font-size:var(--text-lg);letter-spacing:-0.02em;}
@@ -310,11 +317,11 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;}
 /* ── Mode switch ── */
 .mode-switch{
   display:flex;align-items:center;gap:0.15rem;padding:0.2rem;
-  border:1px solid var(--line-dim);border-radius:var(--radius-pill);background:var(--surface-1);
+  border:1px solid var(--line-dim);border-radius:0;background:var(--surface-1);
 }
 .mode-switch__btn{
   display:inline-flex;align-items:center;gap:0.5rem;
-  min-height:38px;padding:0.5rem 0.95rem;border-radius:var(--radius-pill);
+  min-height:38px;padding:0.5rem 0.95rem;border-radius:0;
   color:var(--ink-faint);
   font:600 var(--text-2xs)/1 var(--font-mono);letter-spacing:var(--tracking-label);text-transform:uppercase;
   transition:background-color var(--dur-fast) var(--ease-editorial),
@@ -326,7 +333,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;}
   background:var(--accent-wash);color:var(--ink);box-shadow:inset 0 0 0 1px var(--accent-line);
 }
 .mode-switch__dot{
-  width:0.4rem;height:0.4rem;border-radius:50%;background:currentColor;
+  width:0.4rem;height:0.4rem;border-radius:0;background:currentColor;
   transition:background-color var(--dur-fast) linear;
 }
 .mode-switch__hint{display:none;color:var(--ink-ghost);font-weight:500;letter-spacing:0.06em;text-transform:none;}
@@ -376,7 +383,7 @@ html:not([data-mode]) .shell--signal{display:none;}
   grid-template-columns:repeat(auto-fit,minmax(min(100%,19rem),1fr));
 }
 .fallback__card{
-  padding:var(--space-s);border:1px solid var(--line-dim);border-radius:var(--radius-s);background:var(--surface-1);
+  padding:var(--space-s);border:1px solid var(--line-dim);border-radius:0;background:var(--surface-1);
 }
 .fallback__card h2{
   margin-bottom:0.6rem;color:var(--accent);

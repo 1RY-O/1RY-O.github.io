@@ -342,3 +342,98 @@ grain. The full paint order is documented in `effects.css`.
 og:image replacement for the retired preview, README rewrite at release
 (phase 8), and the phase-7 accessibility/performance pass (SRI re-check,
 `unsafe-inline` removal test, screen-reader walk of both shells).
+---
+
+## Apex Command — mechanical horology + spatial depth (session record)
+
+The Signal stopped being a starfield with text on it and became a machine.
+Five mechanisms, one clock (the rAF in `js/motion.js`), one WebGL program
+(`js/quasar.js`). No new dependencies, no build step.
+
+### 1 · The sapphire lens (`.cursor-dot`, css/effects.css)
+
+The cursor is no longer an emitter, it is a crystal: a 26 px sphere with
+`backdrop-filter: blur(4px) brightness(1.2) contrast(1.5) saturate(1.35)`,
+two inset shadows standing in for its near and far faces, a conic-gradient
+girdle masked to a ring, and a rim drawn from `--theme`. Over an
+interactive target it grows to 72 px and its optical power goes up with it.
+This is the **only** `backdrop-filter` on the page — the shards keep none,
+and four moving blur layers is exactly how a 60 fps lock dies.
+
+### 2 · Climate ignition (data.js → render.js → motion.js → quasar.js)
+
+Every project in `DATA.projects` carries a `theme` hex; `transmission(p)`
+in render.js puts it on the shard as `data-theme`. When the orb is captured
+by a slab (`want > 0.5` in `galleryStep`), `paintTheme(hex)` writes `--theme`
+once on `<html>` and hands the same hex to `PORTFOLIO_QUASAR.setTheme()`,
+which parses it into `u_theme` and ramps `u_themeI`. Release removes the
+property; a failed portal crossing cools it back to ambient. `:root`
+declares `--theme:#7BE7FF` so the whole themed surface list has a floor, and
+every themed declaration ships an `rgba()` pair before its `color-mix()`
+line for engines that cannot mix a live custom property.
+
+### 3 · Wandering-hour carousel (`galleryStep`)
+
+Each slab enters yawed 45° and off to one side, and resolves to face the
+lens exactly as it docks: `turn = (1-approach)² · (1-past)` drives yaw,
+lateral swing and the entry of the mechanism together, so the last stretch
+of travel is pure Z. Swing direction is `toMid` (derived from the authored
+`--gx`), always toward the middle of the volume — the stage is
+`overflow:clip`, and a card thrown past its own edge would be cut off
+mid-approach. The perspective is solved in the same expression
+(`perspective(1150px)` inside the element's own transform list) rather than
+inherited from the volume, so the pinhole that positions the slab and the
+pinhole that turns it are the same one.
+
+### 4 · Machined type (`--spec`)
+
+`spotStep` publishes the orb's position as a **ratio** — `--spec`, the
+percentage across each hollow title's own run — alongside `--spot-x/-y`.
+Flood is no longer a cyan paint bucket: it is three layers clipped to the
+glyphs (a long anisotropic shade curve, 3 px milling at 96°, and a hard
+specular band centred on `--spec`), so sweeping the lens across an ignited
+title travels the flare with it. Row inversion has to kill
+`background-image` and reset `background-clip`, or the light alloy paints
+itself over a flooded row.
+
+### 5 · The mechanical iris (`u_portalT`)
+
+The black hole is gone. Six blades: `cos(6a)` corners the aperture into a
+polygon, a 60-tooth `step/fract` term notches its leading edge like a
+wheel, the assembly turns a sixth of a revolution across the crossing, and
+six hairlines of mechanical black ride the blade seams. In the last 14% of
+the travel the void inside the aperture floods with `u_theme` — the screen
+is consumed by the colour of what is about to load. The CSS veil mirrors
+it: the same radius (148% of the corner distance), the same hex on its rim,
+and six seams confined to a thin annulus by a mask that rides the aperture.
+
+### The dial (`.schematic`)
+
+Concentric hairlines every 58 px, a jewelled ring every 290 px in
+`--theme`, and a masked tick assembly — 12 hour markers, 60 minute ticks,
+one hand in the project colour — rotating once in **720 s** on the
+compositor. Radially symmetric where it can be, one animated transform
+where it can't. Hidden outright under reduced motion and `prefers-contrast`.
+
+### Load-bearing order (`armVolume`)
+
+`armGallery` → `armKinetic` → `rebuildGallery`. The volume must be measured
+before the type is split, because splitting hands each title's line masks to
+the shard that owns them and a shard has to exist to receive them; and it
+must be measured **again** afterwards, because splitting a title can move
+the box a dock centre is computed from. Both the boot path and the
+preference listener call this one function — the arming order is not
+allowed to exist in two places.
+
+### Verified / not verified
+
+- `node --check` clean on all `js/*.js`; CSS brace balance intact.
+- **No browser run.** The iris geometry, the refraction cost on low-end
+  GPUs, the carousel feel and the climate hand-off are unexercised. First
+  browser open: hold the orb on a shard (the environment should warm to
+  that project's hex within ~300 ms), then open a project link and watch
+  the blades rotate open into the same hex.
+- `color-mix()` and `backdrop-filter` both degrade by design (paired
+  fallbacks / the plain hollow type), but neither fallback path has been
+  rendered.
+

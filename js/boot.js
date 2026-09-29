@@ -49,13 +49,13 @@ root.setAttribute('data-mode',mode);
    Armed here, before first paint, and only when motion is allowed:
    prefers-reduced-motion gets no overlay and no scroll lock (css/boot.css
    displays .boot only while this class exists). js/preloader.js is
-   expected to remove it inside ~1 s; the timer below guarantees removal
+   expected to remove it inside ~4.5 s; the timer below guarantees removal
    even if that file fails to load or throws. The sequence can be
    skipped — it can never be survived. */
 var reducedMotion=!!(window.matchMedia&&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 if(!reducedMotion){root.classList.add('is-booting');}
-window.setTimeout(function(){root.classList.remove('is-booting');},5000);
+window.setTimeout(function(){root.classList.remove('is-booting');},10000);
 
 /* If js/mode.js never finishes, stop claiming a render is coming. */
 window.setTimeout(function(){

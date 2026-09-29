@@ -1,16 +1,21 @@
 /* ══════════════════════════════════════════════════════════════════════
-   1RY · BOOT — the acquisition sequence.
+   1RY · BOOT — the pure-flow acquisition sequence.
 
    Layer 0 of the stylesheet stack: boot → tokens → effects → signal →
    archive. Self-contained on purpose: it reuses the colour and spacing
    tokens but introduces no composition of its own beyond the overlay.
+
+   Astro-landing by design: a single elegant glowing line expands across the
+   void while a soft pulse breathes behind it — cinematic, fluid, no
+   terminal text, no percentages. js/preloader.js drives the real
+   milestones underneath and crossfades the overlay into the site.
 
    Lifecycle and every exit path:
      · js/boot.js sets html.is-booting before first paint — only when
        JavaScript is on and the reader has not asked for reduced motion;
      · js/preloader.js drives the real milestones, then hands off;
      · Escape, the Skip button, any failure inside preloader.js, and the
-       unconditional 5 s failsafe in boot.js all remove that class.
+       unconditional 8 s failsafe in boot.js all remove that class.
    `.boot` is displayed only while html.is-booting exists, so no failure
    mode can leave the reader locked inside the sequence.
    ══════════════════════════════════════════════════════════════════════ */
@@ -25,68 +30,134 @@ html.is-booting .boot{
     radial-gradient(130% 85% at 50% 108%,rgba(169,148,255,0.12) 0%,rgba(7,10,18,0) 62%),
     var(--void);
 }
-/* The sequence owns the page for well under a second; nothing scrolls
-   behind it. The class is removed on handoff, so this never becomes a
-   permanent lock. */
+/* The sequence owns the page for ~4 s; nothing scrolls behind it. The
+   class is removed on handoff, so this never becomes a permanent lock. */
 html.is-booting{overflow:hidden;}
 html:not(.js) .boot{display:none!important;}
 
-/* ── Terminal panel ─────────────────────────────────────────────────── */
-.boot__panel{
-  width:min(34rem,100%);
-  font-family:var(--font-mono);
+/* ── Pure flow: one glowing line, one breathing pulse ──────────────────
+   The line draws itself with scaleX (transform only — never layout), the
+   pulse behind it breathes on opacity + scale. Both are pure CSS so they
+   run on the compositor at 60 fps even while the main thread decodes
+   images and compiles the shader. preloader.js only crossfades the
+   overlay and eases --boot-p so the handoff never drops a frame. */
+.boot__flow{
+  position:relative;
+  width:min(30rem,80vw);
+  height:14rem;
+  display:grid;place-items:center;
 }
-.boot__mark{
-  margin:0 0 var(--space-m);
-  font-size:var(--text-3xs);letter-spacing:0.34em;text-transform:uppercase;
-  color:var(--accent);
-}
-.boot__log{
-  list-style:none;margin:0 0 var(--space-m);padding:0;
-  display:grid;gap:0.3rem;
-  font-size:var(--text-3xs);line-height:1.5;
-  color:var(--ink-ghost);
-}
-.boot__log li{
-  display:grid;grid-template-columns:3.4rem minmax(0,1fr) auto;
-  gap:0 0.9rem;align-items:baseline;
-}
-.boot__state{letter-spacing:0.06em;color:var(--ink-ghost);}
-.boot__ms{
-  font-variant-numeric:tabular-nums;letter-spacing:0.04em;
-  color:var(--ink-ghost);
-}
-.boot__log li.is-active .boot__state{color:var(--accent);}
-.boot__log li.is-active .boot__task{color:var(--ink);}
-.boot__log li.is-done{color:var(--ink-faint);}
-.boot__log li.is-done .boot__state{color:var(--ink);}
-.boot__log li.is-failed .boot__state{color:var(--warn);}
-
-/* Rail: only transform is animated, so progress never triggers layout. */
-.boot__rail{
-  position:relative;height:2px;overflow:hidden;
-  background:var(--line-dim);
-}
-.boot__fill{
-  position:absolute;inset:0;
-  background:linear-gradient(90deg,var(--accent),var(--corona));
+.boot__line{
+  display:block;
+  width:100%;height:2px;border-radius:2px;
   transform:scaleX(var(--boot-p,0));
-  transform-origin:0 50%;
+  transform-origin:50% 50%;
+  background:linear-gradient(90deg,var(--accent),var(--corona),var(--accent));
+  background-size:200% 100%;
+  box-shadow:
+    0 0 12px rgba(123,231,255,0.65),
+    0 0 42px rgba(123,231,255,0.28),
+    0 0 90px rgba(169,148,255,0.22);
+  animation:boot-sheen 4s linear infinite;
 }
-.boot__read{
-  display:flex;justify-content:space-between;gap:var(--space-s);
-  margin-top:var(--space-2xs);
-  font-size:var(--text-3xs);letter-spacing:0.14em;text-transform:uppercase;
-  color:var(--ink-faint);
+/* The corona: a massive ring that swells far past the line and dissolves,
+   so the void feels like an ignition while assets load. */
+.boot__pulse{
+  position:absolute;left:50%;top:50%;
+  width:9rem;height:9rem;border-radius:50%;
+  transform:translate(-50%,-50%);
+  border:1px solid var(--accent-line);
+  box-shadow:0 0 64px rgba(123,231,255,0.22) inset,
+             0 0 90px rgba(123,231,255,0.16),
+             0 0 180px rgba(169,148,255,0.20);
+  animation:boot-breathe 4s ease-in-out infinite;
+  pointer-events:none;
 }
-.boot__pct{
-  font-variant-numeric:tabular-nums;   /* the count must not jitter */
-  color:var(--ink);
+@keyframes boot-sheen{
+  from{background-position:0% 0;}
+  to{background-position:200% 0;}
+}
+@keyframes boot-breathe{
+  0%,100%{opacity:0.2;transform:translate(-50%,-50%) scale(0.6);}
+  50%{opacity:0.95;transform:translate(-50%,-50%) scale(2.6);}
+}
+/* ── Mirror Dimension: shattered glass + crystal ring ────────────────
+   preloader.js injects SHARD_COUNT shards (clip-path polygons) into
+   .boot__shards; each shard is absolutely positioned in a 3D chamber
+   (perspective on .boot__flow, preserve-3d on the shard field). During
+   the 4 s load shards float and rotate slowly in real depth
+   (rotateX/rotateY/translateZ, --sh-* custom props spent by the
+   transient preloader rAF — never by handlers). As progress nears 1
+   the snap factor drives every shard onto the ring radius so they form
+   a spinning geometric crystal; the droplet falls dead-centre at the
+   handoff and fires the WebGL shockwave. Transform + opacity only —
+   no layout, compositor-friendly, and all nodes are removed in
+   finish() so nothing outlives the overlay. */
+.boot__flow{perspective:900px;}
+.boot__shards{
+  position:absolute;inset:0;
+  transform-style:preserve-3d;
+  pointer-events:none;
+  /* Shatterseal charge: dormant until the ring snaps shut, then the
+     whole formation radiates. Opacity is spent from JS via --ring-glow
+     so the charge tracks the snap factor, not wall time. */
+  opacity:1;
+  filter:drop-shadow(0 0 calc(var(--ring-glow,0) * 26px) rgba(123,231,255,0.85))
+         drop-shadow(0 0 calc(var(--ring-glow,0) * 60px) rgba(169,148,255,0.5));
+  will-change:filter;
+}
+.boot__shard{
+  position:absolute;left:50%;top:50%;
+  width:var(--sh-size,44px);height:var(--sh-size,44px);
+  margin-left:calc(var(--sh-size,44px) / -2);
+  margin-top:calc(var(--sh-size,44px) / -2);
+  /* Doctor Strange glass: a mostly-transparent crystalline body with a
+     sharp white/cyan diagonal slash. --glare-p is spent from the
+     preloader rAF so the slash sweeps infinitely across every shard. */
+  background:
+    linear-gradient(115deg,
+      transparent 0%,transparent 38%,
+      rgba(255,255,255,0.85) 46%,rgba(123,231,255,0.55) 50%,
+      transparent 54%,transparent 100%),
+    linear-gradient(135deg,rgba(234,243,255,0.16),rgba(123,231,255,0.07) 55%,rgba(169,148,255,0.12));
+  background-size:250% 250%,100% 100%;
+  background-position:var(--glare-p,0% 0%),0 0;
+  border:1px solid rgba(255,255,255,0.55);
+  /* Glass thickness: true refraction of whatever sits behind the shard,
+     plus an intense inset specular that fakes a milled 3D edge. */
+  backdrop-filter:blur(8px) saturate(140%);
+  -webkit-backdrop-filter:blur(8px) saturate(140%);
+  box-shadow:
+    inset 0 0 10px rgba(123,231,255,0.2),
+    inset 1px 1px 2px rgba(255,255,255,0.8),
+    0 0 14px rgba(123,231,255,0.25),inset 0 0 12px rgba(234,243,255,0.12);
+  clip-path:var(--sh-clip);
+  opacity:var(--sh-opacity,0.9);
+  transform:
+    translate3d(var(--sh-x,0px),var(--sh-y,0px),var(--sh-z,0px))
+    rotateX(var(--sh-rx,0deg))
+    rotateY(var(--sh-ry,0deg))
+    rotateZ(var(--sh-rz,0deg));
+  will-change:transform,opacity;
+}
+/* The droplet: a pure concentrated orb of Ion Cyan, held above the ring
+   until the handoff. It falls stretched to scaleY(2) — terminal-velocity
+   elongation with a massive blur trail — then detonates the shockwave. */
+.boot__drop{
+  position:absolute;left:50%;top:50%;
+  width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;
+  background:#7BE7FF;
+  box-shadow:0 0 12px #7BE7FF,0 0 34px #7BE7FF,0 0 80px rgba(123,231,255,0.8),
+    0 0 160px rgba(123,231,255,0.45);
+  opacity:0;
+  transform:translate3d(0,-120px,60px) scale(0.6);
+  pointer-events:none;
+  will-change:transform,opacity,filter;
 }
 .boot__skip{
   position:absolute;right:var(--gutter);bottom:var(--gutter);
   padding:0.55rem 0.9rem;
-  border:1px solid var(--line);border-radius:var(--radius-pill);
+  border:1px solid var(--line);border-radius:0;
   background:var(--surface-1);color:var(--ink-faint);
   font:600 var(--text-3xs)/1 var(--font-mono);
   letter-spacing:var(--tracking-label);text-transform:uppercase;
@@ -96,10 +167,19 @@ html:not(.js) .boot{display:none!important;}
 .boot__skip:hover{color:var(--ink);border-color:var(--line-strong);}
 @media (pointer:coarse){.boot__skip{min-height:44px;}}
 
+/* Reduced motion: the overlay never shows (boot.js skips it), but if it
+   ever does, freeze the loop — a static line, no pulse. */
+@media (prefers-reduced-motion:reduce){
+  .boot__line,.boot__pulse{animation:none;}
+  .boot__pulse{opacity:0.4;}
+}
+
 /* ── First-paint state of the choreographed reveal.
-      This selector list is duplicated in js/preloader.js and must agree
-      with it exactly: anything hidden here that the handoff does not
-      animate would stay hidden. ─────────────────────────────────── */
+      Split across two handoff owners that must agree with this list
+      together: js/preloader.js crossfades REVEAL_SEL on its timeline,
+      and js/motion.js plays the hero lines kinetically (line masks,
+      power4.out) via playBootReveal. Anything hidden here that neither
+      animates would stay hidden — keep all three in step. ───── */
 html.is-booting .shell--signal .signal-hero__tag,
 html.is-booting .shell--signal .signal-name__line,
 html.is-booting .shell--signal .signal-hero__lede,
@@ -108,7 +188,6 @@ html.is-booting .shell--signal .signal-readout,
 html.is-booting .shell--signal .signal-nav,
 html.is-booting .shell--archive .archive-masthead > *,
 html.is-booting .shell--archive .archive-index,
-html.is-booting .telemetry,
 html.is-booting .site-foot{
   opacity:0;
   transform:translate3d(0,1.25rem,0);

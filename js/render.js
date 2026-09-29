@@ -133,7 +133,12 @@ function transmission(p){
   var links=(p.links&&p.links.length)
     ? '<p class="transmission__links">'+p.links.map(function(l){return link(l);}).join('')+'</p>'
     : '';
-  return '<li class="transmission" id="transmission-'+esc(p.id)+'">'+
+  /* data-theme is the shard's climate: motion.js reads it the instant the
+     lens captures the card and paints --theme / the shader's flood colour
+     with it. Absent on data that never declares one, which leaves the
+     house cyan in place. */
+  return '<li class="transmission" id="transmission-'+esc(p.id)+'"'+
+    (p.theme?' data-theme="'+esc(p.theme)+'"':'')+'>'+
     '<div class="transmission__head">'+
       '<span class="transmission__index" aria-hidden="true">'+esc(p.index)+'</span>'+
       '<h3 class="transmission__code">'+esc(p.code)+'</h3>'+

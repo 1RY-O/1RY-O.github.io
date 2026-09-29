@@ -51,14 +51,13 @@
 <script defer src="vendor/ScrollTrigger-3.12.5.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous"></script>
 <script defer src="vendor/lenis-1.3.26.min.js" integrity="sha384-jqpi9VmOdhyLoLURgjCn7EpnG9BbnHW57ibIZoeaIU+erWDH3k8fQQg0xH2ySjnw" crossorigin="anonymous"></script>
 <!-- Execution order after parsing: data and render are pure string work;
-     quasar and telemetry only define themselves; mode.js registers its
+     quasar only defines itself; mode.js registers its
      DOMContentLoaded init here and therefore renders before motion arms
      against the finished DOM; motion then owns the single frame loop;
      preloader runs last and hands off. -->
 <script defer src="js/data.js"></script>
 <script defer src="js/render.js"></script>
 <script defer src="js/quasar.js"></script>
-<script defer src="js/telemetry.js"></script>
 <script defer src="js/mode.js"></script>
 <script defer src="js/motion.js"></script>
 <script defer src="js/preloader.js"></script>
@@ -67,32 +66,23 @@
 
 <a class="skip-link" href="#stage">Skip to content</a>
 
-<!-- ══════════ BOOT · the acquisition sequence ══════════
-     Displayed only while html.is-booting exists (js/boot.js sets it
-     before first paint when JavaScript is on and motion is allowed;
-     js/preloader.js, Escape, the Skip button or the 5 s failsafe remove
-     it). Every number below it is real: each log line is a promise for a
-     true milestone — fonts resolved, experience rendered, near-viewport
-     images decoded, shader compiled, first frame presented — and the
-     counter never claims more than has actually finished. The log is
-     decorative; the Skip button is the only focusable thing inside. -->
+<!-- ══════════ BOOT · pure-flow acquisition sequence ══════════
+     Abstract by design: a single glowing line that expands and breathes
+     while the real milestones clear underneath (see js/preloader.js).
+     No terminal text, no percentages — the sequence is cinematic,
+     the handoff seamless. Displayed only while html.is-booting exists.
+     The Skip button is the only focusable thing inside. -->
+<!-- Mirror Dimension shattering sequence.
+     preloader.js injects 18 glass shards (clip-path polygons) into
+     [data-boot-shards] plus a droplet into [data-boot-drop]; the flow
+     chamber carries 3D perspective so shards float/rotate in real depth.
+     The line + pulse stay as the honest progress strand underneath. -->
 <div class="boot" data-boot>
-  <div class="boot__panel">
-    <p class="boot__mark">1RY · signal acquisition</p>
-    <ol class="boot__log" data-boot-log>
-      <li data-step><span class="boot__state">[ .. ]</span><span class="boot__task">Parsing document structure</span><span class="boot__ms"></span></li>
-      <li data-step><span class="boot__state">[ .. ]</span><span class="boot__task">Acquiring type matrix</span><span class="boot__ms"></span></li>
-      <li data-step><span class="boot__state">[ .. ]</span><span class="boot__task">Composing experience layers</span><span class="boot__ms"></span></li>
-      <li data-step><span class="boot__state">[ .. ]</span><span class="boot__task">Decompressing asset payload</span><span class="boot__ms"></span></li>
-      <li data-step><span class="boot__state">[ .. ]</span><span class="boot__task">Compiling signal kernel</span><span class="boot__ms"></span></li>
-      <li data-step><span class="boot__state">[ .. ]</span><span class="boot__task">Spooling first frame</span><span class="boot__ms"></span></li>
-      <li data-step><span class="boot__state">[ .. ]</span><span class="boot__task">Signal lock</span><span class="boot__ms"></span></li>
-    </ol>
-    <div class="boot__rail"><span class="boot__fill" data-boot-fill></span></div>
-    <p class="boot__read">
-      <span data-boot-task>Standing by</span>
-      <span class="boot__pct"><span data-boot-pct>0.00</span>%</span>
-    </p>
+  <div class="boot__flow" data-boot-flow aria-hidden="true">
+    <span class="boot__line" data-boot-line></span>
+    <span class="boot__pulse" data-boot-pulse></span>
+    <div class="boot__shards" data-boot-shards></div>
+    <span class="boot__drop" data-boot-drop></span>
   </div>
   <button class="boot__skip" type="button" data-boot-skip>Skip intro</button>
 </div>
@@ -116,6 +106,11 @@
     </button>
   </div>
 </header>
+
+<!-- ══════════ SCHEMATIC · Active Theory brutalist grid.
+     Fixed full-viewport hairlines (css/effects.css), drifted by the
+     single rAF in motion.js at 0.4× scroll speed. Decorative only. -->
+<div class="schematic" aria-hidden="true"></div>
 
 <main id="stage">
 
@@ -188,21 +183,6 @@
   </section>
 
 </main>
-
-<!-- ══════════ TELEMETRY · Signal-only HUD chrome.
-     Decorative by design (aria-hidden): scroll depth mapped into a
-     deterministic coordinate frame, rewritten at 15 Hz from the one
-     frame loop (js/telemetry.js). Shown only when html is in Signal
-     mode with a successful render; parked while the footer is in view. -->
-<div class="telemetry" data-telemetry aria-hidden="true">
-  <span class="telemetry__cell"><b>RA</b><span class="telemetry__val telemetry__val--ra" data-tele="ra">00h00m</span></span>
-  <span class="telemetry__sep">/</span>
-  <span class="telemetry__cell"><b>DEC</b><span class="telemetry__val telemetry__val--dec" data-tele="dec">+00°00′</span></span>
-  <span class="telemetry__sep">/</span>
-  <span class="telemetry__cell"><b>DEPTH</b><span class="telemetry__val telemetry__val--depth" data-tele="depth">0.0%</span></span>
-  <span class="telemetry__sep">/</span>
-  <span class="telemetry__cell"><b>FIELD</b><span class="telemetry__val telemetry__val--field" data-tele="field">INNER</span></span>
-</div>
 
 <!-- ══════════ FOOTER · shared chrome. The link list is rendered from the same
      data object as the experiences; the sentence is static so that a failed
