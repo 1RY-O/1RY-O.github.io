@@ -8,6 +8,12 @@
      attributes on the elements it animates; phase 7 re-tests whether it can be
      removed. connect-src 'none' means the page cannot make a runtime request —
      all content is in js/data.js.
+     This is load-bearing for the renderer, not just hygiene: it is the reason
+     js/quasar.js is raw WebGL2 and not three.js from a CDN. A CDN script tag
+     would be blocked by script-src, and connect-src 'none' would block an ESM
+     import() too — so the library has to be vendored here (vendor/, with SRI,
+     like GSAP and Lenis) or not used at all. See the note at the top of
+     js/quasar.js before re-opening this.
      NOTE: frame-ancestors is deliberately absent — it is ignored in a meta CSP
      and only produces a console error. Framing is blocked by the guard at the
      top of js/boot.js, and set properly in _headers on hosts that can send

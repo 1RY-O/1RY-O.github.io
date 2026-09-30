@@ -465,8 +465,10 @@ main.stage-stack,.shell__inner,.site-foot{position:relative;z-index:2;}
    where the near face catches the studio light, a dark crescent where the
    far face falls away — and the rim picks up the colour of whatever it is
    sitting on. One 26 px layer is re-blurred per frame; that is the entire
-   cost, and it is the only backdrop-filter on the page (the shards
-   deliberately keep none). Native cursor is hidden only on pointer:fine
+   cost, and it is the only backdrop-filter on the live page — the shard
+   field deliberately keeps none once the boot overlay is gone (its shards
+   do refract, but boot.js removes every one of those nodes at handoff).
+   Native cursor is hidden only on pointer:fine
    with motion allowed — touch, keyboard and reduced-motion readers keep
    their system cursor. */
 .cursor-dot{
@@ -482,6 +484,16 @@ main.stage-stack,.shell__inner,.site-foot{position:relative;z-index:2;}
     rgba(255,255,255,0.02) 58%,rgba(255,255,255,0.20) 100%);
   -webkit-backdrop-filter:blur(4px) brightness(1.2) contrast(1.5) saturate(1.35);
   backdrop-filter:blur(4px) brightness(1.2) contrast(1.5) saturate(1.35);
+  /* Powerhouse Overdrive — residency. The lens moves every frame AND
+     re-samples the backdrop every frame, which is the one combination
+     that makes a compositor re-raster the region behind it. Declaring
+     both properties costs exactly one dedicated GPU layer for a 26 px
+     disc and buys the blur back. `contain` keeps its style/layout
+     recalcs inside the disc's own box; deliberately not `contain:paint`,
+     which would clip the two outer bloom shadows. */
+  will-change:transform,backdrop-filter;
+  contain:layout style;
+
   box-shadow:
     inset 0 1px 1px rgba(255,255,255,0.75),
     inset 0 -4px 7px rgba(4,7,14,0.60),
@@ -766,4 +778,176 @@ html.is-portal .cursor-dot{opacity:calc(1 - var(--portal,0));}
   html.is-portal .schematic,html.is-portal .horology{
     transform:none;filter:none;opacity:1;
   }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   IGNITION FLASH · the Active Theory half-second
+   ──────────────────────────────────────────────────────────────────────
+   A project click is not a hover: the interface is struck by the
+   project's own hex and rings. motion.js springs --flash 0→1→0 on the
+   root while --theme still holds the captured hex, so every highlight
+   below answers to those two numbers and nothing else — no class
+   swapping per component, no second colour source.
+   body::before is the one pseudo-element on the page nobody else uses,
+   which makes it a free full-viewport layer. It sits above the content
+   (z 2), under the portal veil (9998) and under the lens (99999), and it
+   is only generated while html.is-flash is on — otherwise it does not
+   exist and costs nothing.
+   ══════════════════════════════════════════════════════════════════════ */
+html.is-flash body::before{
+  content:"";
+  position:fixed;inset:0;z-index:9990;
+  pointer-events:none;
+  background:var(--theme,#7BE7FF);
+  mix-blend-mode:screen;
+  opacity:calc(var(--flash,0) * 0.28);
+}
+/* Hollow type, struck. The stroke takes the hex and the glyphs throw a
+   bloom; text-shadow is cheap precisely because the fill is transparent
+   and clipped away — the glow reads as light around the machining
+   instead of smearing through it. */
+html.is-flash .signal-name,
+html.is-flash .signal-name__line,
+html.is-flash .transmission__code,
+html.is-flash .signal-section__title{
+  -webkit-text-stroke-color:var(--theme,#7BE7FF);
+  text-shadow:0 0 calc(var(--flash,0) * 54px) var(--theme,#7BE7FF),
+              0 0 calc(var(--flash,0) * 14px) rgba(255,255,255,0.55);
+}
+html.is-flash .signal-nav a,
+html.is-flash .chip,
+html.is-flash .status,
+html.is-flash .mode-switch__btn{
+  color:var(--theme,#7BE7FF);
+  border-color:var(--theme,#7BE7FF);
+}
+/* The crystal takes the hit hardest: its rim goes solid hex and the
+   bloom behind it doubles for the length of the strike. */
+html.is-flash .cursor-dot{
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.75),
+    inset 0 -4px 7px rgba(4,7,14,0.60),
+    inset 0 0 0 1px var(--theme,#7BE7FF),
+    0 0 calc(16px + var(--flash,0) * 52px) var(--theme,#7BE7FF),
+    0 0 calc(44px + var(--flash,0) * 130px) var(--theme,#7BE7FF);
+}
+@media (prefers-reduced-motion:reduce){
+  html.is-flash body::before{display:none;}
+}
+/* More contrast: the screen-wide screen layer is the one part of a strike
+   that could lift the text it passes over, so it goes — the stroke, the
+   bloom and the crystal keep the hex. */
+@media (prefers-contrast:more){
+  html.is-flash body::before{display:none;}
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   MYSTERY TOURBILLON · the dial comes unanchored
+   ──────────────────────────────────────────────────────────────────────
+   The iris does not close the horology dial — the dial is thrown at the
+   camera. motion.js injects three concentric rings into one fixed volume
+   (the same way armHorology injects its light, for the same reason: the
+   mechanism does not exist without the event that fires it) and puts
+   html.is-tourbillon on the root. From there CSS owns every frame: each
+   ring is a real 3D body inside one shared perspective(), counter-rotates
+   about its own axes at its own rate, and travels through the focal plane
+   so it blows past the lens instead of merely growing in screen space.
+   Zero per-frame style writes on the main thread: a tear is one class
+   added and one removed.
+   ══════════════════════════════════════════════════════════════════════ */
+.tourbillon{
+  position:fixed;inset:0;z-index:9995;
+  pointer-events:none;
+  perspective:560px;
+  transform-style:preserve-3d;
+  opacity:0;
+}
+.tourbillon__ring{
+  --tb-s:clamp(180px,26vmin,320px);
+  position:absolute;left:50%;top:50%;
+  width:var(--tb-s);height:var(--tb-s);
+  margin-left:calc(var(--tb-s) / -2);
+  margin-top:calc(var(--tb-s) / -2);
+  border-radius:50%;
+  border:1px solid rgba(198,246,255,0.55);
+  border-color:var(--theme,rgba(198,246,255,0.55));
+  box-shadow:0 0 22px rgba(123,231,255,0.35),inset 0 0 30px rgba(123,231,255,0.22);
+  box-shadow:0 0 22px color-mix(in srgb,var(--theme) 45%,transparent),
+             inset 0 0 30px color-mix(in srgb,var(--theme) 28%,transparent);
+  /* Sixty index marks per cage: a conic tooth pattern masked down to an
+     annulus at the rim, so each ring reads as a fitted chapter ring and
+     not as a circle with a border on it. */
+  background:repeating-conic-gradient(from 0deg,
+      rgba(198,246,255,0.5) 0deg 0.42deg,rgba(198,246,255,0) 0.42deg 6deg);
+  background:repeating-conic-gradient(from 0deg,
+      var(--theme,rgba(198,246,255,0.5)) 0deg 0.42deg,
+      rgba(198,246,255,0) 0.42deg 6deg);
+  -webkit-mask-image:radial-gradient(closest-side,
+      transparent 84%,#000 85%,#000 98%,transparent 99%);
+  mask-image:radial-gradient(closest-side,
+      transparent 84%,#000 85%,#000 98%,transparent 99%);
+  opacity:0;
+  transform:translate3d(0,0,var(--tb-z0,-240px))
+    rotateX(var(--tb-rx0,58deg)) rotateY(var(--tb-ry0,-20deg)) rotateZ(0deg);
+  will-change:transform,opacity;
+  -webkit-backface-visibility:hidden;backface-visibility:hidden;
+}
+html.is-tourbillon .tourbillon{opacity:1;}
+html.is-tourbillon .tourbillon__ring{
+  animation:tourbillon-flight var(--tb-dur,1.45s) var(--tb-delay,0s)
+    cubic-bezier(0.76,0,0.24,1) both;
+}
+/* One pair of keyframes, three mechanisms. Every end state is written in
+   that ring's own custom properties: they are substituted before the two
+   transform lists interpolate, so the same animation drives three
+   different bodies in real depth. --tb-z1 crosses the focal plane
+   (perspective is 560px), which is what makes a ring blow past the lens
+   instead of scaling up inside the frame. */
+@keyframes tourbillon-flight{
+  0%{
+    opacity:0;
+    transform:translate3d(0,0,var(--tb-z0,-240px))
+      rotateX(var(--tb-rx0,58deg)) rotateY(var(--tb-ry0,-20deg))
+      rotateZ(0deg) scale(0.84);
+  }
+  14%{opacity:1;}
+  76%{opacity:0.88;}
+  100%{
+    opacity:0;
+    transform:translate3d(0,0,var(--tb-z1,760px))
+      rotateX(calc(var(--tb-rx0,58deg) + var(--tb-rxs,150deg)))
+      rotateY(calc(var(--tb-ry0,-20deg) + var(--tb-rys,400deg)))
+      rotateZ(var(--tb-rzs,110deg)) scale(var(--tb-sc,1.8));
+  }
+}
+/* The cages deliberately disagree. The inner one is flung hardest and
+   first, the outer one lags and rolls the other way — an unanchored
+   tourbillon, not one circle with a rim. */
+.tourbillon__ring:nth-child(1){
+  --tb-s:clamp(126px,17vmin,204px);
+  --tb-z0:-210px;--tb-z1:650px;
+  --tb-rx0:64deg;--tb-ry0:-16deg;
+  --tb-rxs:186deg;--tb-rys:438deg;--tb-rzs:-132deg;
+  --tb-dur:1.32s;--tb-sc:2.1;
+}
+.tourbillon__ring:nth-child(2){
+  --tb-s:clamp(212px,30vmin,352px);
+  --tb-z0:-300px;--tb-z1:780px;
+  --tb-rx0:-48deg;--tb-ry0:26deg;
+  --tb-rxs:-128deg;--tb-rys:-366deg;--tb-rzs:154deg;
+  --tb-dur:1.52s;--tb-delay:0.06s;--tb-sc:1.75;
+}
+.tourbillon__ring:nth-child(3){
+  --tb-s:clamp(306px,46vmin,560px);
+  --tb-z0:-380px;--tb-z1:900px;
+  --tb-rx0:36deg;--tb-ry0:-42deg;
+  --tb-rxs:96deg;--tb-rys:262deg;--tb-rzs:-208deg;
+  --tb-dur:1.70s;--tb-delay:0.13s;--tb-sc:1.6;
+}
+/* A reader who asked for less motion never has these nodes built, and if
+   a stale tear ever leaves the class on, the cages hold still and stay
+   invisible rather than firing on load. */
+@media (prefers-reduced-motion:reduce){
+  html.is-tourbillon .tourbillon__ring{animation:none;opacity:0;}
+  html.is-tourbillon .tourbillon{opacity:0;}
 }

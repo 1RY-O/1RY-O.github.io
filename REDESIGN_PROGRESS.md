@@ -6,7 +6,9 @@ chat is the narrative, this is the record.
 
 - Live site: https://1ry-o.github.io — static, no build step, GitHub Pages ready.
 - Source of truth for every fact: `Pilla_Sri_Sai_Rahul_Resume.pdf` (unmodified).
-- Nothing here has been committed, pushed, or deployed by the redesign work.
+- Committed to `main` as the redesign work lands, phase by phase. The
+  Powerhouse Overdrive battery passed **118/118** before its merge (see the
+  session record below).
 
 ---
 
@@ -402,10 +404,13 @@ The black hole is gone. Six blades: `cos(6a)` corners the aperture into a
 polygon, a 60-tooth `step/fract` term notches its leading edge like a
 wheel, the assembly turns a sixth of a revolution across the crossing, and
 six hairlines of mechanical black ride the blade seams. In the last 14% of
-the travel the void inside the aperture floods with `u_theme` — the screen
-is consumed by the colour of what is about to load. The CSS veil mirrors
-it: the same radius (148% of the corner distance), the same hex on its rim,
-and six seams confined to a thin annulus by a mask that rides the aperture.
+the travel the assembly is ragged at its own scale — the aperture is a
+tear, not a circle. What the blades reveal is **pure black**: the old
+theme-flood seal is gone (see Powerhouse Overdrive §4 below), because a
+flooded hole can never be provably black at the instant the DOM routes.
+The CSS veil mirrors the mechanism: the same radius (148% of the corner
+distance), the same hex on its rim, and six seams confined to a thin
+annulus by a mask that rides the aperture.
 
 ### The dial (`.schematic`)
 
@@ -436,4 +441,189 @@ allowed to exist in two places.
 - `color-mix()` and `backdrop-filter` both degrade by design (paired
   fallbacks / the plain hollow type), but neither fallback path has been
   rendered.
+
+## Powerhouse Overdrive — graphics lift on an untouched DOM (session record)
+
+*Session date: 29 Sep 2026 · The DOM architecture is frozen at `2c5dca9`:
+layout, typography and CSS logic are not rewritten by this pass — only the
+graphics engine's constraints were lifted.*
+
+**The fork, settled first.** The brief authorised "Three.js via CDN **or**
+WebGL2". CDN is not available to this document at any price: the meta CSP is
+`script-src 'self'` with `connect-src 'none'`, which blocks a CDN `<script>`
+*and* an ESM `import()` — so the library would have to be vendored, at
+~339 KB plus a 381 KB core, for a scene that is one triangle and one shader.
+Raw **WebGL2** therefore carries the overdrive: zero new bytes, the CSP
+untouched, the script plan and the boot handshake unreshuffled, and the
+pixel budget still governed from one readable place. If the project ever
+wants the library for real (meshes, glTF, a post chain), it goes into
+`vendor/` with SRI like GSAP and Lenis — never a CDN tag. The decision is
+recorded in `index.html`'s CSP comment and at the top of `js/quasar.js` so
+nobody re-litigates it from memory.
+
+### 1 · Residency (killing DOM lag)
+
+- `.cursor-dot` — `will-change:transform,backdrop-filter` plus
+  `contain:layout style`. It moves every frame *and* re-samples the backdrop
+  every frame, which is the one pairing that makes the compositor re-raster
+  the region behind an element. `contain:paint` deliberately **not** used: it
+  would clip the two outer bloom shadows.
+- `.boot__shard` — added `backface-visibility:hidden` (it already carried
+  `will-change:transform,opacity`). The container keeps `will-change:filter`
+  alone: it is the `transform-style:preserve-3d` chamber, and hinting
+  `transform` on a preserving container risks flattening the formation.
+- `.transmissions.is-volume` — `contain:layout paint`, matching the clip it
+  already has. `will-change:transform` deliberately **not** on the volume:
+  the box is 320 vh tall, so the hint would buy one texture roughly three
+  viewports high for a node that never moves. The nodes that do move — the
+  shards — were already promoted, and that is where the hint pays.
+- Carousel cards already carried `will-change:transform,opacity` and
+  `backface-visibility:hidden`; left exactly as they were.
+
+### 2 · GNS Infinity Track (`galleryStep`)
+
+Idle drift is no longer three unrelated sines sharing a variable name. A
+shard outside the detent travels a **lemniscate of Gerono** —
+`x = cos θ`, `y = ½ sin 2θ` — tilted into its own plane (`orbC`/`orbS`
+precomputed at build time, so the tilt costs no trig per frame) with its
+**Z taken from the same θ**, so the idle state is one continuous 3D curve.
+Two things the sines could not do: a shard rounding the near lobe is
+genuinely nearer the lens than one on the far lobe, and the rate is not
+constant — the crossing of the eight is the fast part of the cycle, which is
+the escapement read, a mechanical train whose members move at different
+speeds without ever separating. Amplitude (22–38 px) stays inside the
+footprint the clipped volume can hold, and `damp` — squeezed to zero by the
+detent — is still what pins a centred card dead still.
+
+### 3 · Twin-dragon plasma void (`js/quasar.js`, rewritten)
+
+Context is requested `webgl2` → `webgl` → CSS core, and **the shader source
+stays GLSL ES 1.00 on purpose**: one set of bytes compiles on both contexts,
+so there is no second source to drift out of sync and the WebGL 1 path keeps
+every pixel of the design. `data-webgl-ctx` records which context was
+reached; no rule keys off it.
+
+- `vnoise3`/`fbm3` — real 3D value noise. The 2D fbm could not carry a
+  vortex: a vortex needs a third axis so neighbouring depth planes disagree,
+  and that disagreement — not blur, not opacity — is what reads as volume.
+- `dragon()` — a vortex sampled in its own cylindrical domain: the angle
+  around the axis is sheared by depth and time, so the noise is wound into
+  filaments and the column turns as a body while its surface boils. A ridged
+  `|n|` term gives threads instead of blobs, a two-arm term folds them into a
+  spiral, an exponential throat makes the funnel. `dir` alone makes the pair
+  opposing — the dragons counter-rotate, either side of the accretion core.
+- `plasma()` — one march evaluates **both** dragons at the same samples, so
+  they interleave and occlude in a single accumulation, and a sample outside
+  a dragon's radius costs one dot and one compare instead of a whole noise
+  octet. That early reject — not a smaller volume — is what pays for it. Each
+  depth plane is scaled slightly further inward, so the volume has real
+  parallax against the pointer instead of sliding as one sheet.
+- A domain-warped dust bed sits behind them, so the void is never flat black
+  in the gaps between the dragons.
+- **Climate hook:** `u_theme`/`u_themeI` drive colour *and* structure — `turb`
+  tightens the filaments while the `bloom` gain raises the emission, so a
+  capture excites the void rather than recolouring it. In JS the intensity
+  runs on a **damped spring (ζ ≈ 0.32) instead of a lerp** and is allowed to
+  overshoot past 1 into the shader; that overshoot *is* the detonation. A
+  fresh hex also kicks the spring's velocity, so the bloom leads the DOM's
+  colour change instead of chasing it.
+- **Cost control, in three places:** compile-time `#define VOL_STEPS` /
+  `VOL_OCT` picked by tier at `warm()` (renderer string, buffer area, core
+  count); a **tier ladder** at link time (a driver that cannot unroll a 7-tap
+  march is offered 4-tap, then 3-tap, before it is offered the CSS core); and
+  a **frame governor** that walks the DPR cap down in quarter-steps after 90
+  sustained slow frames and back up after 240 fast ones. The governor spends
+  pixels, never recompiles — a resize costs one re-raster, a recompile is a
+  stall. Every loop bound in the shader is a literal or a `#define`, so no
+  driver is ever asked to count a loop it cannot count.
+
+### 4 · Mystery tourbillon portal (click)
+
+- **Active Theory flash** — `openPortal` paints the theme and springs
+  `--flash` 0→1→0 on the root over ~0.7 s. `body::before` — the one
+  pseudo-element on the page nobody else used — becomes a screen-blended hex
+  sheet; the hollow type's stroke takes the hex and throws a bloom; the nav,
+  chips, status pills and the crystal rim take it too. Suppressed under
+  `prefers-reduced-motion` and `prefers-contrast:more`, because the sheet is
+  the one part of a strike that could lift the text it passes over.
+- **Counter-rotation** — three concentric cages injected into `body` the way
+  `armHorology` injects its light (the mechanism does not exist without the
+  event that fires it), then `html.is-tourbillon` hands it to CSS: one
+  `@keyframes`, three sets of custom properties, each cage with its own axes,
+  direction, duration and delay, travelling through a 560 px `perspective()`
+  volume past the focal plane so it blows by the lens instead of scaling
+  inside the frame. A tear is one class added and one removed — zero
+  per-frame style writes per shard.
+- **Spaghettification and route-on-black** — the plasma is marched through
+  the portal-warped field, so it is already falling when the tear opens; the
+  aperture edge is now perturbed by the fbm, which makes it a rip and not a
+  circle. Inside the blades is `vec3(0.0)`: the old hex-flood seal is gone
+  and the hex stays on the rim plus one blackbody lip, where accreting
+  material would actually sit. After the readability floor and the vignette —
+  both of which add or scale and would leave a residual grey — comes
+  `col *= 1 − smoothstep(0.82, 0.985, pt)`, which drives the frame to exactly
+  zero. That line is why routing the DOM at `t = 1` is a property of the
+  shader rather than a hope about the iris radius.
+
+### Contract audit
+
+`window.PORTFOLIO_QUASAR` is compatible as shipped: `warm` (still resolves
+`'webgl'`/`'css'` for the boot milestone), `tick`, `setDepth`, `setPointer`,
+`setFocus`, `setReveal`, `fireImpact`, `setImpactT`, `setPortal`,
+`portalValue`, `setTheme`, `mode`. No timing entered the module —
+`u_portalT` and `u_impactT` are still written straight from motion.js's
+tweens. quasar still owns no rAF, still renders nothing in Archive, still
+falls to the CSS core on every failure path, and `html[data-webgl="on"]`
+means exactly what it meant before.
+
+### Verification — Phase 3 battery (30 Sep 2026)
+
+**118 checks · 118 passed · 0 failed — VERDICT PASS** (91.4 s), then merged
+into `main`. The battery is source-level *and* runtime: it compiles every
+tier of the ladder against the real driver, then drives the shipped page over
+CDP and reads pixels, uniforms, draw counts and DOM state.
+
+| Phase | Checks | Phase | Checks |
+|---|---|---|---|
+| static contract | 22 ✅ | click (flash/portal/route) | 17 ✅ |
+| env + boot | 9 ✅ | fps + residency | 9 ✅ |
+| compile + landed tier | 14 ✅ | reduced-motion | 10 ✅ |
+| ambient pixels | 9 ✅ | no-GL | 7 ✅ |
+| climate hook | 7 ✅ | contrast | 3 ✅ |
+| portal blackout | 6 ✅ | archive | 5 ✅ |
+
+**The one production fix.** The software-renderer sniff read `gl.RENDERER`,
+which Chrome masks to `"WebKit WebGL"`, so SwiftShader never matched and the
+heaviest tier `[7,3]` ran at `u_quality=1` on a CPU rasteriser (~1.8 fps,
+mean RGB 134/157/186 — a white-out). `js/quasar.js` now appends
+`WEBGL_debug_renderer_info.UNMASKED_RENDERER_WEBGL` inside a `try/catch`
+before the regex. Result: landed tier **[3,2]**, **u_quality 0.25**, ambient
+mean **66/83/106** with luma **p05 24.7 / p95 192.5**, dragon lobes at
+89.6/122.2 against a far corner of 25.9. The tier ladder existed for exactly
+this case; it was just never reached.
+
+**Route-on-black, proven three ways:** the source ordering (`col *=` blackout
+after the readability floor and the vignette, with nothing that adds light
+after it), `u_portalT = 1` → every pixel exactly 0 (max channel `[0,0,0]`,
+mean `[0,0,0]`), and a real click whose navigation is intercepted at the
+instant of routing — frame black, `u_portalT` 1.000, `--portal` monotonic
+`[0, 0.015, 0.037, 0.938, 1]`, `--flash` peaking **0.906**, three cages, and
+the 4.5 s failsafe releasing the aborted route with the page intact.
+
+**Climate:** hex reaches `u_theme` exactly, `u_themeI` peaks **1.082** (the
+documented spring overshoot past 1), frame mean R 70.7 → 163.0, and release
+cools it back to 69.7.
+
+**Hostile:** reduced-motion never creates a GL context; no-GL settles
+`mode()` → `'css'` on the preloader's own clock; contrast suppresses the
+strike sheet (stroke `rgb(123,231,255)`); archive mounts the canvas but
+issues **0 draws in 2 s**.
+
+**Recorded deviations.** 60 FPS is asserted as frame *cost*, not frame time
+(p95 483 ms on SwiftShader — a GPU question this environment cannot answer);
+`.transmissions.is-volume` still carries no `will-change` (320 vh box, see
+§1); the live sapphire lens node is absent under headless because it is built
+only on `pointer:fine`. `gsap.ticker.lagSmoothing(0)` was used **for
+measurement only** so a 1.5 s crossing could complete at software frame
+rates — no shipped file was changed by it.
 

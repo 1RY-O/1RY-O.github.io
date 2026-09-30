@@ -497,12 +497,18 @@ function buildGallery(){
       w:r.width,h:r.height,
       dock:galVol.t+gy/100*galVol.h+r.height*0.5-vh*0.5,  /* scroll Y where it centres */
       ph:i*1.79+0.6,
-      axA:15+(i*7)%11,axB:9+(i*5)%7,
-      ayA:19+(i*11)%13,ayB:7+(i*3)%5,
+      /* GNS Infinity Track: one idle figure-eight per shard. orbR is its
+         half-width, orbW how fast the shard travels it, orbC/orbS the
+         cosine and sine of the tilt of its own plane (precomputed — the
+         drift must not spend trig on the tilt every frame), and az how
+         far it leans in depth. The footprint stays inside the old sine
+         pair's (~22-38 px) because the volume is clipped to the shell's
+         measure. */
+      orbR:22+(i*13)%17,
+      orbW:0.115+(i%3)*0.021,
+      orbC:Math.cos((i%6)*0.5236),orbS:Math.sin((i%6)*0.5236),
       az:520+(i*211)%420,
-      sxA:0.31+(i%3)*0.07,sxB:0.83+(i%2)*0.11,
-      syA:0.24+((i+1)%4)*0.05,syB:0.67+(i%3)*0.09,
-      sz:0.19+(i%2)*0.06,
+      sxA:0.31+(i%3)*0.07,
       hot:0,want:0,dist:false,
       dir:(i%2)?-1:1,                          /* which flank it swings from */
       /* The volume is clipped to the shell's measure, so the flank a
@@ -562,10 +568,28 @@ function galleryStep(now){
        dead in its slot — the click of a lever, not a float past. ─────── */
     var det=1-Math.min(1,Math.abs(raw-1)*13);
     var damp=(1-0.55*app)*(1-rec.hot)*(1-past*0.9)*(1-det*det*0.85);
-    /* ── zero gravity: three out-of-phase sines per shard ────────────── */
-    var dx=(Math.sin(t*rec.sxA+rec.ph)*rec.axA+Math.sin(t*rec.sxB+rec.ph*2.3)*rec.axB)*damp;
-    var dy=(Math.cos(t*rec.syA+rec.ph*1.7)*rec.ayA+Math.sin(t*rec.syB+rec.ph*0.9)*rec.ayB)*damp;
-    z+=Math.sin(t*rec.sz+rec.ph*0.6)*rec.az*damp*(1-past);
+    /* ── GNS Infinity Track: idle travel on a lemniscate ───────────────
+       A shard that is not locked in the detent is never parked, it is
+       travelling. The path is Gerono's figure-eight —
+         x = cos θ,   y = ½ sin 2θ
+       tilted into this shard's own plane and given a Z component taken
+       from the same θ, so the idle state is one continuous 3D curve
+       rather than three unrelated sines sharing a variable name. Two
+       consequences the old drift did not have: a shard rounding the near
+       lobe is genuinely nearer the lens than one on the far lobe, and
+       the rate is not constant — the crossing of the eight is the fast
+       part of the cycle, which is the escapement read, a mechanical
+       train whose members move at different speeds while never
+       separating.
+       Amplitude stays inside the footprint the clipped volume can hold
+       (see the toMid note in buildGallery), and damp — which the detent
+       squeezes to zero — is what pins a centred card dead still. */
+    var th=t*rec.orbW+rec.ph;
+    var ox=Math.cos(th)*rec.orbR;
+    var oy=Math.sin(th*2.0)*rec.orbR*0.5;
+    var dx=(ox*rec.orbC-oy*rec.orbS)*damp;
+    var dy=(ox*rec.orbS+oy*rec.orbC)*damp;
+    z+=Math.sin(th)*rec.az*0.6*damp*(1-past);
     if(z>PERSP*0.62){z=PERSP*0.62;}
     var k=PERSP/(PERSP-z);                       /* pinhole scale          */
     /* ── wandering hour: the slab rides an invisible carousel. It enters
@@ -802,12 +826,67 @@ function onPortalClick(e){
   e.stopPropagation();
   openPortal(a.href,card.getAttribute('data-theme'));
 }
+/* ── Ignition flash + mystery tourbillon ──
+   The instant a transmission is intercepted two things happen in the
+   DOM, and both are CSS-owned so a tear costs one style write per frame
+   on the root and nothing per shard:
+     · --flash is sprung 0→1→0 while --theme still holds the project's
+       hex, which strikes the hollow type, the nav, the chips and the
+       crystal in that exact colour (effects.css);
+     · html.is-tourbillon releases the horology dial — three concentric
+       cages counter-rotate in real perspective and are thrown past the
+       lens while the shader opens the hole beneath them.
+   The cages are injected here rather than shipped in index.html for the
+   same reason as the horology light: the mechanism does not exist
+   without the event that fires it. They are built once on the first
+   interception and reused — the flight restarts because closePortal()
+   removes the class that runs it. */
+var tb={built:false,wrap:null};
+var flash={v:0,tw:null};
+function buildTourbillon(){
+  if(tb.built||reduced.matches){return;}
+  var wrap=document.createElement('div');
+  wrap.className='tourbillon';
+  wrap.setAttribute('aria-hidden','true');
+  wrap.innerHTML='<i class="tourbillon__ring"></i>'+
+    '<i class="tourbillon__ring"></i>'+
+    '<i class="tourbillon__ring"></i>';
+  try{document.body.appendChild(wrap);tb.wrap=wrap;tb.built=true;}
+  catch(e){}
+}
+function ignitionFlash(){
+  if(reduced.matches){return;}
+  buildTourbillon();
+  root.classList.add('is-flash','is-tourbillon');
+  var f={v:0};
+  function write(){try{root.style.setProperty('--flash',f.v.toFixed(3));}catch(e){}}
+  write();
+  if(!G){return;}
+  if(flash.tw){try{flash.tw.kill();}catch(e){}}
+  try{
+    flash.tw=G.timeline({onComplete:function(){
+      flash.tw=null;
+      root.classList.remove('is-flash');
+      try{root.style.setProperty('--flash','0');}catch(e){}
+    }})
+    .to(f,{v:1,duration:0.09,ease:'power4.out',onUpdate:write})
+    .to(f,{v:0,duration:0.62,ease:'power2.in',onUpdate:write});
+  }catch(e){
+    root.classList.remove('is-flash');
+  }
+}
+function quenchIgnition(){
+  if(flash.tw){try{flash.tw.kill();}catch(e){}flash.tw=null;}
+  root.classList.remove('is-flash','is-tourbillon');
+  try{root.style.setProperty('--flash','0');}catch(e){}
+}
 function openPortal(href,hex){
   portal.on=true;
   /* The void this tear opens is the project's own colour: the climate
      ignited by the capture is locked in for the crossing, so the iris
      floods with the same hex the lens took off the card. */
   if(hex){paintTheme(hex);}
+  ignitionFlash();
   root.classList.add('is-portal');
   root.style.setProperty('--portal','0');
   if(lenis){try{lenis.stop();}catch(e){}}
@@ -838,6 +917,7 @@ function closePortal(){
   window.clearTimeout(portal.timer);
   portal.on=false;
   root.classList.remove('is-portal');
+  quenchIgnition();
   /* The crossing failed (sandboxed preview, blocked target): the
      environment returns to ambient light and the shard under the orb is
      free to ignite the climate again on the next frame. */

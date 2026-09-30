@@ -229,6 +229,16 @@ html[data-webgl="on"] .signal-stage__glow{opacity:0.8;}
   /* The volume is the shards' stage: a slab flying past the floor of the
      volume must not bleed into the constellation section below it. */
   overflow:hidden;overflow:clip;
+  /* Powerhouse Overdrive — residency for the 3D carousel.
+     `contain` matches the clip this box already has and lets the
+     rasteriser cull a 320 vh box instead of tracking all of it.
+     will-change:transform is deliberately NOT put on this box: it is
+     three viewports tall, so the hint would ask the compositor for one
+     texture roughly 3× the framebuffer for a node that never moves. The
+     nodes that do move — the shards — already ride their own GPU layers
+     (will-change:transform,opacity + backface-visibility:hidden below),
+     which is where the promotion pays. */
+  contain:layout paint;
 }
 .transmissions.is-volume > .transmission{
   position:absolute;margin:0;

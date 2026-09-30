@@ -133,6 +133,12 @@ html:not(.js) .boot{display:none!important;}
     0 0 14px rgba(123,231,255,0.25),inset 0 0 12px rgba(234,243,255,0.12);
   clip-path:var(--sh-clip);
   opacity:var(--sh-opacity,0.9);
+  /* Powerhouse Overdrive: the shards are transformed on every axis by the
+     boot rAF and already declare will-change:transform,opacity, so they
+     own their layers — the missing half is backface-visibility, which
+     stops the rasteriser preparing a front and a back face for a plane
+     that spends the whole sequence tumbling. */
+  -webkit-backface-visibility:hidden;backface-visibility:hidden;
   transform:
     translate3d(var(--sh-x,0px),var(--sh-y,0px),var(--sh-z,0px))
     rotateX(var(--sh-rx,0deg))
