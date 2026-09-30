@@ -16,11 +16,12 @@
 /* ── Masthead: identity and record side by side; this is a title page,
       not a hero. ── */
 .archive-masthead{
-  display:grid;gap:var(--space-m);
+  display:grid;gap:var(--grid-row-gap);
   padding-bottom:var(--space-l);border-bottom:1px solid var(--line-strong);
 }
+/* 7 + 5 of the twelve-column field: the statement carries, the facts file. */
 @media (min-width:1000px){
-  .archive-masthead{grid-template-columns:minmax(0,7fr) minmax(0,5fr);column-gap:var(--space-xl);align-items:start;}
+  .archive-masthead{grid-template-columns:var(--grid-major) var(--grid-minor);column-gap:var(--grid-col-gap);align-items:start;}
 }
 .archive-kicker{color:var(--ink-ghost);}
 .archive-name{font-size:var(--text-display);font-weight:600;letter-spacing:-0.04em;margin:var(--space-2xs) 0 0;}
@@ -78,9 +79,9 @@
 .case-file__category{
   font:500 var(--text-2xs)/1.4 var(--font-mono);letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-ghost);
 }
-.case-file__body{display:grid;gap:var(--space-m);}
+.case-file__body{display:grid;gap:var(--grid-row-gap);}
 @media (min-width:1000px){
-  .case-file__body{grid-template-columns:minmax(0,7fr) minmax(0,5fr);column-gap:var(--space-xl);align-items:start;}
+  .case-file__body{grid-template-columns:var(--grid-major) var(--grid-minor);column-gap:var(--grid-col-gap);align-items:start;}
 }
 .case-file__summary{margin:0;max-width:var(--measure);color:var(--ink-muted);}
 .case-file__links{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-xs) var(--space-m);font-size:var(--text-sm);}

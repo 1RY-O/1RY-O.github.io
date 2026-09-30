@@ -627,3 +627,127 @@ only on `pointer:fine`. `gsap.ticker.lagSmoothing(0)` was used **for
 measurement only** so a 1.5 s crossing could complete at software frame
 rates — no shipped file was changed by it.
 
+
+## Phase 1 — Design foundation: typography, grid, glass (session record, 30 Sep 2026)
+
+The engine was locked at Phase 3; this phase is the layer the engine has to
+carry type on. Scope was CSS only — `css/tokens.css`, `css/signal.css`,
+`css/archive.css`, 89 insertions across three files, no JS file opened.
+`js/quasar.js` is byte-identical to HEAD (`md5 ec3efd8f…`, asserted in the
+battery rather than promised), no class name was removed or renamed, and the
+approved palette tokens are untouched. The phase adds structure to the
+token surface; it does not restyle anything already composed.
+
+### 1 · A scale with a floor and a ceiling
+
+`--text-display`, `--text-hero` and `--text-cinema` already existed and are
+kept verbatim — the 13rem hero cap is the design's own voice, so the hero
+still measures 60.6 / 115.7 / 206.4 px at 360 / 768 / 1440 (middle term
+`0.75rem + 13.5vw`, cap not yet reached at 1440). What was missing was
+everything *below* display: a prose scale has to be continuous from the
+monument down to the 11px mono label, and the shipped CSS was mixing
+rem literals in that band. Added `--text-3xs … --text-3xl`, every step a
+`clamp()` on rem so browser zoom keeps working, measured as monotonic at
+three viewports and landing on real component boxes: h2 28.8 → 39 → 52,
+case-file prose 15.1 → 15.9 → 17, eyebrow and mono label 11 → 11.5 → 12.
+
+Two extra leading registers, because the scale reaches 13rem: `--leading-hero`
+(0.9) — at display sizes even 1.04 floats a four-word line into a stack of
+words instead of one mass — and `--leading-loose` (1.72) for Archive
+long-measure prose. `h1`–`h4` and `p` are now bound to the scale in the reset
+so a component that sets no size is still on the ladder, and `.eyebrow` /
+`.tech-label` share one rule: same role, two names, one measurement.
+
+### 2 · The twelve-column field, named
+
+The Archive's editorial split was a literal `minmax(0,7fr) minmax(0,5fr)`
+copy-pasted into two rules. It is now a contract: `--grid-cols:12` names the
+field, `--grid-major` / `--grid-minor` are the shipped 7 + 5 reading of it,
+`--grid-col-gap` / `--grid-row-gap` are the gutters, and `--grid-rhythm`
+(1.5rem) is one line of prose at `--text-base`/`--leading-body`, so the
+vertical cadence is measured in whole lines. The `minmax(0,…)` guard stays on
+the component side deliberately: a long mono part number or a bench figure is
+otherwise enough to blow out a track.
+
+Measured after the swap: masthead plus all four case-file bodies split at
+exactly **1.40** track ratio (7/5) — five splits, none within 4% of drift —
+and the column gutter resolves to 110.4px, identical to `--space-xl` at
+1440. `--measure` still resolves to its own definition: the summary's
+`max-width` computes to 707.824px = 66 × 10.72px, 10.72px being one `ch` of
+the prose face at the rendered size — verified against a live `1ch` probe
+rather than against the unit string, because Chrome resolves `ch` to px at
+computed-value time.
+
+### 3 · Glass at a measured alpha
+
+A panel over live plasma has to survive the brightest frame the shader can
+emit, because nothing in the compositor guarantees a dark backdrop. Sampling
+the worst case (frame max 255,255,255) through candidate fills:
+
+| fill alpha | `--ink` | `--ink-muted` | verdict |
+| --- | --- | --- | --- |
+| 0.84 | 10.96:1 | 7.26:1 | AAA body, AAA muted |
+| 0.70 | 6.46:1 | 4.28:1 | AA body, muted fails |
+| 0.94 | — | — | backdrop effectively gone |
+
+`--glass-bg` is therefore `rgba(10,15,27,0.84)`: the floor for anything
+ carrying prose, still translucent enough that the plasma reads *through* the
+panel rather than being painted over it. `--glass-bg-lift`, `--glass-border`
+and `--glass-border-lift` name the hovered state and the flat hairline so a
+panel can state both without repeating a literal, and the elevation ladder
+`--shadow-1/2/3` (with `--shadow-elevation:var(--shadow-2)` as the floating
+reference step) is shadow only — no rounding, no glow, no blur filter
+smuggled in, which the battery checks by string.
+
+Re-measured off rendered pixels rather than arithmetic: sampling the 21,420
+pixels of the nav's interior over live plasma, `--ink` holds **13.56:1** and
+the nav's own link colour holds **8.99:1** at the 99th-percentile luma
+pixel. The hottest single pixel inside the panel was `rgb(44,54,65)` — the
+milled edge, where no text can sit.
+
+**A defect the battery caught.** `.signal-nav` shipped two `background:`
+shorthands; the second one, carrying only image layers, resets
+`background-color` to transparent. It was invisible before because the
+padding-box gradient was opaque at 0.94. At a 0.84 fill it would not be: the
+1px border ring is painted only by `--glass-edge`, whose alpha dies toward
+the bottom-right, so plasma would show through the edge of the bar with
+nothing behind it. The rule now uses longhands — `background-color` under
+every layer, taking the clip of the last one (`border-box`) — so the fill
+spans the ring and the milled edge still draws on top. `effects.css` keeps
+its shorthand idiom, where the surface is opaque and the ring cannot leak.
+
+### Verification — Phase 1 battery (30 Sep 2026)
+
+Scratch harness `/tmp/pw/verify-type.mjs` plus `/tmp/pw/overflow.mjs`: zero
+npm dependencies, Node 22 `WebSocket` driving Chrome over CDP, a 20-line Node
+server serving the repo at `127.0.0.1` so the page runs under its real
+`<meta>` CSP. Static phase first (brace balance, token completeness, no
+`var()` without a declaration or a fallback, class-name integrity vs HEAD,
+`js/quasar.js` md5), then runtime, then pixels.
+
+**57/57** signal, **35/35** archive, **23/23** sweep — 115 checks, 0 failures.
+The sweep walks every element at 360 / 768 / 1440 in both routes and asserts
+three separate things: the document does not scroll sideways, nothing sits
+past the frame with no ancestor willing to clip or scroll it (the root uses
+`overflow-x:clip`, which *hides* overflow, so scrollWidth alone proves
+nothing), and no text box is cut by its own box. The nav stays one row at
+every width, and the Archive's benchmark table degrades to its own scroller
+(`[auto]`, 444px of table inside 324px) instead of widening the page.
+
+Four failures were the harness's fault, and each was fixed in the harness, not
+papered over in the CSS: a `var(--gallery-height,320vh)` fallback is a
+deliberate hook, not a dangling reference; Chrome resolves `ch` to px at
+computed-value time, so the `--measure` check had to compare against a live
+`1ch` probe instead of a unit string; the `aria-live` announcer is a
+`.sr-only` 1px clipped box and must not be measured as a text box; and the
+frame-escape check walked only the immediate parent, so it flagged table
+cells whose scroller is `.bench-wrap` two levels up. Descendants of an SVG
+viewport are clipped by that viewport and are excluded for the same reason.
+
+**Recorded deviations.** The contrast measurement is taken at 1440 only, and
+the luma samples come from a SwiftShader frame — a software renderer's
+plasma, conservative but not identical to a GPU's. `--glass-bg` moved the nav
+fill from 0.94 to 0.84 alpha and its hairline from 0.08 to 0.16: both
+deliberate, both noted above. `.transmissions.is-volume` still carries no
+`will-change` (see §1), and no token in this phase is consumed by JS — the
+`--par-*`, `--sh-*` and `--cam-*` properties remain motion.js's own.

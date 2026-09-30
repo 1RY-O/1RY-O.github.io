@@ -78,6 +78,11 @@
   --leading-tight:1.04;
   --leading-snug:1.24;
   --leading-body:1.62;
+  /* Two more registers, because the scale reaches 13rem. At display sizes
+     1.04 floats the lines apart into a stack of words rather than one
+     mass; editorial prose at 66ch wants more air than body copy gets. */
+  --leading-hero:0.9;      /* --text-display, --text-hero, --text-cinema */
+  --leading-loose:1.72;    /* Archive long-measure prose, pull quotes */
   --tracking-display:-0.03em;
   --tracking-label:0.16em;
 
@@ -111,6 +116,24 @@
   --measure-tight:52ch;
   --head-h:3.5rem;
 
+  /* ── Editorial grid — the Archive's column field ────────────────────
+     The Archive is a twelve-column field read as 7 + 5: prose carries the
+     major track, facts and evidence take the minor one. --grid-cols names
+     the field the splits are taken from; --grid-major / --grid-minor are
+     the shipped 7:5 reading of it and are what the rules actually consume.
+     The minmax(0,…) wrapper has to stay on the component side: a long mono
+     part number or a bench figure is otherwise enough to blow out a track.
+     --grid-rhythm is the baseline the vertical cadence is measured in —
+     body copy at --text-base on --leading-body lands at ~1.5rem per line,
+     so one rhythm step is exactly one line of prose. */
+  --grid-cols:12;
+  --grid-major:minmax(0,7fr);
+  --grid-minor:minmax(0,5fr);
+  --grid-col-gap:var(--space-xl);
+  --grid-row-gap:var(--space-m);
+  --grid-rhythm:1.5rem;
+  --grid-edge:var(--gutter);
+
   /* ── Motion. Two personalities, one vocabulary. ─────────────────── */
   --ease-celestial:cubic-bezier(0.22,1,0.36,1);   /* signal: expansive */
   --ease-drift:cubic-bezier(0.4,0.02,0.2,1);      /* signal: ambient   */
@@ -139,6 +162,39 @@
                inset 1px 0 0 rgba(234,243,255,0.05),
                inset 0 0 0 1px rgba(0,0,0,0.22);
   --glass-drop:0 24px 48px -40px rgba(0,0,0,1);
+
+  /* ── Glass fill and edge ─────────────────────────────────────────────
+     --glass-edge above is the milled *edge*; these are the *fill* and the
+     flat hairline, so a panel that carries prose can state both without
+     repeating a literal.
+
+     The alpha is chosen from measured contrast, not taste. A panel over
+     live plasma has to survive the brightest pixel the shader can emit —
+     frame max 255,255,255, p95 luma 192.5 (final verification battery) —
+     because nothing in the compositor guarantees a dark frame behind it.
+     Composited over that worst case:
+        0.84  --ink 10.96:1  --ink-muted 7.26:1   AAA body, AAA muted
+        0.70  --ink  6.46:1  --ink-muted 4.28:1   AA body, fails muted
+     0.84 is therefore the floor for anything with prose in it, and it is
+     still translucent enough that the plasma reads *through* the panel
+     rather than being painted over. At 0.94 (what the nav used before) the
+     backdrop was effectively gone. */
+  --glass-bg:rgba(10,15,27,0.84);          /* --surface-1 at the legible floor */
+  --glass-bg-lift:rgba(13,20,36,0.90);     /* hovered / focused panel */
+  --glass-border:rgba(234,243,255,0.16);   /* --line, named for panels */
+  --glass-border-lift:rgba(123,231,255,0.40);
+
+  /* ── Elevation — shadow only. No rounding, no glow, no parallax ──────
+     Three steps and no more: one for elements sitting in the page flow,
+     one for floating chrome, one for a panel that has genuinely left the
+     page. --shadow-2 is the drop the floating nav shipped with, kept as
+     the ladder's reference step so nothing drifts. Glass panels pair
+     these with --glass-hair (the inset lights), which does the milled
+     thickness; the drop alone would read as a photograph of a panel. */
+  --shadow-1:0 10px 22px -18px rgba(0,0,0,0.90);
+  --shadow-2:0 18px 40px -28px rgba(0,0,0,0.92);
+  --shadow-3:0 34px 70px -34px rgba(0,0,0,1),0 4px 10px -6px rgba(0,0,0,0.85);
+  --shadow-elevation:var(--shadow-2);
 
   /* ── Depth ──────────────────────────────────────────────────────── */
   --z-backdrop:0;
@@ -179,7 +235,17 @@ h1,h2,h3,h4{
   margin:0;
   text-wrap:balance;
 }
-p{margin:0 0 1em;}
+/* The fluid scale bound to the elements themselves, not only to the
+   components. Every heading the renderers emit carries a class that already
+   states its size, and a class outranks an element selector — so this is the
+   floor for anything hand-written (the no-JS fallback, a future prose
+   section), not a restyling of what is already composed. h1 takes the hero
+   leading because a display line must not float apart. */
+h1{font-size:var(--text-3xl);line-height:var(--leading-hero);}
+h2{font-size:var(--text-2xl);}
+h3{font-size:var(--text-xl);}
+h4{font-size:var(--text-lg);}
+p{margin:0 0 1em;font-size:var(--text-base);line-height:var(--leading-body);}
 ul,ol{margin:0;}
 img,picture,canvas,svg{display:block;max-width:100%;}
 a{color:inherit;}
@@ -212,8 +278,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;}
 }
 .skip-link:focus{transform:translateY(0);}
 
-/* ── Small uppercase monospace label ── */
-.eyebrow{
+/* ── Small uppercase monospace label ──
+   `.tech-label` is the same role under the name the design notes use; both
+   names ride one rule so the role cannot drift between the two modes. */
+.eyebrow,.tech-label{
   margin:0;
   font:600 var(--text-2xs)/1.4 var(--font-mono);
   letter-spacing:0.22em;text-transform:uppercase;color:var(--ink-faint);

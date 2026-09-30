@@ -187,11 +187,19 @@ html[data-webgl="on"] .signal-stage__glow{opacity:0.8;}
   position:sticky;bottom:var(--space-2xs);z-index:var(--z-nav);
   display:flex;flex-wrap:wrap;justify-content:center;gap:0.2rem;
   width:max-content;max-width:100%;margin-inline:auto;padding:0.35rem;
-  border:1px solid var(--line-dim);border-radius:0;background:rgba(10,15,27,0.82);
-  background:
-    linear-gradient(rgba(10,15,27,0.94),rgba(10,15,27,0.94)) padding-box,
-    var(--glass-edge) border-box;
-  box-shadow:var(--glass-hair),0 18px 40px -28px rgba(0,0,0,0.9);
+  border:1px solid var(--glass-border);border-radius:0;
+  /* Longhands, not the `background:` shorthand the buttons in effects.css
+     use: a shorthand with only image layers resets background-color to
+     transparent, which leaves the 1px border ring painted by --glass-edge
+     alone — near-zero alpha at the bottom-right — and the plasma shows
+     through the edge of the bar with nothing behind it. background-color
+     sits under every layer and takes the clip of the last one (border-box),
+     so the fill now spans the ring and the milled edge still draws on top. */
+  background-color:var(--glass-bg);
+  background-image:linear-gradient(var(--glass-bg),var(--glass-bg)),var(--glass-edge);
+  background-origin:padding-box,border-box;
+  background-clip:padding-box,border-box;
+  box-shadow:var(--glass-hair),var(--shadow-elevation);
 }
 .signal-nav a{
   display:inline-flex;align-items:center;min-height:44px;padding:0.6rem 1.1rem;
