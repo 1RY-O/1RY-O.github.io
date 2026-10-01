@@ -57,15 +57,39 @@ html[data-webgl="on"] .signal-stage__glow{opacity:0.8;}
   max-width:var(--container);margin:0 auto;
   padding:clamp(6rem,16vh,12rem) var(--gutter) var(--space-3xl);
   display:grid;gap:var(--space-2xl);
+  /* The narrow column is stated as minmax(0,1fr) and not left implicit,
+     because an implicit track is an `auto` track, and an `auto` track takes
+     its floor from its items' min-content — which is how a single 56-character
+     tagline, or one row of unwrapping nav labels, inflates the column, the
+     page and the whole composition at 360 px: the reader gets a horizontal
+     scroll bar and a monolith that starts off-screen. A zero floor means the
+     track is the width the viewport gave it, and anything genuinely too wide
+     for it scrolls inside the box that owns it (the pill does exactly that
+     below). Same guard --grid-major and --grid-minor already carry. */
+  grid-template-columns:minmax(0,1fr);
 }
+/* The wide field, and the imbalance taken out of it.
+      The field is the token contract, not a literal: --grid-cols names it,
+      and the gutter is the Archive's 7 + 5 gutter — one --grid-col-gap
+      between two tracks — divided by four, because a twelve-track field
+      spends eleven of them. At 1440 that lands on 27.6 px between tracks,
+      11 tracks of void in the middle of the page, and no column anywhere
+      that a reader could mistake for a table.
+
+      The spans below are the shipped reading of that field, exactly the way
+      --grid-major/--grid-minor are the shipped 7 + 5 of the Archive's: the
+      title card owns eight tracks from the left edge, the readout takes the
+      last four and sits low, the actions stop one track short of the hero so
+      the two never share an edge, and the pill floats inside the field
+      instead of spanning it. ── */
 @media (min-width:1080px){
   .shell--signal .shell__inner{
-    grid-template-columns:repeat(12,minmax(0,1fr));
-    column-gap:clamp(1rem,2vw,2rem);
+    grid-template-columns:repeat(var(--grid-cols),minmax(0,1fr));
+    column-gap:calc(var(--grid-col-gap)/4);
     align-items:start;
   }
-  .signal-hero{grid-column:1 / 9;}
-  .signal-actions{grid-column:1 / 8;}
+  .signal-hero{grid-column:1 / 9;}         /* tracks 1-8 of 12   */
+  .signal-actions{grid-column:1 / 8;}      /* deliberately short */
   .signal-readout{grid-column:9 / 13;align-self:end;margin-top:clamp(3rem,12vh,9rem);}
   .signal-nav{grid-column:2 / 12;}
   .signal-section{grid-column:1 / 13;}
@@ -92,9 +116,19 @@ html[data-webgl="on"] .signal-stage__glow{opacity:0.8;}
 .signal-actions{
   transform:translate3d(0,var(--cam-y,0px),0) scale(var(--cam-s,1));
   transform-origin:50% 42%;
-  opacity:var(--cam-o,1);
   will-change:transform,opacity;
 }
+.signal-hero{opacity:var(--cam-o,1);}
+/* The card and the call-to-action start below the fold, so ridden on the
+   camera's own curve they were being spent before a reader had met them: on a
+   1440x900 frame they measured 0.44 alpha the instant they were fully in frame
+   and 0.00 a third of a screen later - the summary was never up long enough to
+   be read. Same variable, still one write per frame on the shell, a delayed
+   curve: full strength across the first half of the climb, the whole handover
+   across the second, nothing at the end of it, and is-cam-gone below still
+   takes the group out of the layer tree. */
+.signal-readout,
+.signal-actions{opacity:min(1,calc(var(--cam-o,1) * 2));}
 /* The camera has left: the group is fully faded, so take it out of the
    layer tree and the accessibility tree instead of carrying three
    composited transparent rectangles down the document. */
@@ -150,26 +184,69 @@ html[data-webgl="on"] .signal-stage__glow{opacity:0.8;}
     padding:var(--space-xl) 0 var(--space-xl) clamp(0rem,2vw,2.25rem);
   }
 }
-.signal-hero__tag{color:var(--accent);}
+/* The one instrument milled into the title card: a glass rail under the
+   monolith, sized off the mono micro-step, so the hero carries the same
+   material as the pill and the readout without putting a panel behind the
+   name — the hollow type has to keep taking its light from the plasma
+   directly. It hugs its text, but hug has to be bounded: `width:max-content`
+   on a grid item is not a wish, it is a floor — the item's min-content
+   contribution becomes the whole 56-character tagline, the implicit track
+   obliges, and the 360 px page woke up 558 px wide with a horizontal scroll
+   bar across the monolith. `max-width:100%` cannot save it, because that
+   percentage is measured against the very track the item just inflated.
+   fit-content(100%) is the honest form of the same intent: take max-content,
+   never more than the track, and contribute only a real min-content when the
+   track asks for one. Stays in block layout deliberately: the kinetic
+   splitter measures this element into inline-block row masks, and a flex
+   container would change those measurements. */
+.signal-hero__tag{
+  color:var(--accent);
+  width:fit-content(100%);min-width:0;justify-self:start;
+  padding:var(--space-2xs) var(--space-s);
+  border:1px solid var(--glass-border);
+  background-color:var(--glass-bg);
+  background-image:linear-gradient(var(--glass-bg),var(--glass-bg)),var(--glass-edge);
+  background-origin:padding-box,border-box;
+  background-clip:padding-box,border-box;
+  box-shadow:var(--glass-hair),var(--shadow-1);
+}
 .signal-name{
-  font-family:var(--font-display);font-size:var(--text-hero);font-weight:700;line-height:0.88;letter-spacing:-0.05em;margin:0;
+  font-family:var(--font-display);font-size:var(--text-hero);font-weight:700;
+  line-height:var(--leading-hero);margin:0;
+  /* Tracking stays tighter than --tracking-display on purpose: that register
+     was measured at the editorial display step, and this runs to 13rem, past
+     the point where -0.03em still holds a name together as one mass. */
+  letter-spacing:-0.05em;
 }
 .signal-name__line{display:block;}
 .signal-name__line:nth-child(2){color:var(--ink-faint);}   /* depth, no gradient */
 .signal-hero__lede{
-  max-width:56ch;margin:var(--space-m) 0 0;
-  color:var(--ink-muted);font-size:var(--text-xl);line-height:1.4;
+  max-width:var(--measure-tight);margin:var(--space-m) 0 0;
+  color:var(--ink-muted);font-size:var(--text-xl);line-height:var(--leading-snug);
 }
 @media (min-width:1080px){.signal-hero__lede{margin-left:clamp(2rem,6vw,7rem);}}
 
-/* ── Readout: the facts as a signal log, not a card grid ── */
+/* ── Readout: the facts as a signal log, not a card grid. It floats on the
+      same machined glass as the pill, because it is the one place in the
+      title card that carries prose — 0.84 is the floor that keeps every ink
+      token above AAA over a lit frame, and the milled edge is what stops it
+      reading as a sticker laid over the plasma. Vertical cadence is spent in
+      half-steps of --grid-rhythm, so the panel's own padding plus a row's
+      padding add up to exactly one line of prose. ── */
 .signal-readout{
-  display:grid;margin:0;padding:0;
-  border-top:1px solid var(--line-dim);border-bottom:1px solid var(--line-dim);
+  display:grid;margin:0;
+  padding:calc(var(--grid-rhythm)*0.5) var(--space-m);
+  border:1px solid var(--glass-border);
+  background-color:var(--glass-bg);
+  background-image:linear-gradient(var(--glass-bg),var(--glass-bg)),var(--glass-edge);
+  background-origin:padding-box,border-box;
+  background-clip:padding-box,border-box;
+  box-shadow:var(--glass-hair),var(--shadow-elevation);
 }
 .signal-readout > div{
-  display:grid;grid-template-columns:minmax(5.5rem,auto) minmax(0,1fr);gap:0.2rem var(--space-s);
-  align-items:baseline;padding:0.85rem 0;border-bottom:1px solid var(--line-dim);
+  display:grid;grid-template-columns:minmax(calc(var(--grid-rhythm)*3.75),auto) minmax(0,1fr);
+  gap:var(--space-3xs) var(--space-s);
+  align-items:baseline;padding:calc(var(--grid-rhythm)*0.5) 0;border-bottom:1px solid var(--line-dim);
 }
 .signal-readout > div:last-child{border-bottom:0;}
 .signal-readout dt{
@@ -185,8 +262,8 @@ html[data-webgl="on"] .signal-stage__glow{opacity:0.8;}
       compact, centred, and it travels with the reader. ── */
 .signal-nav{
   position:sticky;bottom:var(--space-2xs);z-index:var(--z-nav);
-  display:flex;flex-wrap:wrap;justify-content:center;gap:0.2rem;
-  width:max-content;max-width:100%;margin-inline:auto;padding:0.35rem;
+  display:flex;flex-wrap:wrap;justify-content:center;gap:var(--space-3xs);
+  width:fit-content(100%);min-width:0;margin-inline:auto;padding:var(--space-3xs);
   border:1px solid var(--glass-border);border-radius:0;
   /* Longhands, not the `background:` shorthand the buttons in effects.css
      use: a shorthand with only image layers resets background-color to
@@ -200,6 +277,56 @@ html[data-webgl="on"] .signal-stage__glow{opacity:0.8;}
   background-origin:padding-box,border-box;
   background-clip:padding-box,border-box;
   box-shadow:var(--glass-hair),var(--shadow-elevation);
+  /* Only the material transitions. The motion layer owns transform and
+     opacity on this node — measured, not assumed: the loop leaves an inline
+     translate3d/scale and an opacity on the bar every frame it runs, and an
+     inline style outranks every selector written here. A transition on either
+     property would be a race the stylesheet loses by construction. */
+  transition:background-color var(--dur-base) var(--ease-drift),
+             border-color var(--dur-base) var(--ease-drift),
+             box-shadow var(--dur-base) var(--ease-drift);
+}
+/* Contextual, not decorative. The pill is the only chrome that travels, so it
+   says where it is with its own material: at rest a plate lying on the glass,
+   hovered or tabbed into it takes the lift fill, the lit edge and the top step
+   of the shadow ladder — the one element on the page that has genuinely
+   left it. */
+.signal-nav:hover,.signal-nav:focus-within{
+  background-color:var(--glass-bg-lift);
+  border-color:var(--glass-border-lift);
+  box-shadow:var(--glass-hair),var(--shadow-3);
+}
+/* Spatial arrival, spent on the two properties the stylesheet still owns.
+   While the title card still holds the screen the pill's edge is unlit and it
+   lies flat on the glass — no elevation, nothing to draw the eye away from the
+   monolith. The engine's own flag for the handover (is-cam-gone, written by
+   camStep() when the card's opacity spends out — not a timer CSS would have to
+   guess) releases the rule, and the material transitions already on the bar
+   light the edge and lift it onto the shadow ladder over 320 ms.
+   The first attempt at this rode --cam-o directly: `border-color:color-mix(in
+   oklab,var(--glass-border),transparent calc(62% * var(--cam-o,1)))`, so the
+   edge would have ignited on the same number the headline fades on. Measured
+   against the real page it did not hold: Chrome kept the colour computed while
+   --cam-o was 1 after the camera had written 0, which is the class of bug this
+   site has already been bitten by once. A state the browser will confirm beats
+   a curve it will not, so the arrival is a state change and the transition
+   does the smoothing.
+   Movement is the obvious third property and it is not available: the bar
+   carries an inline transform and opacity from the motion loop whenever the
+   reveal or the drift is running, and an inline style outranks every selector
+   written here. html.js is the safety — with no script no camera ever runs, and
+   a control that navigates the page must not sit unlit waiting for a handover
+   that cannot come. */
+html.js .shell--signal:not(.is-cam-gone) .signal-nav{
+  border-color:transparent;
+  box-shadow:var(--glass-hair);
+}
+@media (prefers-reduced-motion:reduce){
+  .signal-nav{transition:none;}
+  /* the camera never runs here, so the pill must not wait for it */
+  html.js .shell--signal:not(.is-cam-gone) .signal-nav{
+    border-color:var(--glass-border);box-shadow:var(--glass-hair),var(--shadow-elevation);
+  }
 }
 .signal-nav a{
   display:inline-flex;align-items:center;min-height:44px;padding:0.6rem 1.1rem;
@@ -251,7 +378,21 @@ html[data-webgl="on"] .signal-stage__glow{opacity:0.8;}
 .transmissions.is-volume > .transmission{
   position:absolute;margin:0;
   left:var(--gx,4%);top:var(--gy,8%);
-  width:clamp(19rem,31vw,29rem);
+  /* The slab's width, stated once, and the title sized against it. A shard is
+     a fixed aperture the camera flies past, so its headline has to be a
+     fraction of the box rather than a step of the viewport scale:
+     --text-cinema runs to 7.5rem, and the widest name in the log —
+     "CircuitMate", eleven characters of display type at 700 and -0.04em, an
+     advance measured off the loaded font at 5.22em — wanted roughly twice the
+     372 px of glass it had at 1440, walking out of the slab and over the void.
+     Dividing the box is the only fit that stays true at every width, because
+     numerator and denominator are the same clamp, and 5.8 spends the box on
+     type while leaving the last tenth of an em as air. The floor of min()
+     keeps --text-cinema in play wherever the slab is wider than the name
+     needs. */
+  --slab-w:clamp(19rem,31vw,29rem);
+  --slab-code:calc((var(--slab-w) - var(--space-l) * 2)/5.8);
+  width:var(--slab-w);
   padding:var(--space-m) var(--space-l);
   border-top:0;
   opacity:var(--sh-o,0);
@@ -307,7 +448,15 @@ html[data-webgl="on"] .signal-stage__glow{opacity:0.8;}
 .transmission:focus-within .transmission__category{color:var(--void);}
 .transmission__head{display:flex;flex-wrap:wrap;align-items:center;gap:0.4rem 0.9rem;}
 .transmission__index{font:600 var(--text-2xs)/1 var(--font-mono);letter-spacing:0.2em;color:var(--accent);}
-.transmission__code{font-family:var(--font-display);font-size:var(--text-cinema);font-weight:700;letter-spacing:-0.04em;line-height:0.95;margin:0;}
+.transmission__code{
+  font-family:var(--font-display);font-weight:700;margin:0;
+  /* The slab's own arithmetic when there is one, the cinema step when there
+     is not — the stacked log has the whole page to write a name across, and
+     the fallback is what a reader with no script gets. */
+  font-size:min(var(--text-cinema),var(--slab-code,var(--text-cinema)));
+  letter-spacing:-0.04em;
+  line-height:var(--leading-hero);
+}
 .transmission__category{
   font:500 var(--text-2xs)/1.4 var(--font-mono);letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-ghost);
 }

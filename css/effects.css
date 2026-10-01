@@ -649,7 +649,11 @@ html.cursor-down .cursor-dot{transform-origin:center;}
    ══════════════════════════════════════════════════════════════════════ */
 .shell--signal .transmissions.is-volume > .transmission{
   border:1px solid rgba(234,243,255,calc(0.10 + var(--sh-lit,0) * 0.22 + var(--sh-hot,0) * 0.38));
-  background-color:rgba(9,13,21,0.80);
+  /* The fill is the glass contract, not a second literal: --glass-bg is the
+     alpha measured to hold AAA ink over the brightest frame the shader can
+     emit. This material shipped at 0.80, under that floor, which is 4% of
+     the plasma's worst case reading straight through a slab of prose. */
+  background-color:var(--glass-bg);
   background-image:
     linear-gradient(112deg,
       rgba(255,255,255,0) calc(var(--sh-glare,50%) - 15%),
@@ -696,6 +700,17 @@ html.cursor-down .cursor-dot{transform-origin:center;}
     inset 0 0 42px color-mix(in srgb,var(--theme) calc(var(--sh-hot,0) * 16%) ,transparent),
     inset 0 0 0 1px color-mix(in srgb,var(--theme) calc(var(--sh-hot,0) * 22%) ,transparent),
     0 calc(14px * var(--sh-elev,1)) calc(58px * var(--sh-elev,1)) rgba(0,0,0,0.58);
+}
+/* The edge is --glass-border too, with the two depth terms added back into
+   its alpha rather than re-authored as a colour: --glass-border is 0.16,
+   and a slab 4000 px down the axis still reads as a hairline while the one
+   at the lens ignites to ~0.64. Relative colour syntax is the only way to
+   keep the token and the live term in one declaration, so it is guarded —
+   the rgba line above is the floor and nothing changes without it. */
+@supports (color:rgb(from red r g b / calc(alpha + 0.1))){
+  .shell--signal .transmissions.is-volume > .transmission{
+    border-color:rgb(from var(--glass-border) r g b / calc(alpha + var(--sh-lit,0) * 0.16 + var(--sh-hot,0) * 0.32));
+  }
 }
 /* The orb's own light, read back off the slab it is claiming. */
 .shell--signal .transmissions.is-volume > .transmission::after{

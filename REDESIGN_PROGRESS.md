@@ -751,3 +751,184 @@ fill from 0.94 to 0.84 alpha and its hairline from 0.08 to 0.16: both
 deliberate, both noted above. `.transmissions.is-volume` still carries no
 `will-change` (see §1), and no token in this phase is consumed by JS — the
 `--par-*`, `--sh-*` and `--cam-*` properties remain motion.js's own.
+
+---
+
+## Phase 2 — The Signal layout: field, glass, arrival (session record, 30 Sep 2026)
+
+The engine, the markup and the data were not touched: `js/*.js` and `index.html`
+are byte-identical to HEAD, and this phase is the two stylesheets being read back
+off the running page. What had to be true is stated as a number, and the number is
+in `tools/verify-signal.mjs`.
+
+### 1 · The twelve-track field, read off the layout
+
+The Signal's field is the Archive's discipline at a quarter of its gutter: the
+runtime check measures `gap: 27.6px` against `--grid-col-gap / 4 = 27.6` rather
+than trusting the declaration. The title card takes eight tracks from the flush
+left edge and the readout the last four with one gutter of air between — at 1440
+that is `hero → 932`, `readout 959 → 1382`, the readout closing the field flush
+with the inner edge. The actions stop short of the card's edge (`819` against
+`932`) because the imbalance is the composition: centring them would be the
+correction that ruins it. The floating pill is inside the field rather than
+across it (`nav 508 → 932`), so the one element that travels still reads as
+placed rather than as chrome.
+
+### 2 · The arrival is material, not movement
+
+The pill's spatial arrival is spent on the two properties the stylesheet still
+owns — `border-color` and `box-shadow` — and released by the engine's own flag
+(`is-cam-gone`, written when the title card's opacity spends out) rather than by a
+timer CSS would have to guess. Measured across the handover: **4 → 5 shadow
+layers** (the hairline alone, then the hairline plus the first step of the ladder)
+and the edge from `rgba(0, 0, 0, 0)` to `rgba(234, 243, 255, 0.16)`.
+
+Movement is the obvious third property and it is not available. The motion loop
+leaves an inline `transform` and `opacity` on that node whenever the reveal or the
+drift is running — caught this session as `translate3d(0px, 0.3308px, 0px)
+scale(1.0003, 1.0003)` with an opacity beside it — and an inline style outranks
+every selector written here. A transition on either property would be a race the
+stylesheet loses by construction, so the battery records the inline write instead
+of asserting on it, and asserts instead that neither property appears in the
+arrival rule at all.
+
+### 3 · A defect the battery caught: the card was spent before it was read
+
+`.signal-hero`, `.signal-readout` and `.signal-actions` shared one
+`opacity: var(--cam-o)`, which is what makes them one title card instead of a
+headline stranding two floaters. It is also wrong for two thirds of it. Measured
+at 1440×900, the readout enters the frame around scroll 300 and was already at
+**0.44 alpha** by scroll 500, at **0.00** by 744 — the summary was never on screen
+long enough to be read, and the rendered crop came back at 1.7:1 with no
+distinguishable ink at all.
+
+The group keeps its one transform; only the curve is split. The monolith, which is
+fully up at scroll 0, keeps the camera's own fade. The readout and the actions,
+which start below the fold, ride `opacity: min(1, calc(var(--cam-o) * 2))`: full
+strength across the first half of the climb, the whole handover across the second,
+nothing at the end of it, `is-cam-gone` still taking them out of the layer tree.
+One variable, still three property writes per frame, no JS. Measured after:
+**6.1–9.8:1** rendered ink over rendered surface, at presence 0.70 in the frame the
+camera leaves it in.
+
+### 4 · Slab material under the camera
+
+A shard is not a card that has been moved; it is glass with light behind it. The
+volume's own border language was read back over twenty samples: `--sh-lit` spanning
+0 → 0.757, the **near** border at 0.27/0.28 against the **far** border's
+0.16/0.17/0.18, i.e. the edge ignites toward the lens instead of glowing evenly.
+The fill resolves to the glass token at 0.84 on every shard with the legibility
+floor holding, and the rendered slab — sampled at 529×494 of the *visible* part,
+with the plasma live behind it — measures **11.4–15.8:1**.
+
+
+### Verification — Phase 2 battery (30 Sep 2026)
+
+`tools/verify-signal.mjs` on the shared `tools/harness.mjs`: no npm dependencies,
+Node 22 `WebSocket` driving Chrome over CDP, the repository served on
+`127.0.0.1` so the page runs under its own `<meta>` CSP. **77/77 passed**, stable
+across consecutive runs, in five steps: the static contract (owned files only,
+`js/*.js` md5-equal to HEAD, no literal length or colour smuggled back into a
+token's job), the runtime (boot under CSP, the twelve tracks and the gutter read
+off the live grid, the arrival in both states, `--sh-lit`/`--sh-hot` live on every
+shard, shards placed by the projection rather than by the layout), fit (every name
+inside its glass at the scale the camera actually shows — `CircuitMate` is 336px of
+type in 372px of glass at 64.6px — and no horizontal escape at 360 / 768 / 1440),
+rendered pixels, and the same layout with script execution switched off.
+
+Four things were learned the hard way and are now assertions rather than folklore.
+
+1. **`Page.captureScreenshot` clips are in document space; a bounding rect is in
+   viewport space.** Proved side by side on the same pill at the same scroll: at
+   its viewport `y` the crop was one flat tone (median and peak both L 0.3), at its
+   document `y` it was lit type (peak L 62). The height was also being clamped
+   against `innerHeight` instead of against the window a capture can actually
+   reach — `[scrollY, scrollY + innerHeight)` — which silently ground every deep
+   sample into a two-pixel sliver. That is how a pill wearing bright labels got
+   reported as 1.98:1 of black. There is now a check that the frame handed to the
+   ruler is the whole element, so the harness cannot rot quietly again.
+2. **A percentile cannot find ink smaller than the percentile.** A 20px mono label
+   inside a 600×340 panel is a twentieth of one per cent of the crop, so the old
+   99.7th-percentile gate averaged the anti-aliased halo and called legible type
+   failing (peak L 9.9 on a panel whose dimmest token is L 25). The gate is now the
+   brighter of p99.7 and everything within 15 points of the brightest pixel: the
+   glyph core is always in, the halo never drags the average down.
+3. **A frame can be captured before the compositor has drawn into it.** The box is
+   on screen, the computed style says opaque type, and the crop holds nothing
+   brighter than L 10 — while the dimmest ink this page ships is `rgb(124,139,166)`
+   at L 25.5 and the fade floor added in §3 keeps opaque type above that. Such a
+   frame is retried once, dropped from the judgement, counted in the open and named
+   in the spread (`inkless@198(p1)`). What gets judged is the **median of the frames
+   that carry ink**, taken at the three scroll positions where the element can hold
+   still on screen — the best frame would be the flattering one and the worst is a
+   moment the camera has already left. A frame with real ink that is merely weak is
+   never dropped: that is the failure the battery exists to catch.
+4. **The arrival flag flips at exactly the wrong scroll.** `--cam-o` sits at 0.000
+   across a band of scroll; landing on that band restarts the 320 ms material
+   transition every time Lenis drifts a fraction of a pixel, so the box-shadow had
+   already made its discrete 4 → 5 jump while the border was still mid-fade at
+   `rgba(0, 0, 0, 0)`. The harness lands 1.6 screens past the crossing and then
+   reads the edge the way it reads a position: until two reads agree. Waiting for
+   the transition to finish *is* the measurement here, because the transition is
+   the arrival — one run caught the edge at `0.145` of the token's `0.16`, six per
+   cent short of its own ease, and a threshold on a moving value called that a
+   failure.
+
+Underneath all of it: Lenis keeps gliding after `scrollTo` and can re-take a native
+scroll on the following frame, so the harness's primitive is `settle()` — and two
+reads agreeing is not arrival either, because `Page.captureScreenshot` pauses the
+renderer and across that pause both reads return the same stale number while the
+page is still mid-glide. A position counts as reached when four consecutive reads
+agree; that is what fixed a `scrollTo(0)` repeatedly reported as reached at 198,
+which quietly moved the rectangle every later frame was aimed at. The wheel is the
+fallback, fed the way a reader feeds it.
+
+**Recorded deviations.** The luma samples come from a SwiftShader frame: a software
+renderer's plasma, conservative but not identical to a GPU's, and the plasma is
+live, so each number is one frame of a moving worst case. Contrast is measured at
+1440 only. With script switched off there is no markup either — content is written
+by `js/render.js` — so step 5 judges the CSS contract through fixtures built from
+the real class names and records the empty shell as the Phase 3 architecture item
+it is. `.signal-nav`'s inline transform is recorded rather than asserted, because
+whether the loop is holding one depends on where in the reveal or the drift you
+catch it.
+
+**The Phase 1 snapshot, re-aimed rather than re-lit.** `tools/verify-type.mjs` came
+back with five failures on its first run against this phase, and each was read before
+anything was touched. Three assert states this phase replaced on purpose: a slab name
+inside a volume is now `min(--text-cinema, --slab-code)` so a name fits the glass it is
+written on (the stacked log and the no-script floor keep the cinema step, which step 5
+still asserts), and under the monolith the bar's edge is `rgba(0, 0, 0, 0)` with the
+hairline as its only shadow — the ladder belongs to the handover, which is step 2's job
+now. Those three now read both halves of the new rule instead of one. The other two were
+this phase's own finding wearing Phase 1's clothes: the sample carried a rect from the
+viewport sweep and aimed its clip in viewport space, so it measured a bright patch of
+page near where the bar had been and reported `--ink` at 2.31:1 against it. Re-read at
+the moment of capture and in document space, the pill's interior is **p50 L 0.6 /
+p99 L 7.6** with its labels hidden — the plasma reading through at its worst still
+leaves **7.44:1** for `--ink` and **4.93:1** for the link colour, so the old floors
+hold exactly where they were first measured. **66/66 passed**, and `verify-signal.mjs`
+repeats at **77/77**; the two batteries now agree, which is the reason to keep them
+beside each other rather than one green number pretending to cover everything.
+
+### Files touched this phase
+
+| File | Change |
+|---|---|
+| `css/signal.css` | The Signal's composition: twelve-track field, title card and readout, floating pill as material, the arrival, the volume's slab language, the readout's delayed camera curve, the reduced-motion and narrow-width floors |
+| `css/effects.css` | Material shared with the Archive where the Signal consumes it (glass, hairline, shadow ladder) — no new tokens |
+| `tools/harness.mjs`, `tools/verify-signal.mjs` | The battery above; the pixel sampler, the settle/wheel scroller and the clip-space findings live here |
+| `tools/verify-type.mjs`, `tools/overflow.mjs` | The Phase 1 scratch batteries, copied in beside the new one so the checks that founded the token contract stay runnable (they still take the repository root as their argument) |
+| `REDESIGN_PROGRESS.md` | This record |
+
+The Archive (`css/archive.css`), `index.html` and every `js/*.js` are unchanged,
+both asserted by the battery rather than promised by this table.
+
+### Next phase (3)
+
+Content architecture: `js/render.js` writes the shells at boot, so without script
+there is no page to judge. Move the first screen of each mode into the HTML (or a
+build-time render), keep `data-render` as the confirmation rather than the origin,
+and re-run this battery against the server-rendered markup — steps 4 and 5 stop
+being a contract test and become a measurement of the real thing.
+
